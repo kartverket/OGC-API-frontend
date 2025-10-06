@@ -1,0 +1,13 @@
+{
+    "url": "https://cache.kartverket.no/v1/wmts/1.0.0/WMTSCapabilities.xml?request=GetCapabilities",
+    "layer": "topograatone",
+    "projection": "EPSG:3857",
+    "extent": [
+        383929.977677947,
+        7874328.561786267,
+        3598402.535883406,
+        11548011.485449649
+    ],
+    "minZoom": 1,
+    "maxZoom": 18
+}
