@@ -1,1 +1,1 @@
-# OGC-API-frontend
+# OGC API front-end
