@@ -8,6 +8,7 @@ RUN apk --update add unzip \
     && unzip -p fylker.zip > fylker.sql \
     && unzip -p kommuner.zip > kommuner.sql \
     && rm *.zip \
+    && chown -R postgres:postgres /tmp/dumps \
     && chmod +x /docker-entrypoint-initdb.d/initdb.sh
 
 EXPOSE 5432
