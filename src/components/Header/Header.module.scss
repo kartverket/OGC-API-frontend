@@ -1,0 +1,30 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+}
+
+.divider {
+    width: 1.5px;
+    height: 28px;
+    background: var(--border-global-divider, #C8C5C5);
+    margin: 0 20px;
+}
+
+.title {
+    color: var(--ds-color-neutral-text-default);
+    font-size: var(--ds-font-size-5);
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}

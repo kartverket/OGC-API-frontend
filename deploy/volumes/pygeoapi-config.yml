@@ -1,0 +1,165 @@
+server:
+  bind:
+    host: 0.0.0.0
+    port: 5000
+  cors: true
+  url: http://localhost:5000
+  mimetype: application/json; charset=UTF-8
+  encoding: utf-8
+  gzip: false
+  languages:
+    - en-US
+  pretty_print: true
+  limits:
+    default_items: 100
+    max_items: 1000
+  map:
+    url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  admin: false
+
+logging:
+  level: INFO
+
+metadata:
+  identification:
+    title:
+      en: Administrative enheter
+    description:
+      en: >
+        Datasettet inneholder administrative grenser og områder for Norge, inkludert fylker og kommuner. 
+    keywords:
+      en:
+        - Fylke
+        - Kommune
+        - Administrativ inndeling
+        - Administrative grenser
+        - Fylkesgrenser
+        - Kommunegrenser
+        - Riksgrense
+    keywords_type: theme
+    terms_of_service: https://www.kartverket.no/geodataarbeid/norge-digitalt/partsinformasjon/avtaler-og-vilkar/norge-digitalt-lisens
+    url: https://www.kartverket.no
+
+  license:
+    name: Norge digitalt-lisens
+    url: https://www.kartverket.no/geodataarbeid/norge-digitalt/partsinformasjon/avtaler-og-vilkar/norge-digitalt-lisens
+  provider:
+    name: Kartverket
+    url: https://www.kartverket.no
+  contact:
+    name: Kartverket
+    email: post@kartverket.no
+    url: https://www.kartverket.no
+
+resources:
+  fylker:
+    type: collection
+    title:
+      en: Fylker
+    description:
+      en: > 
+        Datasettet viser fylkesinndelingen i landet med de mest nøyaktige grensene som er registrert digitalt og som er samlet i ett datasett
+    keywords:
+      en:
+        - Fylke
+        - Fylkesgrense
+    extents:
+      spatial:
+        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: PostgreSQL
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: fylker
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [fylker]
+        id_field: objid
+        table: fylke
+        geom_field: omrade
+        crs:
+          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
+          - http://www.opengis.net/def/crs/EPSG/0/25832
+          - http://www.opengis.net/def/crs/EPSG/0/25833
+          - http://www.opengis.net/def/crs/EPSG/0/25835
+          - http://www.opengis.net/def/crs/EPSG/0/4258
+          - http://www.opengis.net/def/crs/EPSG/0/4326
+          - http://www.opengis.net/def/crs/EPSG/0/3857
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+      - type: tile
+        name: MVT-postgresql
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: fylker
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [fylker]
+        id_field: objid
+        table: fylke
+        geom_field: omrade
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+        options:
+          zoom:
+            min: 12
+            max: 18
+        format:
+          name: pbf
+          mimetype: application/vnd.mapbox-vector-tile
+  kommuner:
+    type: collection
+    title:
+      en: Kommuner
+    description:
+      en: > 
+        Datasettet viser kommuneinndelingen i landet med de mest nøyaktige grensene som er registrert digitalt og som er samlet i ett datasett.
+    keywords:
+      en:
+        - Kommune
+        - Kommunegrenser
+    extents:
+      spatial:
+        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: PostgreSQL
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: kommuner
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [kommuner]
+        id_field: objid
+        table: kommune
+        geom_field: omrade
+        crs:
+          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
+          - http://www.opengis.net/def/crs/EPSG/0/25832
+          - http://www.opengis.net/def/crs/EPSG/0/25833
+          - http://www.opengis.net/def/crs/EPSG/0/25835
+          - http://www.opengis.net/def/crs/EPSG/0/4258
+          - http://www.opengis.net/def/crs/EPSG/0/4326
+          - http://www.opengis.net/def/crs/EPSG/0/3857
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+      - type: tile
+        name: MVT-postgresql
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: kommuner
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [kommuner]
+        id_field: objid
+        table: kommune
+        geom_field: omrade
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+        options:
+          zoom:
+            min: 12
+            max: 18
+        format:
+          name: pbf
+          mimetype: application/vnd.mapbox-vector-tile
