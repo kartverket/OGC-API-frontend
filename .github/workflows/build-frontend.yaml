@@ -1,0 +1,89 @@
+name: Frontend
+# This workflow builds the frontend image and pushes it to the GitHub Container Registry.
+# It is triggered on pushes to the main branch, specifically when changes are made to the "geonorge-server" directory.
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_REGISTRY: ghcr.io
+  NAME: kartverket/datadeling-ogcapi-frontend
+
+jobs:
+  build_frontend:
+    name: Build image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      actions: read
+      id-token: write
+
+    outputs:
+      version: ${{ steps.set_output.outputs.version }}
+      tags: ${{ steps.meta.outputs.tags }}
+      commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}
+          tags: type=sha,format=long
+
+      - name: Get commit message
+        id: get_commit_message
+        run: |
+          {
+            echo 'commit_message<<EOF'
+            git log -1 --pretty=%B
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build docker image and push
+        id: build_frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+
+      - name: Summarize Image Digest and Set Output
+        id: set_output
+        run: |
+          echo "Full Image URL: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME }}:${{ steps.meta.outputs.version }}@${{steps.build_frontend.outputs.digest}}" >> $GITHUB_STEP_SUMMARY
+          echo "version=${{ github.ref_name }}@${{steps.build_frontend.outputs.digest}}" >> $GITHUB_OUTPUT
+
+  # deploy:
+  #     needs: [build_frontend]
+  #     name: Deploy
+  #     permissions:
+  #       id-token: write
+  #     uses: kartverket/datadeling-apps/.github/workflows/release-geosaga.yml@main
+  #     # secrets:
+  #     #   token: ${{  needs.deploy.outputs.token }}
+  #     with:
+  #       # Apps repo namespace
+  #       namespace: datadeling-ogcapi
+  #       # Apps repo app name
+  #       application: ogcapi-frontend
+  #       # Ghrc.io image tag
+  #       tag: ${{ needs.build_frontend.outputs.tags }}
+  #       # identity for the octo-sts action
+  #       identity: mapserver-skip
+  #       deploy_dev: true
+  #       deploy_prod: false
+  #       commit_message: ${{ needs.build_frontend.outputs.commit_message }}
