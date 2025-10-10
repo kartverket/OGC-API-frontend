@@ -13,6 +13,7 @@
         "@digdir/designsystemet-css": "^1.6.0",
         "@digdir/designsystemet-react": "^1.6.0",
         "@digdir/designsystemet-theme": "^1.6.0",
+        "@navikt/aksel-icons": "^7.32.1",
         "@turf/bbox-polygon": "^7.2.0",
         "@turf/helpers": "^7.2.0",
         "next": "15.5.4",
@@ -24,6 +25,8 @@
     },
     "devDependencies": {
         "@biomejs/biome": "2.2.0",
+        "@digdir/designsystemet": "^1.6.0",
+        "@svgr/webpack": "^8.1.0",
         "sass-embedded": "^1.93.2"
     }
 }

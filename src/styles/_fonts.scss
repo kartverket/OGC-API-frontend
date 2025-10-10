@@ -1,15 +1,20 @@
 @font-face {
-    font-family: 'Inter Variable';
+    font-family: 'Mulish';
     font-weight: 100 900;
     font-display: swap;
     font-style: normal;
-    src: url('../assets/fonts/InterVariable.woff2') format('woff2');
+    src: url('../assets/fonts/Mulish.woff2') format('woff2');
 }
 
 @font-face {
-    font-family: 'Inter Variable';
+    font-family: 'Mulish';
     font-weight: 100 900;
     font-display: swap;
     font-style: italic;
-    src: url('../assets/fonts/InterVariable-Italic.woff2') format('woff2');
+    src: url('../assets/fonts/Mulish-Italic.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'RobotoMono';
+    src: url('../assets/fonts/RobotoMono.woff2') format('woff2');
 }

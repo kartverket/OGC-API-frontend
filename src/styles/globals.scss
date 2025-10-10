@@ -1,7 +1,49 @@
-@use '@digdir/designsystemet-theme';
 @use '@digdir/designsystemet-css';
+@use '_theme.css';
 @use 'fonts';
 
 body {
-    font-family: 'Inter Variable';
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--ds-color-neutral-background-tinted);
+    font-family: Mulish;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    background: var(--ds-color-background-default);
+    border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
+
+    >div {
+        display: flex;
+        width: 1440px;
+        padding: 12px 28px;
+        box-sizing: border-box;
+    }
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+
+    >div {
+        width: 1440px;
+        padding: 38px 162px 0 162px;
+        box-sizing: border-box;
+    }
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+
+    >div {
+        display: flex;
+        width: 1440px;
+
+    }
 }

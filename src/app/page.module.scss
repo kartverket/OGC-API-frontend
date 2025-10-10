@@ -1,0 +1,91 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+    width: 615px;
+}
+
+.main {
+    display: flex;
+    gap: 59px;
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+    width: 615px;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.collectionsCard {
+    .cardBlock {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        >* {
+            margin: 0;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .title {
+            font-weight: 500;
+        }
+    }
+}
+
+.datasetInfoCard {
+    border: 0 none;
+
+    .cardBlock {
+        >* {
+            margin: 0;
+        }
+
+        .heading {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-bottom: var(--ds-size-3);
+
+            h2 {
+                font-size: var(--ds-font-size-3);
+            }
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            font-size: var(--ds-font-size-2);
+
+            >div {
+                display: flex;
+                padding: 8px 0;
+            }
+
+            .label {
+                width: 160px;
+                font-weight: 500;
+            }
+
+            .value {
+                font-weight: 400;
+            }
+        }
+    }
+}

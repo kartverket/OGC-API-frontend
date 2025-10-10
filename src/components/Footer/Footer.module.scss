@@ -1,0 +1,23 @@
+.footer {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--ds-size-7);
+    box-sizing: border-box;
+}
+
+.divider {
+    margin: 0;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
