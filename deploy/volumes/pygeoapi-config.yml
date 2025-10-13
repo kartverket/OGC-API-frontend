@@ -73,10 +73,10 @@ resources:
         name: PostgreSQL
         data:
           host: ${POSTGRES_HOST}
-          dbname: fylker
+          dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [fylker]
+          search_path: [administrative_enheter_fylker]
         id_field: objid
         table: fylke
         geom_field: omrade
@@ -93,10 +93,10 @@ resources:
         name: MVT-postgresql
         data:
           host: ${POSTGRES_HOST}
-          dbname: fylker
+          dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [fylker]
+          search_path: [administrative_enheter_fylker]
         id_field: objid
         table: fylke
         geom_field: omrade
@@ -128,10 +128,10 @@ resources:
         name: PostgreSQL
         data:
           host: ${POSTGRES_HOST}
-          dbname: kommuner
+          dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [kommuner]
+          search_path: [administrative_enheter_kommuner]
         id_field: objid
         table: kommune
         geom_field: omrade
@@ -148,10 +148,10 @@ resources:
         name: MVT-postgresql
         data:
           host: ${POSTGRES_HOST}
-          dbname: kommuner
+          dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [kommuner]
+          search_path: [administrative_enheter_kommuner]
         id_field: objid
         table: kommune
         geom_field: omrade
