@@ -2,6 +2,11 @@
 @use '_theme.css';
 @use 'fonts';
 
+html {
+    margin-left: calc(100vw - 100%);
+    margin-right: 0;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -13,7 +18,8 @@ body {
 
 header {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     background: var(--ds-color-background-default);
     border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
 
@@ -32,18 +38,18 @@ main {
 
     >div {
         width: 1440px;
-        padding: 38px 162px 0 162px;
+        padding: 38px 32px 0 32px;
         box-sizing: border-box;
     }
 }
 
 footer {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 
     >div {
         display: flex;
         width: 1440px;
-
     }
 }

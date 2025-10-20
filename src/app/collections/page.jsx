@@ -2,6 +2,14 @@ import Link from 'next/link';
 import { Table, TableHead, TableRow, TableBody, TableCell, TableHeaderCell } from '@digdir/designsystemet-react';
 import { fetchCollections } from '@/utils/api';
 import styles from './page.module.scss';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+
+export const metadata = {
+    title: 'Collections | Administrative enheter | OGC API | Kartverket',
+    icons: {
+        icon: '/gfx/favicon.png'
+    }
+};
 
 
 export default async function Collections() {
@@ -10,7 +18,7 @@ export default async function Collections() {
     return (
         <div className={styles.page}>
             <main className={styles.main}>
-                <Table>                    
+                <Table>
                     <TableHead>
                         <TableRow>
                             <TableHeaderCell>
@@ -35,8 +43,6 @@ export default async function Collections() {
                     </TableBody>
                 </Table>
             </main>
-            <footer className={styles.footer}>
-            </footer>
         </div>
     );
 }

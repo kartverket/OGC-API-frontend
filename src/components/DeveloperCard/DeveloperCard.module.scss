@@ -54,10 +54,42 @@
     display: flex;
     flex-direction: column;
     gap: var(--ds-size-2);
+    --dsc-link-text-decoration-thickness--hover: .125em;
 
     >a {
         display: flex;
         justify-content: space-between;
         text-decoration: none;
+
+        &:visited {
+            color: var(--ds-color-text-subtle);
+        }
+
+        &:hover {
+            color: var(--ds-color-text-default);
+            text-decoration: underline;
+            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
+            text-underline-offset: .27em;
+        }
+
+        &:active {
+            background: none;
+        }
+    }
+}
+
+.downloadButtons {
+    display: flex;
+    flex-direction: column;
+
+    .text {
+        font-size: var(--ds-font-size-2);
+        font-weight: var(--ds-font-weight-medium);
+        margin: var(--ds-size-2) 0;
+    }
+
+    .buttonRow {
+        display: flex;
+        gap: var(--ds-size-4)
     }
 }

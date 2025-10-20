@@ -8,6 +8,11 @@ const nextConfig = {
             },
         },
     },
+    images: {
+        remotePatterns: [
+            new URL('https://editor.geonorge.no/thumbnails/**')
+        ]
+    },
     output: 'standalone'
 };
 
