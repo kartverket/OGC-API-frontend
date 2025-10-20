@@ -1,0 +1,12 @@
+.container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background: var(--ds-color-surface-tinted);
+}
+
+.breadcrumbs {
+    width: 1440px;
+    padding: 0 28px;
+    box-sizing: border-box;
+}

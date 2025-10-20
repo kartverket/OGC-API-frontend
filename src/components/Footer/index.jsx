@@ -6,23 +6,25 @@ import styles from './Footer.module.scss';
 
 export default function Footer() {
     return (
-        <div className={styles.footer}>
+        <>
             <Divider className={styles.divider} />
 
-            <div className={styles.content}>
-                <Image
-                    src="/gfx/logo.svg"
-                    width={117}
-                    height={40}
-                    alt="Logo"
-                />
+            <div className={styles.footer}>
+                <div className={styles.content}>
+                    <Image
+                        src="/gfx/logo.svg"
+                        width={117}
+                        height={40}
+                        alt="Logo"
+                    />
 
-                <div className={styles.links}>
-                    <Link asChild data-size="sm">
-                        <NextLink href="#">Tilgjengelighetserklæring</NextLink>
-                    </Link>
+                    <div className={styles.links}>
+                        <Link asChild data-size="sm">
+                            <NextLink href="#">Tilgjengelighetserklæring</NextLink>
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

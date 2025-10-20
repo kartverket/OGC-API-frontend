@@ -1,8 +1,8 @@
 'use client'
 
 import NextLink from 'next/link';
-import { Card, CardBlock, Heading, Link } from '@digdir/designsystemet-react';
-import { ArrowRightIcon, TerminalIcon } from '@navikt/aksel-icons';
+import { Button, Card, CardBlock, Divider, Heading, Label, Link } from '@digdir/designsystemet-react';
+import { ArrowRightIcon, DownloadIcon, TerminalIcon } from '@navikt/aksel-icons';
 import { API_BASE_URL, DATASET_URL } from '@/config/constants.client';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './DeveloperCard.module.scss';
@@ -20,7 +20,7 @@ export default function DeveloperCard() {
                     <TerminalIcon title="a11y-title" fontSize="24px" />
                     <Heading data-size="2xs">Ta i bruk datasettet</Heading>
                 </div>
-                
+
                 <div className={styles.urlCopy}>
                     <div className={styles.url}>{DATASET_URL}</div>
 
@@ -57,6 +57,29 @@ export default function DeveloperCard() {
                             <ArrowRightIcon title="a11y-title" fontSize="28px" />
                         </NextLink>
                     </Link>
+                </div>
+
+                <Divider />
+
+                <div className={styles.downloadButtons}>
+                    <div className={styles.text}>Last ned datasett</div>
+
+                    <div className={styles.buttonRow}>
+                        <Button variant="secondary" data-size="sm">
+                            <DownloadIcon aria-hidden fontSize="1.5rem" />
+                            GeoJSON
+                        </Button>
+
+                        <Button variant="secondary" data-size="sm">
+                            <DownloadIcon aria-hidden fontSize="1.5rem" />
+                            GPKG
+                        </Button>
+
+                        <Button variant="secondary" data-size="sm">
+                            <DownloadIcon aria-hidden fontSize="1.5rem" />
+                            GML
+                        </Button>
+                    </div>
                 </div>
             </CardBlock >
         </Card >

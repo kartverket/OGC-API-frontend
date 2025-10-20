@@ -1,6 +1,7 @@
 import { Footer, Header } from '@/components';
 import '../styles/globals.scss'
 
+
 export const metadata = {
     title: 'OGC API | Kartverket',
     description: 'En generisk front-end for OGC API',
