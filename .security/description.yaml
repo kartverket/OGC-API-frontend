@@ -1,0 +1,5 @@
+version: 1.0
+organization: Datadeling og Distribusjon
+product: OGC-API-frontend
+repo_types: [Service]
+platforms: [SKIP]
