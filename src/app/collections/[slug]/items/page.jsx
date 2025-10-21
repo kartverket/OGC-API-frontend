@@ -1,36 +1,46 @@
-//http://localhost:5000/reguleringsplaner/collections/arealformal/items
-
 'use client'
 
 import { use } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import useSWR from 'swr'
 import { fetcher } from '@/utils/api';
-import { Map } from '@/components';
+import { getItemsApiUrl, getCollectionApiUrl, getCollectionId } from './helpers';
+import { Heading, Paragraph } from '@digdir/designsystemet-react';
+import { Breadcrumbs } from '@/components';
 import styles from './page.module.scss';
-import { Skeleton } from '@digdir/designsystemet-react';
-import { createApiUrl } from './helpers';
 
 
 export default function Collection({ params }) {
-    const searchParams = useSearchParams();
     const { slug } = use(params);
-    const url = createApiUrl(slug, searchParams);
-    const { data = null } = useSWR(url, fetcher);
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const collectionId = getCollectionId(pathname)
+
+    const { data: collection = null } = useSWR(getCollectionApiUrl(collectionId), fetcher);
+    const { data: items = null } = useSWR(getItemsApiUrl(slug, searchParams), fetcher);
+
+    if (collection === null) {
+        return null;
+    }
 
     return (
-        <div className={styles.page}>
-            <main className={styles.main}>
-                <div className={styles.map}>
-                    {
-                        data == null ?
-                            <Skeleton width={800} height={480} /> :
-                            <Map featureCollection={data} />
-                    }
-                </div>
-            </main>
-            <footer className={styles.footer}>
-            </footer>
-        </div>
+        <>
+            <Breadcrumbs
+                breadcrumbs={{
+                    '/': 'Administrative enheter',
+                    '/collections': 'Collections',
+                    [`/collections/${collection.id}`]: collection.title,
+                    [`/collections/${collection.id}/items`]: 'Items'
+                }}
+            />
+
+            <div className={styles.page}>
+                <Heading level={1} data-size="sm" className={styles.heading}>{collection.title}</Heading>
+
+                <Paragraph>
+                    Kartvisning av items...
+                </Paragraph>
+            </div>
+        </>
     );
 }

@@ -1,0 +1,18 @@
+@use '@/styles/variables' as *;
+
+.page {
+    max-width: $page-width;
+    width: 100%;
+    padding: $main-padding;
+    box-sizing: border-box;
+}
+
+.heading {
+    margin-bottom: var(--ds-size-2);
+}
+
+.collections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-7);
+}

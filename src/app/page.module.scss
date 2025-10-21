@@ -1,7 +1,13 @@
-.container {
+@use '@/styles/variables' as *;
+
+.page {
     display: flex;
     flex-direction: column;
     gap: 21px;
+    max-width: $page-width;
+    width: 100%;
+    padding: $main-padding;
+    box-sizing: border-box;
 }
 
 .top {
@@ -55,81 +61,6 @@
 
         .title {
             font-weight: 500;
-        }
-    }
-}
-
-.datasetInfoCard {
-    border: 0 none;
-
-    .cardBlock {
-        >* {
-            margin: 0;
-        }
-
-        .heading {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            margin-bottom: var(--ds-size-3);
-
-            h2 {
-                font-size: var(--ds-font-size-3);
-            }
-        }
-
-        .info {
-            display: flex;
-            flex-direction: column;
-            font-size: var(--ds-font-size-2);
-
-            >div {
-                display: flex;
-                align-items: center;
-                padding: 8px 0;
-            }
-
-            .label {
-                width: 160px;
-                font-weight: 500;
-            }
-
-            .value {
-                font-weight: 400;
-            }
-
-            .keywords {
-                display: flex;
-                gap: 8px;
-
-                span {
-                    background: var(--ds-color-surface-tinted);
-                    border-radius: var(--ds-border-radius-sm);
-                    padding: 4px 8px;
-                }
-            }
-        }
-
-        .contactInfo {
-            display: flex;
-            flex-direction: column;
-            font-size: var(--ds-font-size-2);
-
-            .details {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin: 0;
-                // height: 0;
-
-                .label {
-                    font-weight: 500;
-                }
-
-                .value {
-                    font-weight: 400;
-                }
-            }
         }
     }
 }

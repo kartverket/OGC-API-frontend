@@ -4,9 +4,10 @@ import { use } from 'react';
 import useSWR from 'swr'
 import { fetcher } from '@/utils/api';
 import { bboxToFeatureCollection } from './helpers';
-import { Map } from '@/components';
+import { Breadcrumbs, Map } from '@/components';
 import { API_BASE_URL } from '@/config/constants.client';
 import styles from './page.module.scss';
+import { Heading, Paragraph } from '@digdir/designsystemet-react';
 
 
 export default function Collection({ params }) {
@@ -21,12 +22,22 @@ export default function Collection({ params }) {
     const featureCollection = bboxToFeatureCollection(bbox);
 
     return (
-        <div className={styles.page}>
-            <main className={styles.main}>
-                <Map featureCollection={featureCollection} />
-            </main>
-            <footer className={styles.footer}>
-            </footer>
-        </div>
+        <>
+            <Breadcrumbs
+                breadcrumbs={{
+                    '/': 'Administrative enheter',
+                    '/collections': 'Collections',
+                    [`/collections/${data.id}`]: data.title
+                }}
+            />
+
+            <div className={styles.page}>
+                <Heading level={1} data-size="sm" className={styles.heading}>{data.title}</Heading>
+                
+                <Paragraph>
+                    Detaljert informasjon om datasett...
+                </Paragraph>
+            </div>
+        </>
     );
 }

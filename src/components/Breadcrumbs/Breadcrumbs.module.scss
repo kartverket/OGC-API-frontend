@@ -1,12 +1,44 @@
+@use '@/styles/variables' as *;
+
 .container {
     display: flex;
     justify-content: center;
     width: 100%;
-    background: var(--ds-color-surface-tinted);
+    background: var(--ds-color-neutral-surface-tinted);
+    border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
 }
 
 .breadcrumbs {
-    width: 1440px;
-    padding: 0 28px;
+    max-width: $page-width;
+    width: 100%;
+    padding: 8px 28px;
     box-sizing: border-box;
+    color: var(--ds-color-neutral-text-default);
+
+    li {
+        &::after {
+            background: var(--ds-color-neutral-text-default);
+            margin-top: -3px;
+        }
+    }
+
+    a {
+        color: var(--ds-color-neutral-text-default);
+        text-decoration: none;
+
+        &:visited {
+            color: var(--ds-color-neutral-text-default);
+        }
+
+        &:hover:not([aria-current="page"]) {
+            color: var(--ds-color-neutral-text-default);
+            text-decoration: underline;
+            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
+            text-underline-offset: .27em;
+        }
+
+        &:active {
+            background: none;
+        }
+    }
 }
