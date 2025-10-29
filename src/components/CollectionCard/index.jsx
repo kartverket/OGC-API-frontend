@@ -1,10 +1,9 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { getCrsCode } from '@/utils/helper';
-import { API_BASE_URL } from '@/config/constants';
 import { Card, Heading, Link } from '@digdir/designsystemet-react';
 import { ArrowRightIcon, ChevronRightIcon } from '@navikt/aksel-icons';
-import thumbnail from '@/assets/gfx/collection-thumbnail.png'
+import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './CollectionCard.module.scss';
 
 
@@ -25,25 +24,33 @@ export default function CollectionCard({ collection }) {
 
                 <div className={styles.content}>
                     <div className={styles.top}>
-                        <Link asChild>
-                            <NextLink href={`/collections/${collection.id}/items`}>
-                                <Heading
-                                    level={2}
-                                    data-size="xs"
-                                    className={styles.title}
-                                >
-                                    {collection.title}
-                                </Heading>
+                        <div className={styles.left}>
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection.id}/items`}>
+                                    <Heading
+                                        level={2}
+                                        data-size="xs"
+                                        className={styles.title}
+                                    >
+                                        {collection.title}
+                                    </Heading>
 
-                                <ChevronRightIcon fontSize="24px" />
-                            </NextLink>
-                        </Link>
+                                    <ChevronRightIcon fontSize="24px" />
+                                </NextLink>
+                            </Link>
+                            {
+                                collection.itemCount && (
+                                    <span className={`${styles.itemCount} ${styles.tag}`}>{collection.itemCount} features</span>
+                                )
+                            }
+                        </div>
 
                         <div className={styles.updated}>
                             <div className={styles.label}>Oppdatert</div>
                             <div className={styles.value}>21.10.2025</div>
                         </div>
                     </div>
+
                     <div className={styles.middle}>
                         <div className={styles.description}>{collection.description}</div>
                         <div className={styles.divider}></div>
@@ -54,14 +61,20 @@ export default function CollectionCard({ collection }) {
                             </div>
                         </div>
                     </div>
+
                     <div className={styles.bottom}>
-                        <div className={styles.keywords}>
-                            {
-                                collection.keywords.map(keyword => (
-                                    <span key={keyword}>{keyword}</span>
-                                ))
-                            }
+                        <div className={styles.left}>
+                            <span className={`${styles.itemType} ${styles.tag}`}>{collection.itemType}</span>
+
+                            <div className={styles.keywords}>
+                                {
+                                    collection.keywords.map(keyword => (
+                                        <span key={keyword} className={styles.tag}>{keyword}</span>
+                                    ))
+                                }
+                            </div>
                         </div>
+
                         <div className={styles.detailsLink}>
                             <Link asChild>
                                 <NextLink href={`/collections/${collection.id}`}>

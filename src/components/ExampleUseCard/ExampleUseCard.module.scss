@@ -1,0 +1,95 @@
+.cardBlock {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-2);
+
+    >* {
+        margin: 0;
+    }
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: var(--ds-size-3);
+
+    h2 {
+        font-size: var(--ds-font-size-3);
+    }
+}
+
+.urlCopy {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-size-2);
+
+    .url {
+        flex: 1;
+        border-radius: var(--ds-border-radius-md);
+        background: var(--ds-color-surface-tinted);
+        padding: 10px 8px;
+        font-family: RobotoMono;
+        font-size: var(--ds-font-size-2);
+    }
+
+    button {
+        border: 0 none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+
+        &:hover svg path {
+            fill: var(--ds-color-text-default);
+        }
+
+        &:active svg {
+            background: var(--ds-color-surface-tinted);
+            border-radius: var(--ds-border-radius-md);
+        }
+    }
+}
+
+.links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-2);
+    --dsc-link-text-decoration-thickness--hover: .125em;
+
+    >a {
+        display: flex;
+        justify-content: space-between;
+        text-decoration: none;
+
+        &:visited {
+            color: var(--ds-color-text-subtle);
+        }
+
+        &:hover {
+            color: var(--ds-color-text-default);
+            text-decoration: underline;
+            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
+            text-underline-offset: .27em;
+        }
+
+        &:active {
+            background: none;
+        }
+    }
+}
+
+.downloadButtons {
+    display: flex;
+    flex-direction: column;
+
+    .text {
+        font-size: var(--ds-font-size-2);
+        font-weight: var(--ds-font-weight-medium);
+        margin: var(--ds-size-2) 0;
+    }
+
+    .buttonRow {
+        display: flex;
+        gap: var(--ds-size-4)
+    }
+}

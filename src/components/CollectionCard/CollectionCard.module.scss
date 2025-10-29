@@ -1,3 +1,20 @@
+@mixin thumbnail-hover {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--ds-color-accent-surface-hover);
+    opacity: 0.5;
+}
+
+@mixin title-hover {
+    color: var(--ds-color-text-default);
+    text-decoration: underline;
+    text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
+    text-underline-offset: .27em;
+}
+
+
 .card {
     padding: 0;
     border: 0 none;
@@ -9,9 +26,15 @@
 
     .thumbnail {
         display: flex;
+        position: relative;
+
+        &:hover::after {
+            @include thumbnail-hover;
+        }
 
         img {
             height: auto;
+            object-fit: scale-down;
         }
     }
 
@@ -29,6 +52,16 @@
     justify-content: space-between;
     border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
 
+    .left {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+
+        .itemCount {
+            background: var(--ds-color-surface-tinted);
+        }
+    }
+
     a {
         display: flex;
         align-items: center;
@@ -39,10 +72,7 @@
         }
 
         &:hover {
-            color: var(--ds-color-text-default);
-            text-decoration: underline;
-            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
-            text-underline-offset: .27em;
+            @include title-hover;
         }
 
         &:active {
@@ -88,15 +118,23 @@
     align-items: center;
     justify-content: space-between;
 
-    .keywords {
+    .left {
         display: flex;
         gap: 8px;
-        font-size: var(--ds-font-size-3);
 
-        span {
-            background: var(--ds-color-surface-tinted);
-            border-radius: var(--ds-border-radius-sm);
-            padding: 4px 8px;
+        .keywords {
+            display: flex;
+            gap: 8px;
+            font-size: var(--ds-font-size-3);
+
+            .tag {
+                background: var(--ds-color-surface-tinted);
+            }
+        }
+
+        .itemType {
+            background: var(--ds-color-warning-surface-tinted);
+            text-transform: capitalize;
         }
     }
 
@@ -126,6 +164,20 @@
             }
         }
     }
+}
+
+.cardContent:has(.thumbnail:hover) .content .top a {
+    @include title-hover;
+}
+
+.cardContent:has(.content .top a:hover) .thumbnail::after {
+    @include thumbnail-hover;
+}
+
+.tag {
+    border-radius: var(--ds-border-radius-sm);
+    padding: 4px 8px;
+    font-size: var(--ds-font-size-3);
 }
 
 .label {

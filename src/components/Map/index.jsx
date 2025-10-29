@@ -1,10 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import createMap from './functions/map';
 import styles from './Map.module.scss';
-import { getLayer } from './functions/helpers';
-
+import createMap from '@/utils/map/map';
+import { getLayer } from '@/utils/map/helpers';
 
 export default function Map({ featureCollection }) {
     const [map, setMap] = useState(null);
