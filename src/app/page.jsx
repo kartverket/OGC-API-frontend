@@ -1,15 +1,18 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { fetchCollections, fetchHome, fetchThumbnail } from '@/utils/api';
-import { Card, CardBlock, Details, DetailsContent, DetailsSummary, Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import { ChevronRightIcon, InformationSquareIcon, PackageFillIcon } from '@navikt/aksel-icons';
-import { DatasetInfoCard, DeveloperCard } from '@/components';
+import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-react';
+import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
+import { ServiceInfoCard, DeveloperCard } from '@/components';
 import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
 import styles from './page.module.scss';
 
-
 async function fetchPageData() {
-    const responses = await Promise.all([fetchHome(), fetchCollections(), /*fetchThumbnail()*/]);
+    const responses = await Promise.all([
+        fetchHome(), 
+        fetchCollections(), 
+        /*fetchThumbnail()*/
+    ]);
 
     return {
         ...responses[0],
@@ -61,7 +64,7 @@ export default async function Home() {
                 </div>
 
                 <div className={styles.right}>
-                    <DatasetInfoCard />
+                    <ServiceInfoCard />
                 </div>
             </div>
         </div>

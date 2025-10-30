@@ -5,6 +5,7 @@ import { TerminalIcon } from '@navikt/aksel-icons';
 import { DATASET_URL } from '@/config/constants.client';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.scss';
+import { Fragment } from 'react';
 
 export default function ExampleUseCard({ collection }) {
     async function copyUrl(url) {
@@ -26,7 +27,7 @@ export default function ExampleUseCard({ collection }) {
             <div className={styles.examples}>
                 {
                     Object.entries(examples).map(entry => (
-                        <div key={entry[0]}>
+                        <Fragment key={entry[0]}>
                             <span className={styles.client}>{entry[0]}</span>
                             <span className={styles.url}>{entry[1]}</span>
 
@@ -36,7 +37,7 @@ export default function ExampleUseCard({ collection }) {
                             >
                                 <CopyIcon title="a11y-title" width="28px" />
                             </button>
-                        </div>
+                        </Fragment>
                     ))
                 }
             </div>

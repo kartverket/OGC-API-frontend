@@ -1,17 +1,16 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { fetchCollection } from '@/utils/api';
+import { bboxToFeatureCollection } from './helpers';
 import { Card, Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import { Breadcrumbs, ExampleUseCard, Map, MapImage } from '@/components';
+import { Breadcrumbs, DatasetInfoCard, ExampleUseCard, MapImage } from '@/components';
+import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './page.module.scss';
-import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
-import { bboxToFeatureCollection } from './helpers';
-
 
 export default async function Collection({ params }) {
     const { slug } = await params;
-    const data = await fetchCollection(slug)
+    const data = await fetchCollection(slug);
     const geonorgeLink = data.links.find(link => link.rel === 'related');
     const bbox = data.extent.spatial.bbox[0];
     const featureCollection = bboxToFeatureCollection(bbox);
@@ -53,7 +52,7 @@ export default async function Collection({ params }) {
                                 </NextLink>
                             </Card>
 
-                            <Link href={geonorgeLink.href} target="_blank">Vis datasettet på Geonorge</Link>
+                            <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link>
                         </div>
                     </div>
                     <div className={styles.right}>
@@ -64,8 +63,8 @@ export default async function Collection({ params }) {
                                 <MapImage
                                     featureCollection={featureCollection}
                                     options={{
-                                        width: 240,
-                                        height: 320,
+                                        width: 195,
+                                        height: 260,
                                         padding: [6, 6, 6, 6],
                                         constrainResolution: false
                                     }}
@@ -73,9 +72,16 @@ export default async function Collection({ params }) {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <ExampleUseCard collection={slug} />
+                </div>  
+
+                <div className={styles.bottom}>
+                    <div className={styles.bottomLeft}>
+                        <ExampleUseCard collection={slug} />
+                    </div>
+
+                    <div className={styles.bottomRight}>
+                        <DatasetInfoCard collection={data} />
+                    </div>
                 </div>
             </div>
         </>

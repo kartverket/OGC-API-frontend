@@ -1,0 +1,85 @@
+.detailsWrapper {
+    overflow: hidden;
+    color: var(--ds-color-text-default);
+    font-size: var(--ds-font-size-3);
+    margin: 0;
+}
+
+.details {
+    position: relative;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        z-index: -1;
+
+        &:checked {
+            &~.detailsContent {
+                max-height: 100rem;
+            }
+
+            &+.detailsLabel {
+                background: var(--ds-color-surface-tinted);
+
+                &::before {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+}
+
+.detailsLabel {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    box-sizing: border-box;
+    cursor: pointer;
+    gap: var(--ds-size-2);
+    list-style: none;
+    min-height: var(--ds-size-14);
+    outline: none;
+    padding: var(--ds-size-2) var(--ds-size-4);
+    position: relative;
+
+    &:hover {
+        background: var(--ds-color-surface-tinted);
+    }
+
+    &:last-child .detailsContent {
+        border-bottom: 0 none;
+    }
+
+    &::before {
+        --dsc-details-icon-url: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.97 9.47a.75.75 0 0 1 1.06 0L12 14.44l4.97-4.97a.75.75 0 1 1 1.06 1.06l-5.5 5.5a.75.75 0 0 1-1.06 0l-5.5-5.5a.75.75 0 0 1 0-1.06'/%3E%3C/svg%3E");
+
+        all: unset;
+        background: currentcolor;
+        border-radius: var(--ds-border-radius-md);
+        content: "";
+        flex-shrink: 0;
+        height: var(--ds-size-6);
+        mask: 50% / contain no-repeat var(--dsc-details-icon-url);
+        width: var(--ds-size-6);
+    }
+}
+
+.detailsContent {
+    max-height: 0;
+    overflow: hidden;
+    border-bottom: 1px solid var(--ds-color-border-subtle);
+    transition: all 0.4s;
+
+    >div {
+        margin-block: var(--ds-size-5, 1rem);
+        margin-inline: var(--ds-size-5, 1rem);
+    }
+}
+
+:global(.ds-card:has(> .detailsWrapper)) {
+    padding: 0;
+} 
+
+:global(.ds-card > .detailsWrapper:last-child > div > div) {
+    border-bottom: 0 none;
+} 
