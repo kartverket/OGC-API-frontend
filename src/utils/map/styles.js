@@ -2,12 +2,13 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 
+
 export const polygonStyle = new Style({
     stroke: new Stroke({
-        color: '#0062ba',
-        width: 2,
+        color: '#389053',
+        width: 2
     }),
     fill: new Fill({
-        color: '#0062ba6e',
-    }),
+        color: '#3890534f'
+    })
 });

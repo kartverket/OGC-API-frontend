@@ -1,6 +1,9 @@
 @use '@/styles/variables' as *;
 
 .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-18);
     max-width: $page-width;
     width: 100%;
     padding: $main-padding;
@@ -9,4 +12,88 @@
 
 .heading {
     margin-bottom: var(--ds-size-2);
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--ds-size-18);
+
+    .left {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ds-size-9);
+    }
+
+    .map {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #dddddd;
+        border-radius: var(--ds-border-radius-sm);
+        padding: var(--ds-size-2);
+        box-sizing: border-box;
+        width: 292px;
+
+        .wrapper {
+            width: 195px;
+            height: 260px;
+            padding: 10px;
+        }
+
+        h4 {
+            font-size: var(--ds-font-size-2);
+            color: var(--ds-color-neutral-text-subtle);
+        }
+    }
+}
+
+.topLeftTop {
+    display: flex;
+    gap: var(--ds-size-4);
+}
+
+.topLeftBottom {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-size-6);
+}
+
+.bottom {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ds-size-6);
+}
+
+.bottomLeft {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-12);
+    flex: 1;
+}
+
+.bottomRight {
+    width: 33%;
+}
+
+.objectCard {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    span {
+        flex: 1;
+    }
+
+    &>* {
+        margin: 0;
+    }
+}
+
+.geonorgeLink {
+    &:visited {
+        color: var(--ds-color-text-subtle);
+    }
 }

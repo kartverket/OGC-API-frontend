@@ -1,0 +1,58 @@
+.exampleUseCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-2);
+
+    >* {
+        margin: 0;
+    }
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: var(--ds-size-3);
+
+    h2 {
+        font-size: var(--ds-font-size-3);
+    }
+}
+
+.examples {
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    font-size: var(--ds-font-size-2);
+    color: var(--ds-color-neutral-text-default);
+    column-gap: var(--ds-size-2);
+    row-gap: var(--ds-size-4);
+
+    &>* {
+        display: flex;
+        align-items: center;
+    }
+
+    .url {
+        flex: 1;
+        border-radius: var(--ds-border-radius-md);
+        background: var(--ds-color-surface-tinted);
+        padding: 10px 8px;
+        font-family: RobotoMono;
+    }
+
+    button {
+        border: 0 none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+
+        &:hover svg path {
+            fill: var(--ds-color-text-default);
+        }
+
+        &:active svg {
+            background: var(--ds-color-surface-tinted);
+            border-radius: var(--ds-border-radius-md);
+        }
+    }
+}

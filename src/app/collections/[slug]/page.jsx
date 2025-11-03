@@ -1,23 +1,17 @@
-'use client'
-
-import { use } from 'react';
-import useSWR from 'swr'
-import { fetcher } from '@/utils/api';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { fetchCollection } from '@/utils/api';
 import { bboxToFeatureCollection } from './helpers';
-import { Breadcrumbs, Map } from '@/components';
-import { API_BASE_URL } from '@/config/constants.client';
+import { Card, Heading, Link, Paragraph } from '@digdir/designsystemet-react';
+import { Breadcrumbs, DatasetInfoCard, ExampleUseCard, MapImage } from '@/components';
+import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
+import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './page.module.scss';
-import { Heading, Paragraph } from '@digdir/designsystemet-react';
 
-
-export default function Collection({ params }) {
-    const { slug } = use(params);
-    const { data } = useSWR(`${API_BASE_URL}/collections/${slug}?f=json`, fetcher);
-
-    if (!data) {
-        return null;
-    }
-
+export default async function Collection({ params }) {
+    const { slug } = await params;
+    const data = await fetchCollection(slug);
+    const geonorgeLink = data.links.find(link => link.rel === 'related');
     const bbox = data.extent.spatial.bbox[0];
     const featureCollection = bboxToFeatureCollection(bbox);
 
@@ -32,11 +26,63 @@ export default function Collection({ params }) {
             />
 
             <div className={styles.page}>
-                <Heading level={1} data-size="sm" className={styles.heading}>{data.title}</Heading>
-                
-                <Paragraph>
-                    Detaljert informasjon om datasett...
-                </Paragraph>
+                <div className={styles.top}>
+                    <div className={styles.left}>
+                        <div className={styles.topLeftTop}>
+                            <Image
+                                src={thumbnail}
+                                alt="Thumbnail"
+                                width={160}
+                                className={styles.thumbnail}
+                            />
+                            <div>
+                                <Heading level={1} data-size="sm" className={styles.heading}>{data.title}</Heading>
+                                <Paragraph>{data.description}</Paragraph>
+                            </div>
+                        </div>
+
+                        <div className={styles.topLeftBottom}>
+                            <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                                <NextLink href={`/collections/${data.id}/items`}>
+                                    <PackageFillIcon title="a11y-title" fontSize="36px" />
+
+                                    <span>Vis objekter i datasettet</span>
+
+                                    <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                                </NextLink>
+                            </Card>
+
+                            <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link>
+                        </div>
+                    </div>
+                    <div className={styles.right}>
+                        <div className={styles.map}>
+                            <Heading data-size="2xs" level={4}>Geografisk utstrekning av datasettet</Heading>
+
+                            <div className={styles.wrapper}>
+                                <MapImage
+                                    featureCollection={featureCollection}
+                                    options={{
+                                        width: 195,
+                                        height: 260,
+                                        padding: [6, 6, 6, 6],
+                                        constrainResolution: false
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+
+                <div className={styles.bottom}>
+                    <div className={styles.bottomLeft}>
+                        <ExampleUseCard collection={slug} />
+                    </div>
+
+                    <div className={styles.bottomRight}>
+                        <DatasetInfoCard collection={data} />
+                    </div>
+                </div>
             </div>
         </>
     );

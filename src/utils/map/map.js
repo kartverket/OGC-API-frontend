@@ -1,13 +1,15 @@
 import { Map, View } from 'ol';
 import { createFeaturesLayer } from './featuresLayer';
 import { createBaseMap } from './baseMap';
+import { getProjection } from './helpers';
+import basemap from '@/config/basemap';
 import './setup';
 
 const MAP_PADDING = [50, 50, 50, 50];
 
-
 export default async function createMap(featureCollection) {
-    const featuresLayer = createFeaturesLayer(featureCollection, 'EPSG:4326');
+    const dataProjection = getProjection(featureCollection);
+    const featuresLayer = createFeaturesLayer(featureCollection, dataProjection);
 
     const map = new Map({
         layers: [
@@ -18,8 +20,8 @@ export default async function createMap(featureCollection) {
 
     map.setView(new View({
         padding: MAP_PADDING,
-        projection: 'EPSG:3857',
-        maxZoom: 18
+        projection: basemap.projection,
+        maxZoom: basemap.maxZoom
     }));
 
     return map;

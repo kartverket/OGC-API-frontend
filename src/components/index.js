@@ -1,7 +1,13 @@
 export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as CollectionCard } from './CollectionCard';
 export { default as DatasetInfoCard } from './DatasetInfoCard';
+export { default as Details } from './Details';
+export { default as DetailsContent } from './Details/DetailsContent';
+export { default as DetailsSummary } from './Details/DetailsSummary';
 export { default as DeveloperCard } from './DeveloperCard';
+export { default as ExampleUseCard } from './ExampleUseCard';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';
 export { default as Map } from './Map';
+export { default as MapImage } from './MapImage';
+export { default as ServiceInfoCard } from './ServiceInfoCard';
