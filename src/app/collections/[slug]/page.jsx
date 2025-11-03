@@ -56,7 +56,9 @@ export default async function Collection({ params }) {
                         </div>
                     </div>
                     <div className={styles.right}>
-                        <div className={styles.map}>
+                        <DatasetInfoCard collection={data} />
+
+                        {/* <div className={styles.map}>
                             <Heading data-size="2xs" level={4}>Geografisk utstrekning av datasettet</Heading>
 
                             <div className={styles.wrapper}>
@@ -70,7 +72,7 @@ export default async function Collection({ params }) {
                                     }}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>  
 
@@ -79,9 +81,9 @@ export default async function Collection({ params }) {
                         <ExampleUseCard collection={slug} />
                     </div>
 
-                    <div className={styles.bottomRight}>
+                    {/* <div className={styles.bottomRight}>
                         <DatasetInfoCard collection={data} />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>
