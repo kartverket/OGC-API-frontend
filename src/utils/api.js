@@ -73,6 +73,16 @@ async function _fetchCollection(name) {
     return await response.json();
 }
 
+export async function fetchItems(collection) {
+   const response = await fetch(`${API_BASE_URL}/collections/${collection}/items?f=json`, {
+        cache: SKIP_SSG ? 'no-store' : 'force-cache'
+    });
+
+  
+  return await response.json();
+}
+
+
 async function _fetchItemCount(collection) {
     const response = await fetch(`${API_BASE_URL}/collections/${collection}/items?f=json&resulttype=hits`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
