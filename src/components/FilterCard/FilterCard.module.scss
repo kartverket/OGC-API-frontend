@@ -46,15 +46,15 @@
         justify-content: center;
         align-items: center;
         height: 100%;
-        margin-top: 10px;
+        margin-top: var(--ds-size-3);
         }
 
     .pattern {
         display: grid;
-        grid-template-columns: 45% 35%;       
+        grid-template-columns: 45% 40%;       
         align-items: end;
         button {
-            margin-left:  var(--ds-size-3);
+            margin-left:  var(--ds-size-4);
         }
         }
 
