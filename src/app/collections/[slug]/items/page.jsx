@@ -8,6 +8,7 @@ import { getItemsApiUrl, getCollectionApiUrl, getCollectionId } from './helpers'
 import { Heading, Table, Select, Label, Field, Pagination } from '@digdir/designsystemet-react';
 import { Breadcrumbs, Map } from '@/components';
 import styles from './page.module.scss';
+import FilterCard from '@/components/FilterCard';
 
 function DynamicFeatureTable({ items, limit }) {
   if (!items?.features?.length) return null;
@@ -138,8 +139,10 @@ export default function Items({ params }) {
         <Heading level={1} data-size="sm" className={styles.heading}>
           {collection.title}
         </Heading>
-
-        <Map featureCollection={items} className={styles.map} />
+        <div className={styles.mapContainer}>
+            <Map featureCollection={items} className={styles.map} />
+            <FilterCard collection={collection} />
+        </div>
 
         <div className={styles.controls}>
           {showSelect && (

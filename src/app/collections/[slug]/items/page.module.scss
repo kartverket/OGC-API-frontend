@@ -11,7 +11,14 @@
     padding: $main-padding;
     box-sizing: border-box;
 }
-
+.mapContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+.map {
+    flex: 1;
+}
 .heading {
     margin-bottom: var(--ds-size-2);
 }
