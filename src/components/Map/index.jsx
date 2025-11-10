@@ -5,7 +5,7 @@ import styles from './Map.module.scss';
 import createMap from '@/utils/map/map';
 import { getLayer } from '@/utils/map/helpers';
 
-export default function Map({ featureCollection }) {
+export default function Map({ featureCollection, width, height }) {
     const [map, setMap] = useState(null);
     const mapElementRef = useRef(null);
     const initRef = useRef(true);
@@ -50,7 +50,7 @@ export default function Map({ featureCollection }) {
     );
 
     return (
-        <div className={styles.mapContainer}>
+        <div className={styles.mapContainer} style={{ width, height }}>
             <div ref={mapElementRef} className={styles.map}></div>
         </div>
     );

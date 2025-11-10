@@ -9,8 +9,8 @@ import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './page.module.scss';
 
 export default async function Collection({ params }) {
-    const { slug } = await params;
-    const data = await fetchCollection(slug);
+    const { collection } = await params;
+    const data = await fetchCollection(collection);
     const geonorgeLink = data.links.find(link => link.rel === 'related');
     const bbox = data.extent.spatial.bbox[0];
     const featureCollection = bboxToFeatureCollection(bbox);
@@ -76,7 +76,7 @@ export default async function Collection({ params }) {
 
                 <div className={styles.bottom}>
                     <div className={styles.bottomLeft}>
-                        <ExampleUseCard collection={slug} />
+                        <ExampleUseCard collection={collection} />
                     </div>
 
                     <div className={styles.bottomRight}>

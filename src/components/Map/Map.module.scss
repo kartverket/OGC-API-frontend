@@ -1,11 +1,9 @@
 .mapContainer {
     position: relative;
-    width: 800px;
-    height: 480px;
 
     .map {
-        border: 1px solid #d2d5d8;
-        border-radius: var(--ds-border-radius-lg);
+        border-radius: var(--ds-border-radius-sm);
+        background-color: #dddddd;
         width: 100%;
         height: 100%;
         overflow: hidden;
