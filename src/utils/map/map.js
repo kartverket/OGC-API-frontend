@@ -1,20 +1,17 @@
 import { Map, View } from 'ol';
-import { createFeaturesLayer } from './featuresLayer';
+import { createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
 import { createBaseMap } from './baseMap';
-import { getProjection } from './helpers';
+import { getLayer, getProjection } from './helpers';
 import basemap from '@/config/basemap';
 import './setup';
 
 const MAP_PADDING = [50, 50, 50, 50];
 
-export default async function createMap(featureCollection) {
-    const dataProjection = getProjection(featureCollection);
-    const featuresLayer = createFeaturesLayer(featureCollection, dataProjection);
-
+export async function createMap() {
     const map = new Map({
         layers: [
             await createBaseMap(),
-            featuresLayer
+            createEmptyFeaturesLayer()
         ]
     });
 
@@ -25,4 +22,10 @@ export default async function createMap(featureCollection) {
     }));
 
     return map;
+}
+
+export function setFeatureCollection(map, featureCollection) {
+    const vectorLayer = getLayer(map, 'features');
+
+    setFeatures(vectorLayer, featureCollection);
 }

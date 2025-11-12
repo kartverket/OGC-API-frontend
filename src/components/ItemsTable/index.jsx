@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Select, SelectOption, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@digdir/designsystemet-react';
+import { Pagination, Select, SelectOption, Skeleton, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, usePagination } from '@digdir/designsystemet-react';
+import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
 import styles from './ItemsTable.module.scss';
 
 const LIMITS = {
@@ -18,28 +19,47 @@ export default function ItemsTable({ data }) {
     const searchParams = useSearchParams();
     const features = data.features;
     const columnNames = Object.keys(features[0].properties);
-    const [limit, setLimit] = useState(searchParams.get('limit') || Object.keys(LIMITS)[0]);
+    const limits = getLimits(searchParams, LIMITS);
+    const [limit, setLimit] = useState(getLimit(searchParams) || Object.keys(LIMITS)[0]);
+    const [currentPage, setCurrentPage] = useState(getCurrentPage(searchParams));
+    const totalPages = useMemo(() => Math.ceil(data.numberMatched / limit), [limit, data.numberMatched]);
+    const itemsShowingText = useMemo(() => getItemsShowingText(searchParams, LIMITS, data), [searchParams, data]);
+    const initRef = useRef(true);
 
-    const summary = useMemo(
+    useEffect(
         () => {
-            const offset = searchParams.get('offset') || 1;
-            const limit = searchParams.get('limit') || Object.keys(LIMITS)[0];
+            if (initRef.current) {
+                initRef.current = false;
+                return;
+            }
 
-            if (limit === '1') {
-                return `Viser ${offset} av ${data.numberMatched}`;
-            } 
-                
-            return `Viser ${offset} - ${data.numberReturned} av ${data.numberMatched}`;
+            const params = new URLSearchParams();
+
+            params.append('limit', limit);
+            params.append('offset', (currentPage - 1) * limit);
+
+            const queryString = params.toString();
+
+            router.push(`${pathname}?${queryString}`, { scroll: false });
         },
-        [searchParams]
+        [pathname, limit, currentPage]
     );
 
-    function handleLimitChange(event) {
-        const limit = event.target.value;
-        setLimit(limit);
+    const { pages, prevButtonProps, nextButtonProps, hasNext, hasPrevious } =
+        usePagination({
+            currentPage,
+            setCurrentPage,
+            onChange: handlePaginationChange,
+            totalPages,
+            showPages: 3,
+        });
 
-        const url = `${pathname}?limit=${limit}`;
-        router.replace(url, { scroll: false });
+    function handleLimitChange(value) {
+        setLimit(value);
+    }
+
+    function handlePaginationChange(_, value) {
+        setCurrentPage(value);
     }
 
     function goToItem(id) {
@@ -51,16 +71,19 @@ export default function ItemsTable({ data }) {
     }
 
     return (
-        <div>
+        <div className={styles.container}>
             <div className={styles.controls}>
-                <div className={styles.limit}>
+                <div className={styles.left}>
+                    <span>Antall items per side:</span>
+
                     <Select
+                        id="limits"
                         value={limit}
-                        onChange={handleLimitChange}
+                        onChange={event => handleLimitChange(event.target.value)}
                         data-size="sm"
                     >
                         {
-                            Object.entries(LIMITS)
+                            limits
                                 .map(entry => (
                                     <SelectOption
                                         key={entry[0]}
@@ -72,7 +95,36 @@ export default function ItemsTable({ data }) {
                         }
                     </Select>
                 </div>
-                {summary}
+
+                <div className={styles.right}>
+                    <Pagination>
+                        <Pagination.List>
+                            <Pagination.Item>
+                                <Pagination.Button aria-label="Forrige side" {...prevButtonProps} />
+                            </Pagination.Item>
+                            {
+                                pages.map(({ page, itemKey, buttonProps }) => (
+                                    <Pagination.Item key={itemKey}>
+                                        {
+                                            typeof page === "number" && (
+                                                <Pagination.Button
+                                                    aria-label={`Side ${page}`} {...buttonProps}
+                                                >
+                                                    {page}
+                                                </Pagination.Button>
+                                            )
+                                        }
+                                    </Pagination.Item>
+                                ))
+                            }
+                            <Pagination.Item>
+                                <Pagination.Button aria-label="Neste side" {...nextButtonProps} />
+                            </Pagination.Item>
+                        </Pagination.List>
+                    </Pagination>
+
+                    <span className={styles.itemsShowing}>{itemsShowingText}</span>
+                </div>
             </div>
 
             <div className={styles.tableWrapper}>

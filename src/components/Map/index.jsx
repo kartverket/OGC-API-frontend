@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import styles from './Map.module.scss';
-import createMap from '@/utils/map/map';
+import { createMap, setFeatureCollection } from '@/utils/map/map';
 import { getLayer } from '@/utils/map/helpers';
+import styles from './Map.module.scss';
 
 export default function Map({ featureCollection, width, height }) {
     const [map, setMap] = useState(null);
@@ -19,11 +19,22 @@ export default function Map({ featureCollection, width, height }) {
             initRef.current = false;
 
             (async () => {
-                const olMap = await createMap(featureCollection);
+                const olMap = await createMap();
                 setMap(olMap);
             })();
         },
         [featureCollection]
+    );
+
+    useEffect(
+        () => {
+            if (map === null) {
+                return;
+            }
+            
+            setFeatureCollection(map, featureCollection);
+        },
+        [map, featureCollection]
     );
 
     useEffect(

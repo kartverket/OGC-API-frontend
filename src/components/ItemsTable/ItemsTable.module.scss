@@ -1,7 +1,19 @@
 .tableWrapper {
+    position: relative;
     border: 1px solid var(--ds-color-border-subtle, #e5e7eb);
     border-radius: var(--ds-border-radius-lg);
     overflow: hidden;
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        opacity: .5;
+    }
 }
 
 .tableViewport {
@@ -90,10 +102,33 @@
 
 .controls {
     display: flex;
+    align-items: flex-start;
     justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    margin-top: var(--ds-size-4);
+    margin-bottom: var(--ds-size-2);
+    font-size: var(--ds-font-size-3);
+
+    .left {
+        display: flex;
+        align-items: center;
+        gap: var(--ds-size-2);
+        margin-top: var(--ds-size-1);
+
+        select {
+            width: fit-content;
+        }
+    }
+
+    .right {
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        gap: var(--ds-size-2);
+
+        .itemsShowing {
+            font-size: var(--ds-font-size-2);
+            color: var(--ds-color-neutral-text-subtle);
+        }
+    }
 }
 
 .pager {

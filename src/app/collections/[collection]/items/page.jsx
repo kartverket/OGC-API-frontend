@@ -1,9 +1,14 @@
+'use client'
+
 import { fetcher, fetchHome, fetchItems } from '@/utils/api';
 import { getItemsApiUrl, getCollectionApiUrl, getCollectionId } from './helpers';
 import { Heading, Table, Select, Label, Field, Pagination } from '@digdir/designsystemet-react';
 import { Breadcrumbs, ItemsTable, Map } from '@/components';
 import styles from './page.module.scss';
 import FilterCard from '@/components/FilterCard';
+import ItemsProvider from '@/context/ItemsProvider';
+import { use } from 'react';
+import useSWR from 'swr';
 
 async function fetchPageData(collection, searchParams) {
     const promises = [
@@ -19,45 +24,27 @@ async function fetchPageData(collection, searchParams) {
     }
 }
 
-export default async function Items({ params, searchParams }) {
-    const { collection } = await params;
-    const _searchParams = await searchParams;
-    const data = await fetchPageData(collection, _searchParams);
-    const collectionTitle = data.links.find(link => link.rel === 'collection').title;
+export default function Items({ params, searchParams }) {
+    const { collection } = use(params);
+    const _searchParams = use(searchParams)
 
-    // const { slug } = use(params);
-    // const router = useRouter();
-    // const pathname = usePathname();
-    // const searchParams = useSearchParams();
-    // const collectionId = getCollectionId(pathname);
-    // const limitParam = searchParams.get('limit');
-    // const limit = limitParam != null ? Number(limitParam) : undefined;
-    // const itemsUrl = useMemo(() => getItemsApiUrl(slug, searchParams), [slug, searchParams]);
-    // const { data: collection = null } = useSWR(getCollectionApiUrl(collectionId), fetcher);
-    // const { data: items = null } = useSWR(itemsUrl, fetcher);
+    // const { data = null } = useSWR(getCollectionApiUrl(collectionId), fetcher);
+    const itemsUrl = getItemsApiUrl(collection, _searchParams);
+    const { data = null } = useSWR(itemsUrl, fetcher);
+    // const data = useSWR() await fetchPageData(collection, _searchParams);
+    console.log(data);
+    const datasetTitle = 'Yo'
+    const collectionTitle = 'To'; // data.links.find(link => link.rel === 'collection').title;
 
-    // if (!collection || !items) return null;
-
-    // const total =
-    //     items?.numberMatched ??
-    //     items?.total ??
-    //     (Array.isArray(items?.features) ? items.features.length : 0);
-
-    // const showSelect = total >= 20;
-
-    // function onLimitChange(e) {
-    //     const v = e.target.value;
-    //     const next = new URLSearchParams(searchParams.toString());
-    //     if (v === 'all') next.delete('limit');
-    //     else next.set('limit', v);
-    //     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
-    // }
+    if (data === null) {
+        return null;
+    }
 
     return (
         <>
             <Breadcrumbs
                 breadcrumbs={{
-                    '/': data.datasetTitle,
+                    '/': datasetTitle,
                     '/collections': 'Collections',
                     [`/collections/${collection}`]: collectionTitle,
                     [`/collections/${collection}/items`]: 'Items',
@@ -85,6 +72,7 @@ export default async function Items({ params, searchParams }) {
                         )
                     }
                 </div>
+
             </div>
         </>
     );

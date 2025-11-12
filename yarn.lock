@@ -3224,6 +3224,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-sort@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "fast-sort@npm:3.4.1"
+  checksum: 10c0/322aeff3c266e2bcb39cbf377f9935bfa15e20c4201f548952719658b85d8bef999d88bdf714f2c11ade3261bcf807898833f5889a8ca6b076e78732bc4ce09c
+  languageName: node
+  linkType: hard
+
 "fastq@npm:^1.6.0":
   version: 1.19.1
   resolution: "fastq@npm:1.19.1"
@@ -4188,6 +4195,7 @@ __metadata:
     "@svgr/webpack": "npm:^8.1.0"
     "@turf/bbox-polygon": "npm:^7.2.0"
     "@turf/helpers": "npm:^7.2.0"
+    fast-sort: "npm:^3.4.1"
     next: "npm:15.5.4"
     ol: "npm:^10.6.1"
     proj4: "npm:^2.19.10"
