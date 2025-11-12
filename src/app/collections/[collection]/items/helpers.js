@@ -1,17 +1,24 @@
+import { fetchHome, fetchItems } from '@/utils/api.client';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export function getItemsApiUrl(slug, searchParams) {
-    const baseUrl = `${API_BASE_URL}/collections/${slug}/items?f=json`;
-    const queryStr = Array.from(searchParams).map(tuple => `${tuple[0]}=${tuple[1]}`).join('&');
-    const url = queryStr ? `${baseUrl}&${queryStr}` : baseUrl;
-
-    return url;
+export function buildApiUrl(collection, searchParams) {
+    const baseUrl = `${API_BASE_URL}/collections/${collection}/items?f=json`;
+    
+    const queryStr = Object.entries(searchParams)
+        .map(entry => `${entry[0]}=${entry[1]}`).join('&');
+    
+    return queryStr !== '' ? 
+        `${baseUrl}&${queryStr}` : 
+        baseUrl;
 }
 
-export function getCollectionApiUrl(collectionId) {
-    return `${API_BASE_URL}/collections/${collectionId}?f=json`;
-}
+export async function fetcher(url) {
+    const promises = [fetchHome(), fetchItems(url)];
+    const result = await Promise.all(promises);
 
-export function getCollectionId(pathname) {
-    return pathname.split('/').at(-2);
+    return {
+        ...result[1],
+        datasetTitle: result[0].title
+    }
 }

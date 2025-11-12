@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Pagination, Select, SelectOption, Skeleton, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, usePagination } from '@digdir/designsystemet-react';
+import { Pagination, Select, SelectOption, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, usePagination } from '@digdir/designsystemet-react';
 import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
 import styles from './ItemsTable.module.scss';
 
@@ -24,26 +24,6 @@ export default function ItemsTable({ data }) {
     const [currentPage, setCurrentPage] = useState(getCurrentPage(searchParams));
     const totalPages = useMemo(() => Math.ceil(data.numberMatched / limit), [limit, data.numberMatched]);
     const itemsShowingText = useMemo(() => getItemsShowingText(searchParams, LIMITS, data), [searchParams, data]);
-    const initRef = useRef(true);
-
-    useEffect(
-        () => {
-            if (initRef.current) {
-                initRef.current = false;
-                return;
-            }
-
-            const params = new URLSearchParams();
-
-            params.append('limit', limit);
-            params.append('offset', (currentPage - 1) * limit);
-
-            const queryString = params.toString();
-
-            router.push(`${pathname}?${queryString}`, { scroll: false });
-        },
-        [pathname, limit, currentPage]
-    );
 
     const { pages, prevButtonProps, nextButtonProps, hasNext, hasPrevious } =
         usePagination({
@@ -56,10 +36,23 @@ export default function ItemsTable({ data }) {
 
     function handleLimitChange(value) {
         setLimit(value);
+        setCurrentPage(1);
+
+        const params = new URLSearchParams(searchParams);
+
+        params.set('limit', value);
+        params.delete('offset');
+        router.push(`${pathname}?${params}`, { scroll: false });
     }
 
     function handlePaginationChange(_, value) {
         setCurrentPage(value);
+
+        const offset = (value - 1) * limit;
+        const params = new URLSearchParams(searchParams);
+
+        params.set('offset', offset);
+        router.push(`${pathname}?${params}`, { scroll: false });
     }
 
     function goToItem(id) {

@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { createMap, setFeatureCollection } from '@/utils/map/map';
-import { getLayer } from '@/utils/map/helpers';
+import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
+import Zoom from './Zoom';
+import ZoomToExtent from './ZoomToExtent';
 import styles from './Map.module.scss';
 
 export default function Map({ featureCollection, width, height }) {
@@ -19,8 +20,7 @@ export default function Map({ featureCollection, width, height }) {
             initRef.current = false;
 
             (async () => {
-                const olMap = await createMap();
-                setMap(olMap);
+                setMap(await createMap());
             })();
         },
         [featureCollection]
@@ -31,8 +31,9 @@ export default function Map({ featureCollection, width, height }) {
             if (map === null) {
                 return;
             }
-            
+
             setFeatureCollection(map, featureCollection);
+            zoomToExtent(map);
         },
         [map, featureCollection]
     );
@@ -44,16 +45,10 @@ export default function Map({ featureCollection, width, height }) {
             }
 
             map.setTarget(mapElementRef.current);
-
-            const vectorLayer = getLayer(map, 'features');
-            const vectorSource = vectorLayer.getSource();
-            const view = map.getView();
-            const extent = vectorSource.getExtent();
-
-            view.fit(extent, map.getSize());
+            zoomToExtent(map);
 
             return () => {
-                map.setTarget(null)
+                map.setTarget(null);
                 map.dispose();
             }
         },
@@ -63,6 +58,11 @@ export default function Map({ featureCollection, width, height }) {
     return (
         <div className={styles.mapContainer} style={{ width, height }}>
             <div ref={mapElementRef} className={styles.map}></div>
+
+            <div className={styles.buttons}>
+                <Zoom map={map} />
+                <ZoomToExtent map={map} />
+            </div>
         </div>
     );
 }

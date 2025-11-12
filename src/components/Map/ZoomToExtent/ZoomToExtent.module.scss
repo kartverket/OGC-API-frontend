@@ -1,0 +1,25 @@
+.button {
+    border-radius: 3px;
+    width: 31px;
+    height: 31px;
+    padding: 0;
+    background-size: 26px;
+    background-color: #ffffff;
+    border: 0 none;
+    cursor: pointer;
+    transition: 0.2s;
+
+    svg {
+        width: 25px;
+        height: 26px;
+        margin-top: 2px;
+    }
+
+    &:not(:disabled):hover {
+        background-color: #f1f1f1 !important;
+    }
+
+    &:not(:disabled):active {
+        background-color: #dbdbdb !important;
+    }
+}

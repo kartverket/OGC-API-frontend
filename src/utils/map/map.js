@@ -29,3 +29,18 @@ export function setFeatureCollection(map, featureCollection) {
 
     setFeatures(vectorLayer, featureCollection);
 }
+
+export function zoomToExtent(map) {
+    const mapSize = map.getSize();
+
+    if (mapSize === undefined) {
+        return;
+    }
+
+    const vectorLayer = getLayer(map, 'features');
+    const vectorSource = vectorLayer.getSource();
+    const view = map.getView();
+    const extent = vectorSource.getExtent();
+
+    view.fit(extent, mapSize);
+}

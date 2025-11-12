@@ -1,44 +1,35 @@
 'use client'
 
-import { fetcher, fetchHome, fetchItems } from '@/utils/api';
-import { getItemsApiUrl, getCollectionApiUrl, getCollectionId } from './helpers';
-import { Heading, Table, Select, Label, Field, Pagination } from '@digdir/designsystemet-react';
-import { Breadcrumbs, ItemsTable, Map } from '@/components';
-import styles from './page.module.scss';
-import FilterCard from '@/components/FilterCard';
-import ItemsProvider from '@/context/ItemsProvider';
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 import useSWR from 'swr';
-
-async function fetchPageData(collection, searchParams) {
-    const promises = [
-        fetchHome(),
-        fetchItems(collection, searchParams)
-    ];
-
-    const result = await Promise.all(promises);
-
-    return {
-        ...result[1],
-        datasetTitle: result[0].title
-    }
-}
+import { buildApiUrl, fetcher } from './helpers';
+import { Heading, Spinner } from '@digdir/designsystemet-react';
+import { Breadcrumbs, ItemsTable, Map } from '@/components';
+import FilterCard from '@/components/FilterCard';
+import styles from './page.module.scss';
 
 export default function Items({ params, searchParams }) {
     const { collection } = use(params);
     const _searchParams = use(searchParams)
+    const apiUrl = buildApiUrl(collection, _searchParams);
+    const { data: _data = null, isLoading } = useSWR(apiUrl, fetcher);
+    const [data, setData] = useState(null);
 
-    // const { data = null } = useSWR(getCollectionApiUrl(collectionId), fetcher);
-    const itemsUrl = getItemsApiUrl(collection, _searchParams);
-    const { data = null } = useSWR(itemsUrl, fetcher);
-    // const data = useSWR() await fetchPageData(collection, _searchParams);
-    console.log(data);
-    const datasetTitle = 'Yo'
-    const collectionTitle = 'To'; // data.links.find(link => link.rel === 'collection').title;
+    useEffect(
+        () => {
+            if (_data !== null) {
+                setData(_data);
+            }
+        },
+        [_data]
+    );
 
     if (data === null) {
         return null;
     }
+
+    const datasetTitle = data.datasetTitle;
+    const collectionTitle = data.links.find(link => link.rel === 'collection').title;
 
     return (
         <>
@@ -54,25 +45,34 @@ export default function Items({ params, searchParams }) {
             <div className={styles.page}>
                 <Heading level={1} data-size="sm" className={styles.heading}>{collectionTitle}</Heading>
 
-                <div className={styles.top}>
-                    <div className={styles.topLeft}>
-                        <Map
-                            featureCollection={data}
-                            width={567}
-                            height={675}
-                        />
-                    </div>
-                    <div className={styles.topRight}></div>
-                </div>
-
-                <div className={styles.bottom}>
+                <div className={styles.content}>
                     {
-                        data.features.length > 0 && (
-                            <ItemsTable data={data} />
+                        isLoading && (
+                            <div className={styles.overlay}>
+                                <Spinner aria-label="Laster data..." data-size="xl" />
+                            </div>
                         )
                     }
-                </div>
 
+                    <div className={styles.top}>
+                        <div className={styles.topLeft}>
+                            <Map
+                                featureCollection={data}
+                                width={567}
+                                height={675}
+                            />
+                        </div>
+                        <div className={styles.topRight}></div>
+                    </div>
+
+                    <div className={styles.bottom}>
+                        {
+                            data.features.length > 0 && (
+                                <ItemsTable data={data} />
+                            )
+                        }
+                    </div>
+                </div>
             </div>
         </>
     );
