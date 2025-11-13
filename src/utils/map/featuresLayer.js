@@ -29,6 +29,12 @@ export function createEmptyFeaturesLayer() {
 
 export function setFeatures(vectorLayer, featureCollection) {
     const vectorSource = vectorLayer.getSource();    
+    vectorSource.clear();
+
+    if (featureCollection.features.length === 0) {
+        return;
+    }
+
     const dataProjection = getProjection(featureCollection);
     const reader = new GeoJSON();
 
@@ -37,6 +43,5 @@ export function setFeatures(vectorLayer, featureCollection) {
         featureProjection: 'EPSG:3857'
     });
 
-    vectorSource.clear();
     vectorSource.addFeatures(features);
 }

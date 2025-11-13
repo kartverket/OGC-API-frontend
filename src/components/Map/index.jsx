@@ -6,7 +6,7 @@ import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
 import styles from './Map.module.scss';
 
-export default function Map({ featureCollection, width, height }) {
+export default function Map({ featureCollection, defaultExtent, width, height }) {
     const [map, setMap] = useState(null);
     const mapElementRef = useRef(null);
     const initRef = useRef(true);
@@ -32,10 +32,12 @@ export default function Map({ featureCollection, width, height }) {
                 return;
             }
 
-            setFeatureCollection(map, featureCollection);
-            zoomToExtent(map);
+            return () => {
+                map.setTarget(null);
+                map.dispose();
+            };
         },
-        [map, featureCollection]
+        [map]
     );
 
     useEffect(
@@ -45,14 +47,21 @@ export default function Map({ featureCollection, width, height }) {
             }
 
             map.setTarget(mapElementRef.current);
-            zoomToExtent(map);
-
-            return () => {
-                map.setTarget(null);
-                map.dispose();
-            }
+            zoomToExtent(map, defaultExtent);
         },
-        [map]
+        [map, defaultExtent]
+    );
+
+    useEffect(
+        () => {
+            if (map === null) {
+                return;
+            }
+
+            setFeatureCollection(map, featureCollection);
+            zoomToExtent(map, defaultExtent);
+        },
+        [map, defaultExtent, featureCollection]
     );
 
     return (

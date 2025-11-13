@@ -12,7 +12,7 @@ export default function Items({ params, searchParams }) {
     const { collection } = use(params);
     const _searchParams = use(searchParams)
     const apiUrl = buildApiUrl(collection, _searchParams);
-    const { data: _data = null, isLoading } = useSWR(apiUrl, fetcher);
+    const { data: _data = null, isLoading } = useSWR({ apiUrl, collection }, fetcher);
     const [data, setData] = useState(null);
 
     useEffect(
@@ -28,22 +28,19 @@ export default function Items({ params, searchParams }) {
         return null;
     }
 
-    const datasetTitle = data.datasetTitle;
-    const collectionTitle = data.links.find(link => link.rel === 'collection').title;
-
     return (
         <>
             <Breadcrumbs
                 breadcrumbs={{
-                    '/': datasetTitle,
+                    '/': data.datasetTitle,
                     '/collections': 'Collections',
-                    [`/collections/${collection}`]: collectionTitle,
+                    [`/collections/${collection}`]: data.collection.title,
                     [`/collections/${collection}/items`]: 'Items',
                 }}
             />
 
             <div className={styles.page}>
-                <Heading level={1} data-size="sm" className={styles.heading}>{collectionTitle}</Heading>
+                <Heading level={1} data-size="sm" className={styles.heading}>{data.collection.title}</Heading>
 
                 <div className={styles.content}>
                     {
@@ -58,11 +55,15 @@ export default function Items({ params, searchParams }) {
                         <div className={styles.topLeft}>
                             <Map
                                 featureCollection={data}
+                                defaultExtent={data.collection.extent}
                                 width={567}
                                 height={675}
                             />
                         </div>
-                        <div className={styles.topRight}></div>
+
+                        <div className={styles.topRight}>
+                            <FilterCard data={data} /> 
+                        </div>
                     </div>
 
                     <div className={styles.bottom}>

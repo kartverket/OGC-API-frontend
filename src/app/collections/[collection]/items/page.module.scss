@@ -11,6 +11,15 @@
     margin-bottom: var(--ds-size-2);
 }
 
+.top {
+    display: flex;
+    gap: var(--ds-size-8);
+
+    .topRight {
+        flex: 1;
+    }
+}
+
 .content {
     display: flex;
     flex-direction: column;
