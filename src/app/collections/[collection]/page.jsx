@@ -9,9 +9,9 @@ import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './page.module.scss';
 
 export default async function Collection({ params }) {
-    const { collection } = await params;
-    const data = await fetchCollection(collection);
-    const geonorgeLink = data.links.find(link => link.rel === 'related');
+    const { slug } = await params;
+    const data = await fetchCollection(slug);
+    // const geonorgeLink = data.links.find(link => link.rel === 'related');
     const bbox = data.extent.spatial.bbox[0];
     const featureCollection = bboxToFeatureCollection(bbox);
 
@@ -52,11 +52,13 @@ export default async function Collection({ params }) {
                                 </NextLink>
                             </Card>
 
-                            <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link>
+                            {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
                         </div>
                     </div>
                     <div className={styles.right}>
-                        <div className={styles.map}>
+                        <DatasetInfoCard collection={data} />
+
+                        {/* <div className={styles.map}>
                             <Heading data-size="2xs" level={4}>Geografisk utstrekning av datasettet</Heading>
 
                             <div className={styles.wrapper}>
@@ -70,7 +72,7 @@ export default async function Collection({ params }) {
                                     }}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>  
 
@@ -79,9 +81,9 @@ export default async function Collection({ params }) {
                         <ExampleUseCard collection={collection} />
                     </div>
 
-                    <div className={styles.bottomRight}>
+                    {/* <div className={styles.bottomRight}>
                         <DatasetInfoCard collection={data} />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>
