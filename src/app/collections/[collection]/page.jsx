@@ -78,7 +78,7 @@ export default async function Collection({ params }) {
 
                 <div className={styles.bottom}>
                     <div className={styles.bottomLeft}>
-                        <ExampleUseCard collection={slug} />
+                        <ExampleUseCard collection={collection} />
                     </div>
 
                     {/* <div className={styles.bottomRight}>

@@ -12,7 +12,9 @@ export async function fetchHome() {
 }
 
 export async function fetchCollections() {
-    const response = await fetch(`${API_BASE_URL}/collections/?f=json`, {
+    const url = `${API_BASE_URL}/collections/?f=json`;
+
+    const response = await fetch(url, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
@@ -48,6 +50,32 @@ export async function fetchCollection(name) {
         ...result[0],
         itemCount: result[1].count
     }
+}
+
+export async function fetchItems(collection, searchParams) {
+    let url = `${API_BASE_URL}/collections/${collection}/items?f=json`;
+    
+    const queryStr = Object.entries(searchParams)
+        .map(entry => `&${entry[0]}=${entry[1]}`)
+        .join('');
+
+    url += queryStr;
+
+    const response = await fetch(url, {
+        cache: 'no-store'
+    });
+
+    return await response.json();
+}
+
+export async function fetchItem(collection, id) {
+    const url = `${API_BASE_URL}/collections/${collection}/items/${id}`;
+
+    const response = await fetch(url, {
+        cache: SKIP_SSG ? 'no-store' : 'force-cache'
+    });
+
+    return await response.json();
 }
 
 export async function fetchThumbnail() {

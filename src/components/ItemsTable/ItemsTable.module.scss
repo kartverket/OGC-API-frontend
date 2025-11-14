@@ -1,0 +1,101 @@
+.tableWrapper {
+    position: relative;
+    border: 1px solid var(--ds-color-border-subtle, #e5e7eb);
+    border-radius: var(--ds-border-radius-lg);
+    overflow: hidden;
+}
+
+.tableViewport {
+    overflow: auto;
+    max-height: 474px;
+    -webkit-overflow-scrolling: touch;
+    background: var(--ds-color-surface-default, #fff);
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: max-content;
+
+    th {
+        text-transform: uppercase;
+    }
+
+    td:first-child,
+    th:first-child {
+        min-width: 60px;
+        max-width: 260px;
+    }
+
+    tbody {
+        tr {
+            cursor: pointer;
+
+            &:hover td {
+                background: var(--dsc-table-background--hover) !important;
+            }
+
+            &:not(:hover):nth-child(odd) td {
+                background: #ffffff;
+            }
+        }
+    }
+
+    th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 4;
+        border-right: 2px solid var(--ds-color-border-subtle, #e5e7eb);
+        background: var(--ds-color-surface-default, #ffffff);
+        box-shadow: 1px 0 0 rgba(0, 0, 0, 0.08);
+    }
+
+
+    td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        box-shadow: 1px 0 0 rgba(0, 0, 0, 0.08);
+        border-right: 2px solid var(--ds-color-border-subtle, #e5e7eb);
+    }
+
+    td span {
+        display: block;
+        max-width: 360px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.controls {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    margin-bottom: var(--ds-size-2);
+    font-size: var(--ds-font-size-3);
+    gap: var(--ds-size-3);
+
+    .left {
+        display: flex;
+        align-items: center;
+        gap: var(--ds-size-2);
+        margin-top: var(--ds-size-1);
+
+        select {
+            width: fit-content;
+        }
+    }
+
+    .right {
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        gap: var(--ds-size-2);
+
+        .itemsShowing {
+            font-size: var(--ds-font-size-2);
+            color: var(--ds-color-neutral-text-subtle);
+        }
+    }
+}
