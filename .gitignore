@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 deploy/volumes/postgis
+
+# proxy-certs
+nginx.crt
+nginx.key

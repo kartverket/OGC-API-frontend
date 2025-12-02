@@ -1,16 +1,24 @@
 'use client'
 
 import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 import { Button, Card, CardBlock, Divider, Heading, Label, Link } from '@digdir/designsystemet-react';
 import { ArrowRightIcon, DownloadIcon, TerminalIcon } from '@navikt/aksel-icons';
-import { API_BASE_URL, DATASET_URL } from '@/config/constants.client';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './DeveloperCard.module.scss';
 
 
 export default function DeveloperCard() {
+    const [origin, setOrigin] = useState('');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setOrigin(window.location.origin);
+        }
+    }, []);
+
     async function copyUrl() {
-        await navigator.clipboard.writeText(DATASET_URL);
+        await navigator.clipboard.writeText(origin);
     }
 
     return (
@@ -22,7 +30,7 @@ export default function DeveloperCard() {
                 </div>
 
                 <div className={styles.urlCopy}>
-                    <div className={styles.url}>{DATASET_URL}</div>
+                    <div className={styles.url}>{origin}</div>
 
                     <button
                         onClick={copyUrl}
@@ -34,25 +42,25 @@ export default function DeveloperCard() {
 
                 <div className={styles.links}>
                     <Link asChild>
-                        <NextLink href={`${API_BASE_URL}/openapi?f=html`} target="_blank">
+                        <NextLink href={`/openapi?f=html`} target="_blank">
                             Swagger UI
                             <ArrowRightIcon title="a11y-title" fontSize="28px" />
                         </NextLink>
                     </Link>
                     <Link asChild>
-                        <NextLink href={`${API_BASE_URL}/openapi?f=html`} target="_blank">
+                        <NextLink href={`/openapi?f=html`} target="_blank">
                             ReDoc
                             <ArrowRightIcon title="a11y-title" fontSize="28px" />
                         </NextLink>
                     </Link>
                     <Link asChild>
-                        <NextLink href={`${API_BASE_URL}/openapi?f=json`} target="_blank">
+                        <NextLink href={`/openapi?f=json`} target="_blank">
                             OpenAPI Document
                             <ArrowRightIcon title="a11y-title" fontSize="28px" />
                         </NextLink>
                     </Link>
                     <Link asChild>
-                        <NextLink href={`${API_BASE_URL}/conformance?f=html`} target="_blank">
+                        <NextLink href={`/conformance?f=html`} target="_blank">
                             Conformance
                             <ArrowRightIcon title="a11y-title" fontSize="28px" />
                         </NextLink>
