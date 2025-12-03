@@ -1,9 +1,8 @@
 import { fetchCollection, fetchHome, fetchItems, fetchQueryables } from '@/utils/api.client';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export function buildApiUrl(collection, searchParams) {
-    const baseUrl = `${API_BASE_URL}/collections/${collection}/items?f=json`;
+    const baseUrl = `/collections/${collection}/items?f=json`;
 
     const queryStr = Object.entries(searchParams)
         .map(entry => `${entry[0]}=${entry[1]}`).join('&');

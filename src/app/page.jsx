@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { fetchCollections, fetchHome, fetchThumbnail } from '@/utils/api';
+import { fetchCollections, fetchHome, /*fetchThumbnail*/ } from '@/utils/api';
 import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import { ServiceInfoCard, DeveloperCard } from '@/components';
