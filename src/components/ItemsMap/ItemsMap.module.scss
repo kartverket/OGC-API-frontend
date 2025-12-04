@@ -1,0 +1,35 @@
+.bbox {
+    background: #0063ba36;
+    border: 2px solid #0062ba;
+    box-sizing: border-box;
+}
+
+.resizeTopLeft,
+.resizeTopRight,
+.resizeBottomLeft,
+.resizeBottomRight {
+    background: #0062ba;
+    border-radius: 50%;
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.resizeTopLeft {
+    left: -6px !important;
+    top: -6px !important;
+}
+
+.resizeTopRight {
+    right: -6px !important;
+    top: -6px !important;
+}
+
+.resizeBottomLeft {
+    left: -6px !important;
+    bottom: -6px !important;
+}
+
+.resizeBottomRight {
+    right: -6px !important;
+    bottom: -6px !important;
+}

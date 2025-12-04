@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '@/config/constants.client';
 import { fetchCollection, fetchHome, fetchItems, fetchQueryables } from '@/utils/api.client';
 
 
 export function buildApiUrl(collection, searchParams) {
-    const baseUrl = `/collections/${collection}/items?f=json`;
+    const baseUrl = `${API_BASE_URL}/collections/${collection}/items?f=json`;
 
     const queryStr = Object.entries(searchParams)
         .map(entry => `${entry[0]}=${entry[1]}`).join('&');
@@ -34,4 +35,17 @@ export async function fetcher({ apiUrl, collection }) {
         },
         datasetTitle: result[3].title,
     };
+}
+
+export function getDefaultExtent(searchParams, data) {   
+    if (searchParams.bbox) {
+        return {
+            bbox: searchParams.bbox.split(',').map(coord => parseFloat(coord)),
+            crs: 'EPSG:4326'
+        };
+    }
+
+    return data !== null ?
+        data.collection.extent :
+        null;
 }

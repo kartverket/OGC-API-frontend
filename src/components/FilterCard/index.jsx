@@ -1,21 +1,62 @@
 'use client'
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Card, Heading, Label, Select, Field, Button, Input, Chip } from '@digdir/designsystemet-react';
-import { EqualsIcon, FilterIcon } from '@navikt/aksel-icons';
-import { getControlTypeFromField, getFields } from './helpers';
+import { Card, Heading, Label, Select, Field, Button, Input, Chip, FieldDescription } from '@digdir/designsystemet-react';
+import { EqualsIcon, FilterIcon, PencilIcon } from '@navikt/aksel-icons';
+import { getControlTypeFromField, getFields, parseBboxStr, validateBbox } from './helpers';
 import styles from './FilterCard.module.scss';
+import { getExtentFromBBox } from '@/utils/map/map';
 
-export default function FilterCard({ data }) {
+
+export default function FilterCard({ data, bbox, onBboxChange }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const [selectedField, setSelectedField] = useState('');
     const [filterValue, setFilterValue] = useState('');
 
+    const [_bbox, setBbox] = useState(() => {
+        const bboxStr = searchParams.get('bbox');
+        const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : data.collection.extent.bbox;
+
+        if (validateBbox(bbox)) {
+            return {
+                minLon: bbox[0].toString(),
+                minLat: bbox[1].toString(),
+                maxLon: bbox[2].toString(),
+                maxLat: bbox[3].toString()
+            };
+        }
+
+        return {
+            minLon: '',
+            minLat: '',
+            maxLon: '',
+            maxLat: ''
+        };
+    });
+
+    useEffect(
+        () => {
+            if (!bbox) {
+                return;
+            }
+
+            setBbox({
+                minLon: bbox[0].toString(),
+                minLat: bbox[1].toString(),
+                maxLon: bbox[2].toString(),
+                maxLat: bbox[3].toString()
+            })
+        },
+        [bbox]
+    );
+
     const [selectedFilters, setSelectedFilters] = useState(() => {
         const fields = getFields([], data.queryables);
+
+        fields.push('bbox');
 
         return [...searchParams]
             .filter(entry => fields.includes(entry[0]))
@@ -66,9 +107,26 @@ export default function FilterCard({ data }) {
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
+    function editBbox() {
+
+    }
+
     function handleFieldSelectChange(event) {
         setFilterValue('');
         setSelectedField(event.target.value);
+    }
+
+    function handleBboxChange(event) {
+        const updated = {
+            ...bbox,
+            [event.target.name]: event.target.value
+        };
+
+        setBbox(updated);
+
+        const a = Object.values(updated).map(coordinate => parseFloat(coordinate));
+
+        onBboxChange(a);
     }
 
     function renderControl() {
@@ -130,14 +188,13 @@ export default function FilterCard({ data }) {
                 )
             }
 
-            <div className={styles.fields}>
+            <div className={styles.filters}>
                 <div>
                     <Field className={styles.fieldSelect}>
-                        <Label htmlFor="field-select" size="small">Felt</Label>
+                        <Label htmlFor="field-select">Felt</Label>
 
                         <Select
                             id="field-select"
-                            size="small"
                             value={selectedField}
                             onChange={handleFieldSelectChange}
                             data-size="sm"
@@ -154,7 +211,7 @@ export default function FilterCard({ data }) {
                     <EqualsIcon fontSize="24px" />
 
                     <Field className={styles.fieldFilter}>
-                        <Label htmlFor="filter-value" size="small">Filter pattern</Label>
+                        <Label htmlFor="filter-value">Filter pattern</Label>
                         {renderControl()}
                     </Field>
 
@@ -164,6 +221,69 @@ export default function FilterCard({ data }) {
                         disabled={selectedField === '' || filterValue === ''}
                     >
                         Legg til filter
+                    </Button>
+                </div>
+                <div className={styles.bbox}>
+                    <Heading level={3} data-size="2xs">Bounding box (BBOX)</Heading>
+
+                    <div className={styles.inputs}>
+                        <div>
+                            <Label htmlFor="minLon" data-size="sm">Min. lon</Label>
+                            <Input
+                                type="number"
+                                id="minLon"
+                                name="minLon"
+                                value={_bbox.minLon}
+                                onChange={handleBboxChange}
+                                data-size="sm"
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="minLat" data-size="sm">Min. lat</Label>
+                            <Input
+                                type="number"
+                                id="minLat"
+                                name="minLat"
+                                value={_bbox.minLat}
+                                onChange={handleBboxChange}
+                                data-size="sm"
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="maxLon" data-size="sm">Maks. lon</Label>
+                            <Input
+                                type="number"
+                                id="maxLon"
+                                name="maxLon"
+                                value={_bbox.maxLon}
+                                onChange={handleBboxChange}
+                                data-size="sm"
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="maxLat" data-size="sm">Maks. lat</Label>
+                            <Input
+                                type="number"
+                                id="maxLat"
+                                name="maxLat"
+                                value={_bbox.maxLat}
+                                onChange={handleBboxChange}
+                                data-size="sm"
+                            />
+                        </div>
+                    </div>
+
+                    <Button
+                        onClick={editBbox}
+                        variant="secondary"
+                        data-size="sm"
+                    // disabled={selectedField === '' || filterValue === ''}
+                    >
+                        <PencilIcon title="Rediger" fontSize="24px" />
+                        Rediger BBOX-filter
                     </Button>
                 </div>
             </div>

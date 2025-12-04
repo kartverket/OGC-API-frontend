@@ -2,18 +2,22 @@
 
 import { use, useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { buildApiUrl, fetcher } from './helpers';
+import { buildApiUrl, fetcher, getDefaultExtent } from './helpers';
 import { Heading, Spinner } from '@digdir/designsystemet-react';
-import { Breadcrumbs, ItemsTable, Map } from '@/components';
+import { Breadcrumbs, ItemsMap, ItemsTable } from '@/components';
 import FilterCard from '@/components/FilterCard';
 import styles from './page.module.scss';
+import MapProvider from '@/context/MapProvider';
+
 
 export default function Items({ params, searchParams }) {
     const { collection } = use(params);
     const _searchParams = use(searchParams)
     const apiUrl = buildApiUrl(collection, _searchParams);
-    const { data: _data = null, isLoading } = useSWR({ apiUrl, collection }, fetcher);
+    const { data: _data = null, isLoading } = useSWR({ apiUrl, collection }, fetcher, { revalidateOnFocus: false });
     const [data, setData] = useState(null);
+    const defaultExtent = getDefaultExtent(_searchParams, data);
+    const [bbox, setBbox] = useState(null);
 
     useEffect(
         () => {
@@ -53,16 +57,25 @@ export default function Items({ params, searchParams }) {
 
                     <div className={styles.top}>
                         <div className={styles.topLeft}>
-                            <Map
-                                featureCollection={data}
-                                defaultExtent={data.collection.extent}
-                                width={567}
-                                height={675}
-                            />
+                            <MapProvider featureCollection={data}>
+                                <ItemsMap
+                                    featureCollection={data}
+                                    defaultExtent={defaultExtent}
+                                    width={567}
+                                    height={675} 
+                                    bbox={bbox}
+                                    onExtentChange={setBbox}
+                                />
+                            </MapProvider>
                         </div>
 
                         <div className={styles.topRight}>
-                            <FilterCard data={data} /> 
+                            <FilterCard 
+                                data={data} 
+                                onBboxChange={setBbox}
+                                bbox={bbox}
+                                // onExtentUpdate=
+                            />
                         </div>
                     </div>
 

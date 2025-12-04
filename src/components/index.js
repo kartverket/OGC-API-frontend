@@ -8,6 +8,7 @@ export { default as DeveloperCard } from './DeveloperCard';
 export { default as ExampleUseCard } from './ExampleUseCard';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';
+export { default as ItemsMap } from './ItemsMap';
 export { default as ItemsTable } from './ItemsTable';
 export { default as Map } from './Map';
 export { default as MapImage } from './MapImage';

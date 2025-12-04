@@ -31,3 +31,42 @@ export function getControlTypeFromField(selectedField, queryables) {
             return 'text';
     }
 }
+
+export function parseBboxStr(bboxStr) {
+    if (bboxStr === null) {
+        return null;
+    }
+
+    return bboxStr.split(',').map(coordinate => parseFloat(coordinate));
+}
+
+export function validateBbox(bbox) {    
+    if (!Array.isArray(bbox) || bbox.length !== 4) {
+        return false;
+    }
+
+    const [minLon, minLat, maxLon, maxLat] = bbox;
+
+    if (![minLon, minLat, maxLon, maxLat].every(coordinate => Number.isFinite(coordinate))) {
+        return false;
+    }
+
+    if (
+        minLon < -180 || minLon > 180 ||
+        maxLon < -180 || maxLon > 180 ||
+        minLat < -90 || minLat > 90 ||
+        maxLat < -90 || maxLat > 90
+    ) {
+        return false;
+    }
+
+    if (minLon > maxLon || minLat > maxLat) {
+        return false;
+    }
+
+    if (minLon === maxLon || minLat === maxLat) {
+        return false;
+    }
+
+    return true;
+}

@@ -1,21 +1,41 @@
-export const fetcher = (...args) => fetch(...args).then(response => response.json());
+import { API_BASE_URL } from '@/config/constants.client';
+
 
 export async function fetchHome() {
-    const response = await fetch(`/?f=json`);
-    return await response.json();
+    const url = `${API_BASE_URL}?f=json`;
+
+    return await _fetch(url);
 }
 
 export async function fetchItems(url) {
-    const response = await fetch(url);
-    return await response.json();
+    return await _fetch(url);
 }
 
 export async function fetchCollection(collection) {
-    const response = await fetch(`/collections/${collection}?f=json`);
-    return await response.json();
+    const url = `${API_BASE_URL}/collections/${collection}?f=json`;
+
+    return await _fetch(url);
 }
 
 export async function fetchQueryables(collection) {
-    const response = await fetch(`/collections/${collection}/queryables?f=json`);
-    return await response.json();
+    const url = `${API_BASE_URL}/collections/${collection}/queryables?f=json`;
+
+    return await _fetch(url);
+}
+
+async function _fetch(url) {
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            const message = `Failed to fetch ${url} (${response.statusText})`;
+            console.error(message);
+            throw new Error(message);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Failed to fetch ${url}: ${error.message}`);
+        throw error;
+    }
 }

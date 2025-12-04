@@ -44,7 +44,7 @@ export function zoomToExtent(map, defaultExtent) {
     view.fit(extent, mapSize);
 }
 
-function getExtent(map, defaultExtent) {   
+export function getExtent(map, defaultExtent) {   
     const vectorLayer = getLayer(map, 'features');
     const vectorSource = vectorLayer.getSource();
 
@@ -57,7 +57,7 @@ function getExtent(map, defaultExtent) {
     return getExtentFromBBox(bbox, crs);
 }
 
-function getExtentFromBBox(bbox, crs) {
+export function getExtentFromBBox(bbox, crs) {
     const [minX, maxX] = proj4(crs, 'EPSG:3857', [bbox[0], bbox[1]]);
     const [minY, maxY] = proj4(crs, 'EPSG:3857', [bbox[2], bbox[3]]);
 

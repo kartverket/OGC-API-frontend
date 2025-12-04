@@ -1,44 +1,16 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
-import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
+import { useEffect, useRef } from 'react';
+import { zoomToExtent } from '@/utils/map/map';
+import { useMap } from '@/context/MapProvider';
 import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
 import styles from './Map.module.scss';
 
-export default function Map({ featureCollection, defaultExtent, width, height }) {
-    const [map, setMap] = useState(null);
+
+export default function Map({ defaultExtent, width, height }) {
+    const map = useMap();
     const mapElementRef = useRef(null);
-    const initRef = useRef(true);
-
-    useEffect(
-        () => {
-            if (!initRef.current) {
-                return;
-            }
-
-            initRef.current = false;
-
-            (async () => {
-                setMap(await createMap());
-            })();
-        },
-        [featureCollection]
-    );
-
-    useEffect(
-        () => {
-            if (map === null) {
-                return;
-            }
-
-            return () => {
-                map.setTarget(null);
-                map.dispose();
-            };
-        },
-        [map]
-    );
 
     useEffect(
         () => {
@@ -50,18 +22,6 @@ export default function Map({ featureCollection, defaultExtent, width, height })
             zoomToExtent(map, defaultExtent);
         },
         [map, defaultExtent]
-    );
-
-    useEffect(
-        () => {
-            if (map === null) {
-                return;
-            }
-
-            setFeatureCollection(map, featureCollection);
-            zoomToExtent(map, defaultExtent);
-        },
-        [map, defaultExtent, featureCollection]
     );
 
     return (
