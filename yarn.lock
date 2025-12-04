@@ -1231,18 +1231,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/biome@npm:2.2.0"
+"@biomejs/biome@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/biome@npm:2.3.8"
   dependencies:
-    "@biomejs/cli-darwin-arm64": "npm:2.2.0"
-    "@biomejs/cli-darwin-x64": "npm:2.2.0"
-    "@biomejs/cli-linux-arm64": "npm:2.2.0"
-    "@biomejs/cli-linux-arm64-musl": "npm:2.2.0"
-    "@biomejs/cli-linux-x64": "npm:2.2.0"
-    "@biomejs/cli-linux-x64-musl": "npm:2.2.0"
-    "@biomejs/cli-win32-arm64": "npm:2.2.0"
-    "@biomejs/cli-win32-x64": "npm:2.2.0"
+    "@biomejs/cli-darwin-arm64": "npm:2.3.8"
+    "@biomejs/cli-darwin-x64": "npm:2.3.8"
+    "@biomejs/cli-linux-arm64": "npm:2.3.8"
+    "@biomejs/cli-linux-arm64-musl": "npm:2.3.8"
+    "@biomejs/cli-linux-x64": "npm:2.3.8"
+    "@biomejs/cli-linux-x64-musl": "npm:2.3.8"
+    "@biomejs/cli-win32-arm64": "npm:2.3.8"
+    "@biomejs/cli-win32-x64": "npm:2.3.8"
   dependenciesMeta:
     "@biomejs/cli-darwin-arm64":
       optional: true
@@ -1262,62 +1262,62 @@ __metadata:
       optional: true
   bin:
     biome: bin/biome
-  checksum: 10c0/092ee79cad7f253427499aa193374e4c1fe5935be916d426f96fd1b8864b9c95f623d447c096894a4f864a15618c965f71863987c7afdcf77e5cdb79ec28fecd
+  checksum: 10c0/a6bae2db99cc2bd7146a93a97f1185b343d3538284d990e8cec796a94e10b88436cca846568a5d464db4bdd790d4282d3ad67da757f7e3fc4c958d5398a6b914
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-arm64@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-darwin-arm64@npm:2.2.0"
+"@biomejs/cli-darwin-arm64@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-darwin-arm64@npm:2.3.8"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-x64@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-darwin-x64@npm:2.2.0"
+"@biomejs/cli-darwin-x64@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-darwin-x64@npm:2.3.8"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64-musl@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.2.0"
+"@biomejs/cli-linux-arm64-musl@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.3.8"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-linux-arm64@npm:2.2.0"
+"@biomejs/cli-linux-arm64@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-linux-arm64@npm:2.3.8"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64-musl@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-linux-x64-musl@npm:2.2.0"
+"@biomejs/cli-linux-x64-musl@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-linux-x64-musl@npm:2.3.8"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-linux-x64@npm:2.2.0"
+"@biomejs/cli-linux-x64@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-linux-x64@npm:2.3.8"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-arm64@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-win32-arm64@npm:2.2.0"
+"@biomejs/cli-win32-arm64@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-win32-arm64@npm:2.3.8"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-x64@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@biomejs/cli-win32-x64@npm:2.2.0"
+"@biomejs/cli-win32-x64@npm:2.3.8":
+  version: 2.3.8
+  resolution: "@biomejs/cli-win32-x64@npm:2.3.8"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -1386,14 +1386,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digdir/designsystemet-css@npm:^1.6.0":
+"@digdir/designsystemet-css@npm:^1.8.0":
   version: 1.8.0
   resolution: "@digdir/designsystemet-css@npm:1.8.0"
   checksum: 10c0/5b0856f791482c065aa641a70899923cb3d53c41d4ea51d4b8b14aa732f0004190745f8458ad653cffed0bf95c520a787d0c80607bd72930aa5adcac9de156b9
   languageName: node
   linkType: hard
 
-"@digdir/designsystemet-react@npm:^1.6.0":
+"@digdir/designsystemet-react@npm:^1.8.0":
   version: 1.8.0
   resolution: "@digdir/designsystemet-react@npm:1.8.0"
   dependencies:
@@ -1414,7 +1414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digdir/designsystemet-theme@npm:^1.6.0":
+"@digdir/designsystemet-theme@npm:^1.8.0":
   version: 1.8.0
   resolution: "@digdir/designsystemet-theme@npm:1.8.0"
   dependencies:
@@ -1430,7 +1430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digdir/designsystemet@npm:^1.6.0":
+"@digdir/designsystemet@npm:^1.8.0":
   version: 1.8.0
   resolution: "@digdir/designsystemet@npm:1.8.0"
   dependencies:
@@ -1897,7 +1897,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/aksel-icons@npm:^7.32.1, @navikt/aksel-icons@npm:^7.35.0":
+"@navikt/aksel-icons@npm:^7.35.0, @navikt/aksel-icons@npm:^7.35.1":
   version: 7.35.1
   resolution: "@navikt/aksel-icons@npm:7.35.1"
   checksum: 10c0/fb12620fb557c87dcf3bdd0b33f8b758256bfeb87e2570c9dcfdb9af9efbe14cb03cf4478f18f25b59508a3ce8142002b3f7343e04cea00cf3f25e8a6ab5558c
@@ -2409,7 +2409,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@turf/bbox-polygon@npm:^7.2.0":
+"@turf/bbox-polygon@npm:^7.3.1":
   version: 7.3.1
   resolution: "@turf/bbox-polygon@npm:7.3.1"
   dependencies:
@@ -2420,7 +2420,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@turf/helpers@npm:7.3.1, @turf/helpers@npm:^7.2.0":
+"@turf/helpers@npm:7.3.1, @turf/helpers@npm:^7.3.1":
   version: 7.3.1
   resolution: "@turf/helpers@npm:7.3.1"
   dependencies:
@@ -3954,7 +3954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:16.0.7":
+"next@npm:^16.0.7":
   version: 16.0.7
   resolution: "next@npm:16.0.7"
   dependencies:
@@ -4128,28 +4128,28 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ogc-api-frontend@workspace:."
   dependencies:
-    "@biomejs/biome": "npm:2.2.0"
-    "@digdir/designsystemet": "npm:^1.6.0"
-    "@digdir/designsystemet-css": "npm:^1.6.0"
-    "@digdir/designsystemet-react": "npm:^1.6.0"
-    "@digdir/designsystemet-theme": "npm:^1.6.0"
-    "@navikt/aksel-icons": "npm:^7.32.1"
+    "@biomejs/biome": "npm:^2.3.8"
+    "@digdir/designsystemet": "npm:^1.8.0"
+    "@digdir/designsystemet-css": "npm:^1.8.0"
+    "@digdir/designsystemet-react": "npm:^1.8.0"
+    "@digdir/designsystemet-theme": "npm:^1.8.0"
+    "@navikt/aksel-icons": "npm:^7.35.1"
     "@svgr/webpack": "npm:^8.1.0"
-    "@turf/bbox-polygon": "npm:^7.2.0"
-    "@turf/helpers": "npm:^7.2.0"
+    "@turf/bbox-polygon": "npm:^7.3.1"
+    "@turf/helpers": "npm:^7.3.1"
     fast-sort: "npm:^3.4.1"
-    next: "npm:16.0.7"
-    ol: "npm:^10.6.1"
-    proj4: "npm:^2.19.10"
-    react: "npm:19.2.1"
-    react-dom: "npm:19.2.1"
+    next: "npm:^16.0.7"
+    ol: "npm:^10.7.0"
+    proj4: "npm:^2.20.2"
+    react: "npm:^19.2.1"
+    react-dom: "npm:^19.2.1"
     sass: "npm:^1.94.2"
-    sass-embedded: "npm:^1.93.2"
-    swr: "npm:^2.3.6"
+    sass-embedded: "npm:^1.93.3"
+    swr: "npm:^2.3.7"
   languageName: unknown
   linkType: soft
 
-"ol@npm:^10.6.1":
+"ol@npm:^10.7.0":
   version: 10.7.0
   resolution: "ol@npm:10.7.0"
   dependencies:
@@ -4359,7 +4359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:^2.19.10":
+"proj4@npm:^2.20.2":
   version: 2.20.2
   resolution: "proj4@npm:2.20.2"
   dependencies:
@@ -4439,7 +4439,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.1":
+"react-dom@npm:^19.2.1":
   version: 19.2.1
   resolution: "react-dom@npm:19.2.1"
   dependencies:
@@ -4450,7 +4450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.1":
+"react@npm:^19.2.1":
   version: 19.2.1
   resolution: "react@npm:19.2.1"
   checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
@@ -4741,7 +4741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass-embedded@npm:^1.93.2":
+"sass-embedded@npm:^1.93.3":
   version: 1.93.3
   resolution: "sass-embedded@npm:1.93.3"
   dependencies:
@@ -5232,7 +5232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.3.6":
+"swr@npm:^2.3.7":
   version: 2.3.7
   resolution: "swr@npm:2.3.7"
   dependencies:
