@@ -5,7 +5,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json yarn.lock ./
-RUN yarn set version stable \
+RUN corepack enable \
+    && yarn set version stable \
     && yarn config set nodeLinker node-modules \
     && yarn install --immutable
 
@@ -16,7 +17,8 @@ ENV SKIP_SSG=true
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN yarn set version stable \
+RUN corepack enable \
+    && yarn set version stable \
     && yarn run build
 
 FROM base AS runner
@@ -36,7 +38,5 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-
-USER nextjs
 
 CMD ["node", "server.js"]
