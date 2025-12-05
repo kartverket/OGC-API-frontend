@@ -1,7 +1,8 @@
 FROM node:24-alpine AS base
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat \
+    && npm install -g npm@latest
 WORKDIR /app
 
 COPY package.json yarn.lock ./

@@ -3351,7 +3351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^11.0.3":
+"glob@npm:^11.1.0":
   version: 11.1.0
   resolution: "glob@npm:11.1.0"
   dependencies:
@@ -3364,17 +3364,6 @@ __metadata:
   bin:
     glob: dist/esm/bin.mjs
   checksum: 10c0/1ceae07f23e316a6fa74581d9a74be6e8c2e590d2f7205034dd5c0435c53f5f7b712c2be00c3b65bf0a49294a1c6f4b98cd84c7637e29453b5aa13b79f1763a2
-  languageName: node
-  linkType: hard
-
-"glob@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "glob@npm:13.0.0"
-  dependencies:
-    minimatch: "npm:^10.1.1"
-    minipass: "npm:^7.1.2"
-    path-scurry: "npm:^2.0.0"
-  checksum: 10c0/8e2f5821f3f7c312dd102e23a15b80c79e0837a9872784293ba2e15ec73b3f3749a49a42a31bfcb4e52c84820a474e92331c2eebf18819d20308f5c33876630a
   languageName: node
   linkType: hard
 
@@ -4138,7 +4127,6 @@ __metadata:
     "@turf/bbox-polygon": "npm:^7.3.1"
     "@turf/helpers": "npm:^7.3.1"
     fast-sort: "npm:^3.4.1"
-    glob: "npm:^13.0.0"
     next: "npm:^16.0.7"
     ol: "npm:^10.7.0"
     proj4: "npm:^2.20.2"
