@@ -1,8 +1,7 @@
 FROM node:24-alpine AS base
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat \
-    && npm install -g npm@latest
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json yarn.lock ./
@@ -23,6 +22,8 @@ RUN corepack enable \
     && yarn run build
 
 FROM base AS runner
+RUN npm uninstall -g npm \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
