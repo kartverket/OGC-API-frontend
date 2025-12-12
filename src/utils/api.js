@@ -4,7 +4,7 @@ import { API_BASE_URL, SKIP_SSG } from '@/config/constants';
 export const fetcher = (...args) => fetch(...args).then(response => response.json());
 
 export async function fetchHome() {
-    const response = await fetch(`${API_BASE_URL}/?f=json`, {
+    const response = await fetch(`${API_BASE_URL}?f=json`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
@@ -12,13 +12,24 @@ export async function fetchHome() {
 }
 
 export async function fetchCollections() {
-    const url = `${API_BASE_URL}/collections/?f=json`;
+    const url = `${API_BASE_URL}/collections?f=json`;
 
     const response = await fetch(url, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
+    if (!response.ok) {
+        const text = await response.text();
+        console.error('[fetchCollections] Error response:', text);
+        throw new Error(`Failed to fetch collections: ${response.status} ${response.statusText}`);
+    }
+
     const data = await response.json();
+    if (!data.collections) {
+        console.error('[fetchCollections] No collections in response:', data);
+        throw new Error('Invalid response: missing collections array');
+    }
+
     const promises = [];
 
     for (const collection of data.collections) {
