@@ -13,25 +13,23 @@ export function buildApiUrl(collection, searchParams) {
 }
 
 export async function fetcher({ apiUrl, collection }) {
-    const promises = [
+    const [items, queryables, collectionData, homeData] = await Promise.all([
         fetchItems(apiUrl),
         fetchQueryables(collection),
         fetchCollection(collection),
         fetchHome(),
-    ];
-
-    const result = await Promise.all(promises);
+    ]);
 
     return {
-        ...result[0],
-        queryables: result[1],
+        ...items,
+        queryables,
         collection: {
-            title: result[2].title,
+            title: collectionData.title,
             extent: {
-                bbox: result[2].extent.spatial.bbox[0],
-                crs: result[2].extent.spatial.crs
+                bbox: collectionData.extent.spatial.bbox[0],
+                crs: collectionData.extent.spatial.crs
             }
         },
-        datasetTitle: result[3].title,
+        datasetTitle: homeData.title,
     };
 }

@@ -1,37 +1,38 @@
 {
-    "name": "ogc-api-frontend",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev --turbopack",
-        "build": "next build --turbopack",
-        "start": "next start",
-        "lint": "biome check",
-        "format": "biome format --write"
-    },
-    "dependencies": {
-        "@digdir/designsystemet-css": "^1.8.0",
-        "@digdir/designsystemet-react": "^1.8.0",
-        "@digdir/designsystemet-theme": "^1.8.0",
-        "@navikt/aksel-icons": "^7.35.1",
-        "@turf/bbox-polygon": "^7.3.1",
-        "@turf/helpers": "^7.3.1",
-        "fast-sort": "^3.4.1",
-        "next": "^16.0.10",
-        "ol": "^10.7.0",
-        "proj4": "^2.20.2",
-        "react": "^19.2.1",
-        "react-dom": "^19.2.1",
+  "name": "ogc-api-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "biome check",
+    "format": "biome format --write"
+  },
+  "packageManager": "yarn@4.12.0",
+  "dependencies": {
+    "@digdir/designsystemet-css": "^1.8.0",
+    "@digdir/designsystemet-react": "^1.8.0",
+    "@digdir/designsystemet-theme": "^1.8.0",
+    "@navikt/aksel-icons": "^7.35.1",
+    "@turf/bbox-polygon": "^7.3.1",
+    "@turf/helpers": "^7.3.1",
+    "fast-sort": "^3.4.1",
+    "next": "^16.0.10",
+    "ol": "^10.7.0",
+    "proj4": "^2.20.2",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
         "sass": "^1.94.2",
-        "swr": "^2.3.7"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "^2.3.8",
-        "@digdir/designsystemet": "^1.8.0",
-        "@svgr/webpack": "^8.1.0",
-        "sass-embedded": "^1.93.3"
+    "swr": "^2.3.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.8",
+    "@digdir/designsystemet": "^1.8.0",
+    "@svgr/webpack": "^8.1.0",
+    "sass-embedded": "^1.93.3"
     },
     "resolutions": {
         "glob": "^11.1.0"
-    }
+  }
 }
