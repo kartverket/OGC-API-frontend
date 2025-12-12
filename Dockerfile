@@ -20,12 +20,14 @@ RUN corepack enable && yarn run build
 
 
 FROM base AS runner
+RUN npm uninstall -g npm \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 150 nodejs \
+    && adduser --system --uid 150 nextjs
 
 COPY --from=builder /app/public ./public
 
