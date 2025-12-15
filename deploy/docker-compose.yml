@@ -67,23 +67,6 @@ services:
     networks:
       - pygeoapi-network
     
-  proxy:
-    image: nginx:latest
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      # - ./nginx.crt:/etc/ssl/certs/selfsigned.crt
-      # - ./nginx.key:/etc/ssl/private/selfsigned.key
-    ports:
-      - "80:80"
-    depends_on:
-      pygeoapi:
-        condition: service_healthy
-    networks:
-      - pygeoapi-network
-
-    extra_hosts:
-      host.docker.internal: host-gateway
-
 networks:
   pygeoapi-network:
     driver: bridge
