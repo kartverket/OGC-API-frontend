@@ -15,7 +15,7 @@
 
         &:checked {
             &~.detailsContent {
-                max-height: 100rem;
+                max-height: 50rem;
             }
 
             &+.detailsLabel {
