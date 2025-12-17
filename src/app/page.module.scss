@@ -64,3 +64,22 @@
         }
     }
 }
+
+@media (max-width: 820px) {
+    .top {
+        width: 100%;
+
+        img {
+            display: none;
+        }
+    }
+
+    .main {
+        flex-direction: column;
+        gap: 21px;
+    }
+
+    .left {
+        width: 100%;
+    }
+}
