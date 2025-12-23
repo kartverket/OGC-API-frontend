@@ -3,10 +3,31 @@ import NextLink from "next/link";
 import { getCrsCode } from "@/utils/helper";
 import { Card, Heading, Link } from "@digdir/designsystemet-react";
 import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
-import thumbnail from "@/assets/gfx/collection-thumbnail.png";
 import styles from "./CollectionCard.module.scss";
+import { fetchItems } from "@/utils/api";
 
-export default function CollectionCard({ collection }) {
+export default async function CollectionCard({ collection }) {
+
+  // Fetch one item to check geometry type
+  const itemsData = await fetchItems(collection.id, { limit: 1 });
+  const geometryType = itemsData.features?.[0]?.geometry?.type || null;
+
+  // Determine which icon to use based on geometry type (default to polygon)
+  let geometryIconPath = "/gfx/polygon.svg";
+
+  if (geometryType) {
+    if (/polygon/i.test(geometryType)) {
+      geometryIconPath = "/gfx/polygon.svg";
+    } else if (/line/i.test(geometryType)) {
+      geometryIconPath = "/gfx/line.svg";
+    } else if (/point/i.test(geometryType)) {
+      geometryIconPath = "/gfx/points.svg";
+    } else {
+      // Fallback to polygon for unrecognized geometry types
+      geometryIconPath = "/gfx/polygon.svg";
+    }
+  }
+
   return (
     <Card className={styles.card}>
       <div className={styles.cardContent}>
@@ -14,7 +35,12 @@ export default function CollectionCard({ collection }) {
           href={`/collections/${collection.id}/items`}
           className={styles.thumbnail}
         >
-          <Image src={thumbnail} alt="Thumbnail" width={175} />
+          <Image
+            src={geometryIconPath}
+            alt="Thumbnail"
+            width={150}
+            height={150}
+          />
         </NextLink>
 
         <div className={styles.content}>
@@ -44,6 +70,7 @@ export default function CollectionCard({ collection }) {
 
           <div className={styles.middle}>
             <div className={styles.description}>{collection.description}</div>
+
             <div className={styles.divider}></div>
             <div className={styles.metadata}>
               <div>
