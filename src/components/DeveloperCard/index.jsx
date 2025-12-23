@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Card,
@@ -8,7 +9,11 @@ import {
   Link,
   Skeleton,
 } from "@digdir/designsystemet-react";
-import { ArrowRightIcon, TerminalIcon } from "@navikt/aksel-icons";
+import {
+  ArrowRightIcon,
+  TerminalIcon,
+  CheckmarkIcon,
+} from "@navikt/aksel-icons";
 import CopyIcon from "@/assets/gfx/icon-copy.svg";
 import styles from "./DeveloperCard.module.scss";
 import NextLink from "next/link";
@@ -30,18 +35,31 @@ function DeveloperCardWrapper({ children }) {
 
 function DeveloperCard() {
   const origin = window.location.origin;
+  const [copied, setCopied] = useState(false);
 
   async function copyUrl() {
     await navigator.clipboard.writeText(origin);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 1500);
   }
 
   return (
     <DeveloperCardWrapper>
       <div className={styles.urlCopy}>
         <div className={styles.url}>{origin}</div>
-        {/* TODO: add icon animation to show the url is copied. Consider adding toast as well */}
-        <button type="button" onClick={copyUrl} aria-label="Kopier URL">
-          <CopyIcon title="a11y-title" width="28px" />
+        <button
+          type="button"
+          onClick={copyUrl}
+          aria-label="Kopier URL"
+          className={styles.copyButton}
+        >
+          {copied ? (
+            <CheckmarkIcon title="Kopiert!" width="28px" height="28px" />
+          ) : (
+            <CopyIcon title="a11y-title" width="28px" />
+          )}
         </button>
       </div>
 

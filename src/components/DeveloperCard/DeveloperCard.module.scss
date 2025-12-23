@@ -38,9 +38,21 @@
         background: none;
         padding: 0;
         cursor: pointer;
+        transition: transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover, &:focus-visible {
+            transform: scale(1.15);
+        }
 
         &:hover svg path {
             fill: var(--ds-color-text-default);
+        }
+
+        &:active {
+            transform: scale(0.95);
         }
 
         &:active svg {
