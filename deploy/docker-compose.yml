@@ -17,7 +17,8 @@ services:
       - pygeoapi-network
 
   pygeoapi:
-    image: geopython/pygeoapi:latest
+    build:
+      context: ./pygeoapi
     ports:
       - "5000:5000"
     volumes:
