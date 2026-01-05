@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { getCrsCode } from '@/utils/helper';
 import { Card, Heading, Link } from '@digdir/designsystemet-react';
 import { ArrowRightIcon, ChevronRightIcon } from '@navikt/aksel-icons';
 import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './CollectionCard.module.scss';
+import { getCrsCode } from '@/utils/map/helpers';
 
 
 export default function CollectionCard({ collection }) {

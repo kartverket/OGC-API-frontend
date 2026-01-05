@@ -1,10 +1,57 @@
-const URI_REGEX = /^http:\/\/www\.opengis\.net\/def\/crs\/(?<auth>\w+)\/.*\/(?<code>\w+)$/m;
-const URN_REGEX = /^urn:ogc:def:crs:(?<auth>\w+):.*?:(?<code>\w+)$/m;
+export function debounce(func, delay) {
+    let timeoutId;
 
-export function getCrsCode(value) {
-    const match = value.match(URI_REGEX) || value.match(URN_REGEX);
+    return function (...args) {
+        clearTimeout(timeoutId);
 
-    return match !== null ? 
-        `${match.groups['auth']}:${match.groups['code']}` :
-        'OGC:CRS84'
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+export function throttle(func, delay) {
+    let inThrottle;
+    let lastArgs;
+    let lastThis;
+
+    return function (...args) {
+        lastArgs = args;
+        lastThis = this;
+
+        if (!inThrottle) {
+            func.apply(lastThis, lastArgs);
+            inThrottle = true;
+
+            setTimeout(() => {
+                inThrottle = false;
+
+                if (lastArgs) {
+                    func.apply(lastThis, lastArgs);
+                    lastArgs = null;
+                    lastThis = null;
+                }
+            }, delay);
+        }
+    };
+}
+
+export function roundDecimals(number, precision) {
+    if (countDecimalPlaces(number) <= precision) {
+        return number;
+    }
+
+    const factor = Math.pow(10, precision);
+    
+    return Math.round(number * factor) / factor;
+}
+
+function countDecimalPlaces(number) {
+    const numberAsString = number.toString();
+
+    if (numberAsString.includes('.')) {
+        return numberAsString.split('.')[1].length;
+    } 
+
+    return 0;
 }

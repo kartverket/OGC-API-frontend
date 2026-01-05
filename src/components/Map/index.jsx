@@ -7,8 +7,7 @@ import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
 import styles from './Map.module.scss';
 
-
-export default function Map({ defaultExtent, width, height }) {
+export default function Map({ width, height }) {
     const map = useMap();
     const mapElementRef = useRef(null);
 
@@ -19,9 +18,9 @@ export default function Map({ defaultExtent, width, height }) {
             }
 
             map.setTarget(mapElementRef.current);
-            zoomToExtent(map, defaultExtent);
+            // zoomToExtent(map, defaultExtent);
         },
-        [map, defaultExtent]
+        [map]
     );
 
     return (

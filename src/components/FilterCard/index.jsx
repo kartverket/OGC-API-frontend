@@ -1,12 +1,20 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Card, Heading, Label, Select, Field, Button, Input, Chip, FieldDescription } from '@digdir/designsystemet-react';
-import { EqualsIcon, FilterIcon, PencilIcon } from '@navikt/aksel-icons';
-import { getControlTypeFromField, getFields, parseBboxStr, validateBbox } from './helpers';
+import { debounce, roundDecimals } from '@/utils/helper';
+import { useMap } from '@/context/MapProvider';
+import { useItems } from '@/context/ItemsProvider';
+import { getSizeAndPositionFromBbox } from '../ItemsMap/helpers';
+import { extend } from 'ol/extent';
+import { unByKey } from 'ol/Observable';
+import bboxPolygon from '@turf/bbox-polygon';
+import booleanWithin from '@turf/boolean-within';
+import { setBboxFeature, toggleBboxFeature } from '@/utils/map/featuresLayer';
+import { getControlTypeFromField, getFields, getMapViewBounds, isWithinBounds, isBboxValid, parseBbox, getFeaturesExtent, getBboxExtent } from './helpers';
+import { Card, Heading, Label, Select, Field, Button, Input, Chip } from '@digdir/designsystemet-react';
+import { EqualsIcon, FilterIcon, PencilIcon, XMarkIcon } from '@navikt/aksel-icons';
 import styles from './FilterCard.module.scss';
-import { getExtentFromBBox } from '@/utils/map/map';
 
 
 export default function FilterCard({ data, bbox, onBboxChange }) {
@@ -15,42 +23,38 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
     const searchParams = useSearchParams();
     const [selectedField, setSelectedField] = useState('');
     const [filterValue, setFilterValue] = useState('');
-
-    const [_bbox, setBbox] = useState(() => {
-        const bboxStr = searchParams.get('bbox');
-        const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : data.collection.extent.bbox;
-
-        if (validateBbox(bbox)) {
-            return {
-                minLon: bbox[0].toString(),
-                minLat: bbox[1].toString(),
-                maxLon: bbox[2].toString(),
-                maxLat: bbox[3].toString()
-            };
-        }
-
-        return {
-            minLon: '',
-            minLat: '',
-            maxLon: '',
-            maxLat: ''
-        };
-    });
+    const [_bbox, setBbox] = useState(bbox.map(coordinate => coordinate.toString()));
+    const viewBoundsRef = useRef(null);
+    const bboxRef = useRef(null);
+    const map = useMap();
+    const { setSizeAndPosition, sizeAndPositionRef, bboxEdit, setBboxEdit } = useItems();
 
     useEffect(
         () => {
-            if (!bbox) {
+            if (bbox !== null) {
+                setBbox(bbox.map(coordinate => coordinate.toString()));
+            }
+        },
+        [bbox]
+    );
+
+    useEffect(
+        () => {
+            if (map === null) {
                 return;
             }
 
-            setBbox({
-                minLon: bbox[0].toString(),
-                minLat: bbox[1].toString(),
-                maxLon: bbox[2].toString(),
-                maxLat: bbox[3].toString()
-            })
+            const onMoveEnd = debounce(() => {
+                viewBoundsRef.current = getMapViewBounds(map);
+            }, 250);
+
+            map.on('moveend', onMoveEnd);
+
+            return () => {
+                map.un('moveend', onMoveEnd);
+            };
         },
-        [bbox]
+        [map]
     );
 
     const [selectedFilters, setSelectedFilters] = useState(() => {
@@ -68,6 +72,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
 
     const controlType = useMemo(() => getControlTypeFromField(selectedField, data.queryables), [selectedField, data.queryables]);
     const fields = useMemo(() => getFields(selectedFilters, data.queryables), [selectedFilters, data.queryables]);
+    const hasBboxFilter = useMemo(() => selectedFilters.some(filter => filter.field === 'bbox'), [selectedFilters]);
 
     function addFilter() {
         setSelectedFilters([
@@ -84,7 +89,37 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
-    function removeAllFilters() {
+    function addBboxFilter() {
+        const field = 'bbox';
+        const value = _bbox.join(',');
+        const clone = [...selectedFilters];
+        const index = clone.findIndex(filter => filter.field === field);
+
+        if (index === -1) {
+            setSelectedFilters([
+                ...selectedFilters,
+                { field, value }
+            ]);
+        } else {
+            clone.splice(index, 1, { field, value });
+            setSelectedFilters(clone);
+        }
+
+        const parsed = parseBbox(_bbox);        
+        bboxRef.current = null;
+
+        setBboxFeature(map, parsed);
+        setBboxEdit(false);
+
+        const params = new URLSearchParams(searchParams);
+        params.set(field, value);
+
+        router.push(`${pathname}?${params}`, { scroll: false });
+    }
+
+    function removeAllFilters() {        
+        cancelEditBbox();
+
         const filters = [...selectedFilters];
         setSelectedFilters([]);
 
@@ -98,6 +133,10 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
         const filters = [...selectedFilters];
         const filter = filters[index];
 
+        if (filter.field === 'bbox') {
+            cancelEditBbox();
+        }
+
         filters.splice(index, 1);
         setSelectedFilters(filters);
 
@@ -107,26 +146,72 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
-    function editBbox() {
-
-    }
-
     function handleFieldSelectChange(event) {
         setFilterValue('');
         setSelectedField(event.target.value);
     }
 
-    function handleBboxChange(event) {
-        const updated = {
-            ...bbox,
-            [event.target.name]: event.target.value
-        };
+    function startEditBbox() {
+        bboxRef.current = _bbox;
+        toggleBboxFeature(map, false);
 
-        setBbox(updated);
+        const featuresExtent = getFeaturesExtent(map);
+        const bboxExtent = getBboxExtent(_bbox);
+        const combinedExtent = extend(featuresExtent, bboxExtent)
+        const combinedPoly = bboxPolygon(combinedExtent);
 
-        const a = Object.values(updated).map(coordinate => parseFloat(coordinate));
+        const view = map.getView();
+        const viewExtent = view.calculateExtent(map.getSize());
+        const viewPoly = bboxPolygon(viewExtent);
 
-        onBboxChange(a);
+        function updateSizeAndPosition() {
+            const sizeAndPosition = getSizeAndPositionFromBbox(map, bboxExtent);
+
+            sizeAndPositionRef.current = sizeAndPosition;
+            setSizeAndPosition(sizeAndPosition);
+            setBboxEdit(true);
+        }
+
+        if (booleanWithin(combinedPoly, viewPoly)) {
+            updateSizeAndPosition();
+        } else {
+            view.fit(combinedExtent, map.getSize());
+
+            const key = map.on('moveend', () => {
+                updateSizeAndPosition();
+                unByKey(key);
+            });
+        }
+    }
+
+    function cancelEditBbox() {
+        const parsed = parseBbox(bboxRef.current);
+        bboxRef.current = null;
+
+        toggleBboxFeature(map, true);
+        setBboxEdit(false);
+        onBboxChange(parsed);
+    }
+
+    function handleBboxChange(value, index) {
+        const clone = [..._bbox];
+        clone.splice(index, 1, roundDecimals(value, 6));
+
+        if (!isBboxValid(clone)) {
+            return;
+        }
+
+        const viewBounds = viewBoundsRef.current;
+
+        if (!isWithinBounds(value, index, viewBounds)) {
+            value = viewBounds[index].toString();
+            clone.splice(index, 1, roundDecimals(value, 6));
+        }
+
+        const parsed = parseBbox(clone);
+
+        setBbox(clone)
+        onBboxChange(parsed);
     }
 
     function renderControl() {
@@ -189,7 +274,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
             }
 
             <div className={styles.filters}>
-                <div>
+                <div className={styles.fields}>
                     <Field className={styles.fieldSelect}>
                         <Label htmlFor="field-select">Felt</Label>
 
@@ -223,18 +308,19 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                         Legg til filter
                     </Button>
                 </div>
+
                 <div className={styles.bbox}>
                     <Heading level={3} data-size="2xs">Bounding box (BBOX)</Heading>
 
-                    <div className={styles.inputs}>
+                    <div className={styles.inputs} style={{ display: bboxEdit ? 'flex' : 'none' }}>
                         <div>
                             <Label htmlFor="minLon" data-size="sm">Min. lon</Label>
                             <Input
                                 type="number"
                                 id="minLon"
-                                name="minLon"
-                                value={_bbox.minLon}
-                                onChange={handleBboxChange}
+                                value={_bbox[0]}
+                                onChange={event => handleBboxChange(event.target.value, 0)}
+                                step="any"
                                 data-size="sm"
                             />
                         </div>
@@ -244,9 +330,9 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="minLat"
-                                name="minLat"
-                                value={_bbox.minLat}
-                                onChange={handleBboxChange}
+                                value={_bbox[1]}
+                                onChange={event => handleBboxChange(event.target.value, 1)}
+                                step="any"
                                 data-size="sm"
                             />
                         </div>
@@ -256,9 +342,9 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="maxLon"
-                                name="maxLon"
-                                value={_bbox.maxLon}
-                                onChange={handleBboxChange}
+                                value={_bbox[2]}
+                                onChange={event => handleBboxChange(event.target.value, 2)}
+                                step="any"
                                 data-size="sm"
                             />
                         </div>
@@ -268,23 +354,49 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="maxLat"
-                                name="maxLat"
-                                value={_bbox.maxLat}
-                                onChange={handleBboxChange}
+                                value={_bbox[3]}
+                                onChange={event => handleBboxChange(event.target.value, 3)}
+                                step="any"
                                 data-size="sm"
                             />
                         </div>
                     </div>
 
-                    <Button
-                        onClick={editBbox}
-                        variant="secondary"
-                        data-size="sm"
-                    // disabled={selectedField === '' || filterValue === ''}
-                    >
-                        <PencilIcon title="Rediger" fontSize="24px" />
-                        Rediger BBOX-filter
-                    </Button>
+                    <div className={styles.buttons}>
+                        {
+                            !bboxEdit && (
+                                <Button
+                                    onClick={startEditBbox}
+                                    variant="secondary"
+                                    data-size="sm"
+                                >
+                                    <PencilIcon title="Rediger" fontSize="24px" />
+                                    Rediger BBOX-filter
+                                </Button>
+                            )
+                        }
+                        {
+                            bboxEdit && (
+                                <>
+                                    <Button
+                                        onClick={cancelEditBbox}
+                                        variant="secondary"
+                                        data-size="sm"
+                                    >
+                                        <XMarkIcon title="Avbryt" fontSize="24px" />
+                                        Avbryt redigering
+                                    </Button>
+
+                                    <Button
+                                        onClick={addBboxFilter}
+                                        data-size="sm"
+                                    >
+                                        {!hasBboxFilter ? 'Legg til' : 'Oppdater'} BBOX-filter
+                                    </Button>
+                                </>
+                            )
+                        }
+                    </div>
                 </div>
             </div>
         </Card>

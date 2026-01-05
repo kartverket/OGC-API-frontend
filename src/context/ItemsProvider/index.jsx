@@ -1,19 +1,21 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
-export default function ItemsProvider({ data, children }) {
-    const [loading, setLoading] = useState(false);
-
-    useEffect(
-        () => {
-            setLoading(false);
-        },
-        [data]
-    );
+export default function ItemsProvider({ children }) {
+    const [bboxEdit, setBboxEdit] = useState(false);
+    const [sizeAndPosition, setSizeAndPosition] = useState(null);
+    const sizeAndPositionRef = useRef(null);
 
     return (
-        <ItemsContext.Provider value={{ loading, setLoading }}>
+        <ItemsContext.Provider value={{
+            bboxEdit,
+            setBboxEdit,
+            sizeAndPosition, 
+            setSizeAndPosition, 
+            sizeAndPositionRef
+        }}
+        >
             {children}
         </ItemsContext.Provider>
     );

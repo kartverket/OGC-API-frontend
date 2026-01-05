@@ -1,11 +1,15 @@
 'use client';
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { createMap } from '@/utils/map/map';
+import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
+import { useSearchParams } from 'next/navigation';
+import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
+import { setBboxFeature } from '@/utils/map/featuresLayer';
 
 
-export default function MapProvider({ featureCollection, children }) {
+export default function MapProvider({ data, children }) {
     const [map, setMap] = useState(null);
+    const searchParams = useSearchParams();
     const initRef = useRef(true);
 
     useEffect(
@@ -20,7 +24,35 @@ export default function MapProvider({ featureCollection, children }) {
                 setMap(await createMap());
             })();
         },
-        [featureCollection]
+        []
+    );
+
+    useEffect(
+        () => {
+            if (map === null) {
+                return;
+            }
+
+            setFeatureCollection(map, data);
+            zoomToExtent(map, data.collection.extent)
+        },
+        [map, data]
+    );
+
+    useEffect(
+        () => {
+            if (map === null || data === null) {
+                return;
+            }
+
+            const bboxStr = searchParams.get('bbox');
+            const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
+
+            if (isBboxValid(bbox) || bbox === null) {
+                setBboxFeature(map, bbox)
+            }
+        },
+        [map, data, searchParams]
     );
 
     useEffect(

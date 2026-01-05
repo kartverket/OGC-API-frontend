@@ -1,91 +1,68 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import { Rnd } from 'react-rnd';
 import { useMap } from '@/context/MapProvider';
-import { getExtentFromBBox, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
-import { debounce, getExtentFromSizeAndPosition, getMouseWheelZoomInteraction, getSizeAndPositionFromExtent, transformExtent } from './helpers';
+import { debounce } from '@/utils/helper';
+import { transformExtent } from '@/utils/map/helpers';
+import { getBboxFromSizeAndPosition, getMouseWheelZoomInteraction, getSizeAndPositionFromBbox } from './helpers';
 import { Map } from '@/components';
 import styles from './ItemsMap.module.scss';
+import { useItems } from '@/context/ItemsProvider';
+import { unByKey } from 'ol/Observable';
 
 
-export default function ItemsMap({ featureCollection, defaultExtent, bbox, width, height, onExtentChange }) {
+export default function ItemsMap({ width, height, bbox, onBboxChange }) {
     const map = useMap();
-    const [extent, setExtent] = useState(null);
-    const [sizeAndPosition, setSizeAndPosition] = useState(null);
+    const { sizeAndPosition, setSizeAndPosition, sizeAndPositionRef, bboxEdit } = useItems();
     const boxElRef = useRef(null);
     const containerElRef = useRef(null);
-    const sizeAndPositionRef = useRef(null);
 
     useEffect(
         () => {
-            if (map === null) {
+            if (map === null || bbox === null || !bboxEdit) {
                 return;
             }
 
-            setFeatureCollection(map, featureCollection);
-            zoomToExtent(map, defaultExtent);
-        },
-        [map, defaultExtent, featureCollection]
-    );
+            const transformed = transformExtent(bbox, 'EPSG:4326', 'EPSG:3857');
+            const sizeAndPosition = getSizeAndPositionFromBbox(map, transformed);
 
-    useEffect(
-        () => {
-            if (!bbox) {
-                return;
-            }
-
-            const _defaultExtent = getExtentFromBBox(bbox, 'http://www.opengis.net/def/crs/OGC/1.3/CRS84');
-            const sizeAndPosition = getSizeAndPositionFromExtent(map, _defaultExtent);
-            const extent = getExtentFromSizeAndPosition(map, sizeAndPosition);
             sizeAndPositionRef.current = sizeAndPosition;
-
             setSizeAndPosition(sizeAndPosition);
-            setExtent(extent);
         },
-        [bbox]
+        [map, bbox, bboxEdit]
     );
+
+    const eventListenerKeyRef = useRef(null);
 
     useEffect(
         () => {
             if (map === null) {
                 return;
             }
-
-            map.once('postrender', () => {
-                const _defaultExtent = getExtentFromBBox(defaultExtent.bbox, defaultExtent.crs);
-                const sizeAndPosition = getSizeAndPositionFromExtent(map, _defaultExtent);
-                const extent = getExtentFromSizeAndPosition(map, sizeAndPosition);
-                sizeAndPositionRef.current = sizeAndPosition;
-
-                setSizeAndPosition(sizeAndPosition);
-                setExtent(extent);
-            });
 
             const onMoveEnd = debounce(() => {
-                if (sizeAndPositionRef.current !== null) {
-                    const extent = getExtentFromSizeAndPosition(map, sizeAndPositionRef.current);
-                    setExtent(extent);
-                }
-            }, 300);
+                const bbox = getBboxFromSizeAndPosition(map, sizeAndPositionRef.current);
+                onBboxChange(bbox);
+            }, 250);
 
-            map.on('moveend', onMoveEnd);
-
-            return () => {
-                map.un('moveend', onMoveEnd);
-            };
+            if (bboxEdit) {
+                eventListenerKeyRef.current = map.on('moveend', onMoveEnd);
+            } else {
+                unByKey(eventListenerKeyRef.current);
+            }
         },
-        [map, defaultExtent]
+        [map, bboxEdit]
     );
 
     useEffect(
         () => {
-            if (extent === null) {
+            if (!bboxEdit || boxElRef.current === null) {
                 return;
             }
 
             const boxEl = boxElRef.current.resizableElement.current;
+            const mwz = getMouseWheelZoomInteraction(map);
 
             const onWheel = event => {
                 event.preventDefault();
@@ -97,7 +74,6 @@ export default function ItemsMap({ featureCollection, defaultExtent, bbox, width
                 const { x, y } = sizeAndPositionRef.current;
                 const mouseX = event.offsetX + x;
                 const mouseY = event.offsetY + y;
-                const mwz = getMouseWheelZoomInteraction(map);
 
                 mwz.handleEvent({
                     type: 'wheel',
@@ -114,32 +90,18 @@ export default function ItemsMap({ featureCollection, defaultExtent, bbox, width
                 boxEl.removeEventListener('wheel', onWheel);
             }
         },
-        [map, extent]
+        [map, bboxEdit]
     );
-
-    function handleExtentChange(index, value) {
-        const updated = [...extent]
-        updated.splice(index, 1, parseFloat(value));
-
-        setExtent(updated);
-        onExtentUpdate(updated);
-
-        const transformed = transformExtent(updated, 'EPSG:4326', 'EPSG:3857');
-        const sizeAndPosition = getSizeAndPositionFromExtent(map, transformed);
-
-        setSizeAndPosition(sizeAndPosition);
-        sizeAndPositionRef.current = sizeAndPosition;
-    }
 
     return (
         <div ref={containerElRef} className={styles.container}>
             <Map
-                defaultExtent={defaultExtent}
+                // defaultExtent={defaultExtent}
                 width={width}
                 height={height}
             />
             {
-                sizeAndPosition && (
+                sizeAndPosition && bboxEdit && (
                     <Rnd
                         ref={boxElRef}
                         bounds="parent"
@@ -162,9 +124,8 @@ export default function ItemsMap({ featureCollection, defaultExtent, bbox, width
                             setSizeAndPosition(sizeAndPosition);
                             sizeAndPositionRef.current = sizeAndPosition;
 
-                            const extent = getExtentFromSizeAndPosition(map, sizeAndPosition);
-                            setExtent(extent);
-                            onExtentChange(extent);
+                            const bbox = getBboxFromSizeAndPosition(map, sizeAndPosition);
+                            onBboxChange(bbox);
                         }}
                         onResizeStop={(event, direction, ref, delta, position) => {
                             const sizeAndPosition = {
@@ -176,17 +137,14 @@ export default function ItemsMap({ featureCollection, defaultExtent, bbox, width
                             setSizeAndPosition(sizeAndPosition);
                             sizeAndPositionRef.current = sizeAndPosition;
 
-                            const extent = getExtentFromSizeAndPosition(map, sizeAndPosition);
-                            setExtent(extent);
-                            onExtentChange(extent);
+                            const bbox = getBboxFromSizeAndPosition(map, sizeAndPosition);
+                            onBboxChange(bbox);
                         }}
                         className={styles.bbox}
                     >
                     </Rnd>
                 )
             }
-
         </div>
-
     );
 }

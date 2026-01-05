@@ -1,5 +1,5 @@
 import { Map, View } from 'ol';
-import { createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
+import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
 import { createBaseMap } from './baseMap';
 import { getLayer, getProjection } from './helpers';
 import basemap from '@/config/basemap';
@@ -12,7 +12,8 @@ export async function createMap() {
     const map = new Map({
         layers: [
             await createBaseMap(),
-            createEmptyFeaturesLayer()
+            createEmptyFeaturesLayer(),
+            createBboxFeatureLayer()
         ]
     });
 

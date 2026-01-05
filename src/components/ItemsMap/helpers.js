@@ -1,12 +1,15 @@
+import { roundDecimals } from '@/utils/helper';
+import { transformExtent } from '@/utils/map/helpers';
+import bboxPolygon from '@turf/bbox-polygon';
+import booleanContains from '@turf/boolean-contains';
 import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
-import { transformExtent as _transformExtent } from 'ol/proj';
 
 
-export function getSizeAndPositionFromExtent(map, extent) {
-    const minXminY = [extent[0], extent[1]];
+export function getSizeAndPositionFromBbox(map, bbox) {
+    const minXminY = [bbox[0], bbox[1]];
     const bottomLeft = map.getPixelFromCoordinate(minXminY);
 
-    const maxXMaxY = [extent[2], extent[3]];
+    const maxXMaxY = [bbox[2], bbox[3]];
     const topRight = map.getPixelFromCoordinate(maxXMaxY);
 
     const width = roundDecimals(topRight[0] - bottomLeft[0], 0);
@@ -22,7 +25,7 @@ export function getSizeAndPositionFromExtent(map, extent) {
     };
 }
 
-export function getExtentFromSizeAndPosition(map, { x, y, width, height }) {
+export function getBboxFromSizeAndPosition(map, { x, y, width, height }) {
     const bottomLeft = [x, y + height];
     const topRight = [x + width, y];
 
@@ -32,66 +35,17 @@ export function getExtentFromSizeAndPosition(map, { x, y, width, height }) {
     return transformExtent([minXminY[0], minXminY[1], maxXMaxY[0], maxXMaxY[1]], 'EPSG:3857', 'EPSG:4326', 6);
 }
 
-export function transformExtent(extent, sourceProj, destProj, precision = -1) {
-    const transformed = _transformExtent(extent, sourceProj, destProj);
+export function bboxWithinView(map, bbox) {
+    const view = map.getView();
+    const extent = view.calculateExtent(map.getSize());
+    const viewPoly = bboxPolygon(extent);        
+    const bboxPoly = bboxPolygon(bbox);
 
-    if (precision === -1) {
-        return transformed;
-    }
-
-    return [
-        roundDecimals(transformed[0], precision),
-        roundDecimals(transformed[1], precision),
-        roundDecimals(transformed[2], precision),
-        roundDecimals(transformed[3], precision)
-    ];
+    return booleanContains(viewPoly, bboxPoly);
 }
 
 export function getMouseWheelZoomInteraction(map) {
     return map.getInteractions()
         .getArray()
         .find(interaction => interaction instanceof MouseWheelZoom);
-}
-
-export function roundDecimals(number, precision) {
-    const factor = Math.pow(10, precision);
-    return Math.round(number * factor) / factor;
-}
-
-export function debounce(func, delay) {
-    let timeoutId;
-
-    return function (...args) {
-        clearTimeout(timeoutId);
-
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
-
-export function throttle(func, delay) {
-    let inThrottle;
-    let lastArgs;
-    let lastThis;
-
-    return function (...args) {
-        lastArgs = args;
-        lastThis = this;
-
-        if (!inThrottle) {
-            func.apply(lastThis, lastArgs);
-            inThrottle = true;
-
-            setTimeout(() => {
-                inThrottle = false;
-
-                if (lastArgs) {
-                    func.apply(lastThis, lastArgs);
-                    lastArgs = null;
-                    lastThis = null;
-                }
-            }, delay);
-        }
-    };
 }

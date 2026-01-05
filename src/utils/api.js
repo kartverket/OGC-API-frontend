@@ -1,7 +1,5 @@
 import { API_BASE_URL, SKIP_SSG } from '@/config/constants';
-// import { METADATA_ID } from '@/config/constants.client';
 
-export const fetcher = (...args) => fetch(...args).then(response => response.json());
 
 export async function fetchHome() {
     const response = await fetch(`${API_BASE_URL}/?f=json`, {

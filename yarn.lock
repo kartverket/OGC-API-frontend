@@ -2403,7 +2403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@turf/bbox@npm:7.3.1":
+"@turf/bbox@npm:7.3.1, @turf/bbox@npm:^7.3.1":
   version: 7.3.1
   resolution: "@turf/bbox@npm:7.3.1"
   dependencies:
@@ -2412,6 +2412,21 @@ __metadata:
     "@types/geojson": "npm:^7946.0.10"
     tslib: "npm:^2.8.1"
   checksum: 10c0/c2b0cd6246bf323a8da4faf84d36d0210cc5185ab19cc1cfd41fe09a73a43c042cc29becf8bf387038525df419cbe4b16ec0e0243e65eb3c391a2fa8e233487c
+  languageName: node
+  linkType: hard
+
+"@turf/boolean-contains@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@turf/boolean-contains@npm:7.3.1"
+  dependencies:
+    "@turf/bbox": "npm:7.3.1"
+    "@turf/boolean-point-in-polygon": "npm:7.3.1"
+    "@turf/boolean-point-on-line": "npm:7.3.1"
+    "@turf/helpers": "npm:7.3.1"
+    "@turf/invariant": "npm:7.3.1"
+    "@types/geojson": "npm:^7946.0.10"
+    tslib: "npm:^2.8.1"
+  checksum: 10c0/83dee8520738e0633f117e76a9eaf8d21ac20d1d0b337667492436d2f9172e7168c5057ef5690e12fee7c6bb1a07001a01dfb6b28bcf4b101bfef58954314a70
   languageName: node
   linkType: hard
 
@@ -2503,6 +2518,21 @@ __metadata:
     geojson-polygon-self-intersections: "npm:^1.2.1"
     tslib: "npm:^2.8.1"
   checksum: 10c0/651767a39dc321e2bf97e73123f30d925b884f4706124bb57cfadc548dc05806ffbb7b197318887fd2995eddc385ed766bc8b9c44da07a4428a73112d3bbca36
+  languageName: node
+  linkType: hard
+
+"@turf/boolean-within@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@turf/boolean-within@npm:7.3.1"
+  dependencies:
+    "@turf/bbox": "npm:7.3.1"
+    "@turf/boolean-point-in-polygon": "npm:7.3.1"
+    "@turf/boolean-point-on-line": "npm:7.3.1"
+    "@turf/helpers": "npm:7.3.1"
+    "@turf/invariant": "npm:7.3.1"
+    "@types/geojson": "npm:^7946.0.10"
+    tslib: "npm:^2.8.1"
+  checksum: 10c0/46c93bbbbf00629dc5e49d48472ec08dc7858c0598ff6a43fb6c0fe9739a570b917ad0ce6ccf0b14c374441a46b3ac824ee02961ade070a05533d31fd453df99
   languageName: node
   linkType: hard
 
@@ -2638,6 +2668,19 @@ __metadata:
     "@types/geojson": "npm:^7946.0.10"
     tslib: "npm:^2.8.1"
   checksum: 10c0/c45852c46cc0729d23165e923506e1e106b76ad68c7b1b94f761fbb431d85b518cc5e9403c756d2cd14806a4497a9c90a83096483f436bae247355aafd1b9356
+  languageName: node
+  linkType: hard
+
+"@turf/union@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@turf/union@npm:7.3.1"
+  dependencies:
+    "@turf/helpers": "npm:7.3.1"
+    "@turf/meta": "npm:7.3.1"
+    "@types/geojson": "npm:^7946.0.10"
+    polyclip-ts: "npm:^0.16.8"
+    tslib: "npm:^2.8.1"
+  checksum: 10c0/e7b19147d10a301507c816cc8efdd30bd846c1c8b86d42e9ab6155abc124602f93ea36e3fb24b4c688ccbf7e588a15f7a9340d4a1ad62145be87e2c1c87c47e6
   languageName: node
   linkType: hard
 
@@ -2835,6 +2878,13 @@ __metadata:
   bin:
     baseline-browser-mapping: dist/cli.js
   checksum: 10c0/d27b83bee3c0f68a38eac5694e2f1e37135fbd0d402ebbafb9414423928f30206d3f4146fc53e1b49ec856142123cf537855beaa7eb9eb9e37bca1c52b38587a
+  languageName: node
+  linkType: hard
+
+"bignumber.js@npm:^9.1.0":
+  version: 9.3.1
+  resolution: "bignumber.js@npm:9.3.1"
+  checksum: 10c0/61342ba5fe1c10887f0ecf5be02ff6709271481aff48631f86b4d37d55a99b87ce441cfd54df3d16d10ee07ceab7e272fc0be430c657ffafbbbf7b7d631efb75
   languageName: node
   linkType: hard
 
@@ -4471,9 +4521,13 @@ __metadata:
     "@digdir/designsystemet-theme": "npm:^1.6.0"
     "@navikt/aksel-icons": "npm:^7.32.1"
     "@svgr/webpack": "npm:^8.1.0"
+    "@turf/bbox": "npm:^7.3.1"
     "@turf/bbox-polygon": "npm:^7.2.0"
+    "@turf/boolean-contains": "npm:^7.3.1"
     "@turf/boolean-valid": "npm:^7.3.1"
+    "@turf/boolean-within": "npm:^7.3.1"
     "@turf/helpers": "npm:^7.2.0"
+    "@turf/union": "npm:^7.3.1"
     fast-sort: "npm:^3.4.1"
     next: "npm:15.5.4"
     ol: "npm:^10.6.1"
@@ -4644,6 +4698,16 @@ __metadata:
   dependencies:
     robust-predicates: "npm:^3.0.2"
   checksum: 10c0/12badef8b15216acdae7d609a8aca1b916d6a9cac2f53ace2928e3b521bee57224489ea8fba41d001c0c05c50e64152c175e3d6583d8cad6fe7af929f082b49a
+  languageName: node
+  linkType: hard
+
+"polyclip-ts@npm:^0.16.8":
+  version: 0.16.8
+  resolution: "polyclip-ts@npm:0.16.8"
+  dependencies:
+    bignumber.js: "npm:^9.1.0"
+    splaytree-ts: "npm:^1.0.2"
+  checksum: 10c0/8de02c32e566421875c70890fe6d3d7bd55a92fc39867446e65999e042c4632fb27ab1a7e106e96edd12d63b32a643f3a690d9a980aeda655a41ddf4e8750f5d
   languageName: node
   linkType: hard
 
@@ -5511,6 +5575,13 @@ __metadata:
   version: 1.2.1
   resolution: "source-map-js@npm:1.2.1"
   checksum: 10c0/7bda1fc4c197e3c6ff17de1b8b2c20e60af81b63a52cb32ec5a5d67a20a7d42651e2cb34ebe93833c5a2a084377e17455854fee3e21e7925c64a51b6a52b0faf
+  languageName: node
+  linkType: hard
+
+"splaytree-ts@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "splaytree-ts@npm:1.0.2"
+  checksum: 10c0/4c34573891a749055ffe22381ea841ae03dbf7b55a3ea4a1d7df5013bfbe128e79f6c468579358ec573734cdbdf5f77a97ae7185f155248eb8be58151428c85e
   languageName: node
   linkType: hard
 
