@@ -53,6 +53,10 @@ metadata:
     url: https://www.kartverket.no
 
 resources:
+  get-distinct-values:
+     type: process
+     processor:
+            name: distinct_values.DistinctValuesProcessor
   fylker:
     type: collection
     title:
