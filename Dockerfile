@@ -1,11 +1,11 @@
-FROM node:24-alpine AS base
+FROM dhi.io/bun:1-alpine3.22-dev AS base
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json yarn.lock .yarnrc.yml ./
-RUN corepack enable && yarn install --immutable
+COPY package.json ./
+RUN bun install
 
 FROM base AS builder
 WORKDIR /app
@@ -13,21 +13,18 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_SSG=true
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/.yarnrc.yml ./
 COPY . .
 
-RUN corepack enable && yarn run build
+RUN bun run build
 
 
 FROM base AS runner
-RUN npm uninstall -g npm \
-    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 150 nodejs \
-    && adduser --system --uid 150 nextjs
+    && adduser --system --uid 150 -G nodejs nextjs
 
 COPY --from=builder /app/public ./public
 
@@ -41,4 +38,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]
