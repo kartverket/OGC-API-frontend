@@ -1,11 +1,10 @@
 'use client';
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 import { useSearchParams } from 'next/navigation';
+import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
 import { setBboxFeature } from '@/utils/map/featuresLayer';
-import { getLayer } from '@/utils/map/helpers';
 
 
 export default function MapProvider({ data, children }) {
@@ -45,20 +44,21 @@ export default function MapProvider({ data, children }) {
 
             const bboxStr = searchParams.get('bbox');
             const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
+            const bboxValid = isBboxValid(bbox);
             let extent = data.collection.extent;
 
-            if (isBboxValid(bbox) || bbox === null) {
-                setBboxFeature(map, bbox)
-
-                if (data.features.length === 0) {
-                    extent = {
-                        bbox,
-                        crs: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
-                    }
-                }
+            if (bboxValid || bbox === null) {
+                setBboxFeature(map, bbox);
             }
 
-            zoomToExtent(map, extent)
+            if (bboxValid && data.features.length === 0) {
+                extent = {
+                    bbox,
+                    crs: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
+                };
+            }
+
+            zoomToExtent(map, extent);
         },
         [map, data, searchParams]
     );
