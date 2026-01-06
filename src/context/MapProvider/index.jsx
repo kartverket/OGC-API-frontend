@@ -5,6 +5,7 @@ import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 import { useSearchParams } from 'next/navigation';
 import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
 import { setBboxFeature } from '@/utils/map/featuresLayer';
+import { getLayer } from '@/utils/map/helpers';
 
 
 export default function MapProvider({ data, children }) {
@@ -29,12 +30,9 @@ export default function MapProvider({ data, children }) {
 
     useEffect(
         () => {
-            if (map === null) {
-                return;
+            if (map !== null && data !== null) {
+                setFeatureCollection(map, data);
             }
-
-            setFeatureCollection(map, data);
-            zoomToExtent(map, data.collection.extent)
         },
         [map, data]
     );
@@ -47,10 +45,20 @@ export default function MapProvider({ data, children }) {
 
             const bboxStr = searchParams.get('bbox');
             const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
+            let extent = data.collection.extent;
 
             if (isBboxValid(bbox) || bbox === null) {
                 setBboxFeature(map, bbox)
+
+                if (data.features.length === 0) {
+                    extent = {
+                        bbox,
+                        crs: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
+                    }
+                }
             }
+
+            zoomToExtent(map, extent)
         },
         [map, data, searchParams]
     );

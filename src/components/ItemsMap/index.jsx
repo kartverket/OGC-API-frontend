@@ -2,14 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 import { Rnd } from 'react-rnd';
+import { unByKey } from 'ol/Observable';
 import { useMap } from '@/context/MapProvider';
+import { useItems } from '@/context/ItemsProvider';
 import { debounce } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
 import { getBboxFromSizeAndPosition, getMouseWheelZoomInteraction, getSizeAndPositionFromBbox } from './helpers';
 import { Map } from '@/components';
 import styles from './ItemsMap.module.scss';
-import { useItems } from '@/context/ItemsProvider';
-import { unByKey } from 'ol/Observable';
 
 
 export default function ItemsMap({ width, height, bbox, onBboxChange }) {
@@ -96,7 +96,6 @@ export default function ItemsMap({ width, height, bbox, onBboxChange }) {
     return (
         <div ref={containerElRef} className={styles.container}>
             <Map
-                // defaultExtent={defaultExtent}
                 width={width}
                 height={height}
             />

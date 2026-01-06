@@ -74,7 +74,7 @@ export function setBboxFeature(map, bbox) {
     }
 
     const transformed = transformExtent(bbox, 'EPSG:4326', 'EPSG:3857');
-    const feature = createBboxFeature(bbox);
+    const feature = createBboxFeature(transformed);
 
     vectorSource.clear();
     vectorSource.addFeature(feature);
@@ -91,19 +91,11 @@ export function toggleBboxFeature(map, show) {
 }
 
 function createBboxFeature(extent) {
-    const bboxPoly = bboxPolygon(extent);
-    debugger
-    const projd = bboxPoly.geometry.coordinates[0].map(coordinate => {
-        return fromLonLat(coordinate);
-    });
+    const polygon = fromExtent(extent);
+    const feature = new Feature(polygon);
 
-    const f = new Feature(new Polygon([projd]));
+    feature.setStyle(bboxStyle);
+    feature.set('_style', bboxStyle);    
 
-    // const polygon = fromExtent(extent);
-    // const feature = new Feature(polygon);
-
-    f.setStyle(bboxStyle);
-    f.set('_style', bboxStyle);
-
-    return f;
+    return feature;
 }
