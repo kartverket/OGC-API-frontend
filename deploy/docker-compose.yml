@@ -21,10 +21,11 @@ services:
       context: ./pygeoapi
     ports:
       - "5000:5000"
+      - "9090:9090"
     volumes:
       - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
     environment:
-      - PUBLIC_URL=http://localhost/api
+      - PUBLIC_URL=http://localhost:5000/
       - POSTGRES_HOST=postgis
       - POSTGRES_DB=pygeoapi_test
       - POSTGRES_USER=postgres
