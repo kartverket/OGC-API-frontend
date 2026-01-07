@@ -2,15 +2,15 @@
 
 import { use, useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { buildApiUrl, fetcher, getDefaultExtent } from './helpers';
+import { buildApiUrl, fetcher } from './helpers';
 import { Heading, Spinner } from '@digdir/designsystemet-react';
-import { Breadcrumbs, ItemsMap, ItemsTable } from '@/components';
-import FilterCard from '@/components/FilterCard';
-import styles from './page.module.scss';
+import ItemsProvider from '@/context/ItemsProvider';
 import MapProvider from '@/context/MapProvider';
 import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
 import { transformExtent } from '@/utils/map/helpers';
-import ItemsProvider from '@/context/ItemsProvider';
+import { Breadcrumbs, ItemsMap, ItemsTable } from '@/components';
+import FilterCard from '@/components/FilterCard';
+import styles from './page.module.scss';
 
 
 export default function Items({ params, searchParams }) {
@@ -52,8 +52,6 @@ export default function Items({ params, searchParams }) {
         return null;
     }
 
-    const defaultExtent = data.collection.extent; // getDefaultExtent(_searchParams, data);
-
     return (
         <>
             <Breadcrumbs
@@ -77,14 +75,11 @@ export default function Items({ params, searchParams }) {
                         )
                     }
 
-
                     <div className={styles.top}>
                         <MapProvider data={data}>
                             <ItemsProvider>
                                 <div className={styles.topLeft}>
                                     <ItemsMap
-                                        featureCollection={data}
-                                        defaultExtent={defaultExtent}
                                         bbox={bbox}
                                         onBboxChange={setBbox}
                                         width={567}

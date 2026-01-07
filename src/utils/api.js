@@ -1,3 +1,4 @@
+import { getReasonPhrase } from 'http-status-codes';
 import { API_BASE_URL, SKIP_SSG } from '@/config/constants';
 
 
@@ -52,7 +53,7 @@ export async function fetchCollection(name) {
 
 export async function fetchItems(collection, searchParams) {
     let url = `${API_BASE_URL}/collections/${collection}/items?f=json`;
-    
+
     const queryStr = Object.entries(searchParams)
         .map(entry => `&${entry[0]}=${entry[1]}`)
         .join('');
@@ -66,15 +67,35 @@ export async function fetchItems(collection, searchParams) {
     return await response.json();
 }
 
+class ApiError extends Error {
+    constructor(message, status) {
+        super(message);
+        this.status = status;
+    }
+}
+
 export async function fetchItem(collection, id) {
-    const url = `${API_BASE_URL}/collections/${collection}/items/${id}`;
+    const url = `${API_BASE_URL}/collections/${collection}/items/${id}?f=json`;
 
     const response = await fetch(url, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
-    return await response.json();
+    if (response.ok) {
+        return await response.json();
+    }
+
+    const reason = getReasonPhrase(response.status);
+    const message = `${response.status} (${reason})`;
+
+    throw new ApiError(message, {
+        code: response.status,
+        text: response.statusText,
+        reason
+    });
+
 }
+
 
 // export async function fetchThumbnail() {
 //     const baseUrl = 'https://kartkatalog.geonorge.no/api/getdata';

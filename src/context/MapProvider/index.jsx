@@ -7,6 +7,8 @@ import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
 import { setBboxFeature } from '@/utils/map/featuresLayer';
 
 
+const CRS84_URI = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
+
 export default function MapProvider({ data, children }) {
     const [map, setMap] = useState(null);
     const searchParams = useSearchParams();
@@ -25,6 +27,20 @@ export default function MapProvider({ data, children }) {
             })();
         },
         []
+    );
+
+    useEffect(
+        () => {
+            if (map === null) {
+                return;
+            }
+
+            return () => {
+                map.setTarget(null);
+                map.dispose();
+            };
+        },
+        [map]
     );
 
     useEffect(
@@ -54,27 +70,13 @@ export default function MapProvider({ data, children }) {
             if (bboxValid && data.features.length === 0) {
                 extent = {
                     bbox,
-                    crs: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
+                    crs: CRS84_URI
                 };
             }
 
             zoomToExtent(map, extent);
         },
         [map, data, searchParams]
-    );
-
-    useEffect(
-        () => {
-            if (map === null) {
-                return;
-            }
-
-            return () => {
-                map.setTarget(null);
-                map.dispose();
-            };
-        },
-        [map]
     );
 
     return (

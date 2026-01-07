@@ -1,13 +1,11 @@
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
 import GeoJSON from 'ol/format/GeoJSON';
-import { bboxStyle, lockStyle, polygonStyle } from './styles';
+import { bboxStyle, polygonStyle } from './styles';
 import { getLayer, getProjection } from './helpers';
-import Polygon, { fromExtent } from 'ol/geom/Polygon';
-import { Feature, Overlay } from 'ol';
-import { fromLonLat, transformExtent } from 'ol/proj';
-import { Point } from 'ol/geom';
-import bboxPolygon from '@turf/bbox-polygon';
+import { fromExtent } from 'ol/geom/Polygon';
+import { Feature } from 'ol';
+import { transformExtent } from 'ol/proj';
 
 
 export function createFeaturesLayer(featureCollection) {

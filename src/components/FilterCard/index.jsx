@@ -105,7 +105,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
             setSelectedFilters(clone);
         }
 
-        const parsed = parseBbox(_bbox);        
+        const parsed = parseBbox(_bbox);
         bboxRef.current = null;
 
         setBboxFeature(map, parsed);
@@ -117,7 +117,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
-    function removeAllFilters() {        
+    function removeAllFilters() {
         cancelEditBbox();
 
         const filters = [...selectedFilters];
@@ -185,12 +185,14 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
     }
 
     function cancelEditBbox() {
-        const parsed = parseBbox(bboxRef.current);
-        bboxRef.current = null;
+        if (bboxRef.current !== null) {
+            const parsed = parseBbox(bboxRef.current);
+            bboxRef.current = null;
+            onBboxChange(parsed);
+        }
 
         toggleBboxFeature(map, true);
         setBboxEdit(false);
-        onBboxChange(parsed);
     }
 
     function handleBboxChange(value, index) {

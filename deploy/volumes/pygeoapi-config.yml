@@ -66,7 +66,7 @@ resources:
         - Fylkesgrense
     extents:
       spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
+        bbox: [4.087524, 57.759005, 31.761592, 71.384878]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     links: 
       - type: text/html
@@ -126,7 +126,7 @@ resources:
         - Kommunegrenser
     extents:
       spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
+        bbox: [4.087524, 57.759005, 31.761592, 71.384878]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     links: 
       - type: text/html

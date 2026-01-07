@@ -12,7 +12,7 @@ import { Map } from '@/components';
 import styles from './ItemsMap.module.scss';
 
 
-export default function ItemsMap({ width, height, bbox, onBboxChange }) {
+export default function ItemsMap({ bbox, onBboxChange, width, height }) {
     const map = useMap();
     const { sizeAndPosition, setSizeAndPosition, sizeAndPositionRef, bboxEdit } = useItems();
     const boxElRef = useRef(null);

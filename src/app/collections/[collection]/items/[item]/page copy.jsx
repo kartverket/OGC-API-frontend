@@ -1,45 +1,30 @@
-// 'use client'
-
-import { fetchCollection, fetchHome, fetchItem } from '@/utils/api';
+import { fetchHome, fetchItem } from '@/utils/api';
 import React from 'react';
 import { Heading } from '@digdir/designsystemet-react';
 import { Breadcrumbs } from '@/components';
 import styles from './page.module.scss';
 import { MapImage } from '@/components';
-import { notFound } from 'next/navigation';
 
 async function fetchPageData(collection, itemId) {
     const promises = [
-        fetchItem(collection, itemId),
-        fetchCollection(collection),
         fetchHome(),
+        fetchItem(collection, itemId)
     ];
 
-    let result;
-
-    try {
-        result = await Promise.all(promises);
-        
-    } catch (error) {
-        throw error
-    }
+    const result = await Promise.all(promises);
 
     return {
-        ...result[0],
-        collection: {
-            title: result[1].title,
-        },
-        dataset: {
-            title: result[2].title
-        }
+        ...result[1],
+        datasetTitle: result[0].title
     }
 }
 
 export default async function Item({ params }) {
     const { collection, item } = await params;
     const data = await fetchPageData(collection, item);
+    const collectionTitle = data.links.find(link => link.rel === 'collection').title;
+    const feature = data;
 
-    console.log(data)
 
     function ItemDetails({ data }) {
         if (!data) return <p>Ingen data</p>;
@@ -74,9 +59,9 @@ export default async function Item({ params }) {
         <>
             <Breadcrumbs
                 breadcrumbs={{
-                    '/': data.dataset.title,
+                    '/': data.datasetTitle,
                     '/collections': 'Collections',
-                    [`/collections/${collection}`]: data.collection.title,
+                    [`/collections/${collection}`]: collectionTitle,
                     [`/collections/${collection}/items`]: 'Items',
                     [`/collections/${collection}/items/${data.id}`]: data.id,
                 }}
@@ -84,20 +69,19 @@ export default async function Item({ params }) {
 
             <div className={styles.page}>
                 <Heading level={1} data-size="sm" className={styles.heading}>{data.id}</Heading>
-
                 <div className={styles.content}>
                     <div className={styles.map}>
-                        {/* <MapImage
+                        <MapImage
                             featureCollection={data.geometry}
                             options={{
 
                                 padding: [30, 30, 30, 30],
                                 constrainResolution: false
                             }}
-                        /> */}
+                        />
                     </div>
                     <div className={styles.infocard}>
-                        {/* <ItemDetails data={data.properties} /> */}
+                        <ItemDetails data={data.properties} />
                     </div>
 
                 </div>

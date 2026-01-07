@@ -8,13 +8,14 @@ export default function ItemsProvider({ children }) {
     const sizeAndPositionRef = useRef(null);
 
     return (
-        <ItemsContext.Provider value={{
-            bboxEdit,
-            setBboxEdit,
-            sizeAndPosition, 
-            setSizeAndPosition, 
-            sizeAndPositionRef
-        }}
+        <ItemsContext.Provider
+            value={{
+                bboxEdit,
+                setBboxEdit,
+                sizeAndPosition,
+                setSizeAndPosition,
+                sizeAndPositionRef
+            }}
         >
             {children}
         </ItemsContext.Provider>
