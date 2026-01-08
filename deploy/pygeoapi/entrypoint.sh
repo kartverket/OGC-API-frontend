@@ -80,6 +80,15 @@ cd ${PYGEOAPI_HOME}
 
 echo "Default config in ${PYGEOAPI_CONFIG}"
 
+VALIDATION_OUTPUT=$(/venv/bin/pygeoapi config validate -c ${PYGEOAPI_CONFIG} 2>&1)
+echo "$VALIDATION_OUTPUT" | awk '/Failed validating/{f=1} f'
+if echo "$VALIDATION_OUTPUT" | grep -q "Failed validating"; then
+    echo "Config validation failed. Stopping container."
+    exit 1
+else
+    echo "Config validation passed."
+fi
+
 echo "Trying to generate openapi.yml"
 /venv/bin/pygeoapi openapi generate ${PYGEOAPI_CONFIG} --output-file ${PYGEOAPI_OPENAPI} ${OPENAPI_GENERATE_FAIL_ON_INVALID_COLLECTION}
 
