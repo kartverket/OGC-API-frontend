@@ -16,6 +16,14 @@ services:
     networks:
       - pygeoapi-network
 
+# Init container to create the config volume with the right permissions
+# Pygeoapi will create an openapi configfile in that volume on startup
+  pygeoapi-init:
+    image: busybox
+    volumes:
+      - ./volumes/apiconfig:/apiconfig
+    command: sh -c "chown -R 150:150 /apiconfig && chmod -R 775 /apiconfig"
+
   pygeoapi:
     build:
       context: ./pygeoapi
@@ -23,6 +31,7 @@ services:
       - "5000:5000"
       - "9090:9090"
     volumes:
+      - ./volumes/apiconfig:/apiconfig
       - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
     environment:
       - PUBLIC_URL=http://localhost:5000/
@@ -31,6 +40,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=qwer1234
       - CONTAINER_PORT=5000
+      - PYGEOAPI_OPENAPI=/apiconfig/openapi.yml
+      - PYGEOAPI_CONFIG=/apiconfig/local.config.yml
     healthcheck:
       test: [
         "CMD-SHELL",
@@ -42,6 +53,8 @@ services:
       start_period: 10s
     restart: always
     depends_on:
+      pygeoapi-init:
+        condition: service_completed_successfully
       postgis:
         condition: service_healthy
     networks:
