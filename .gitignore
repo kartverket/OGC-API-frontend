@@ -48,3 +48,6 @@ nginx.key
 
 # yarn
 .yarn/
+
+# docker
+deploy/volumes/apiconfig/
