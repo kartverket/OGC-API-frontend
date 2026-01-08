@@ -8,7 +8,7 @@ COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
 COPY entrypoint.sh /entrypoint.sh
 RUN  chmod +x /entrypoint.sh
 
-RUN pip install --break-system-packages prometheus_client prometheus_flask_exporter
+RUN /venv/bin/python3 -m pip install prometheus_client prometheus_flask_exporter
 
 EXPOSE 5000 9090
 # CMD ["python", "/app/entrypoint.py"]
