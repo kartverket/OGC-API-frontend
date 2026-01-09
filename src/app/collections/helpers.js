@@ -1,10 +1,9 @@
-import { fetchCollection, fetchHome, fetchItem, getStatus } from '@/utils/api';
+import { fetchCollections, fetchHome, getStatus } from '@/utils/api';
 
 
-export async function fetchData(collection, itemId) {
+export async function fetchData() {
     const promises = [
-        fetchItem(collection, itemId),
-        fetchCollection(collection),
+        fetchCollections(),
         fetchHome()
     ];
 
@@ -19,11 +18,8 @@ export async function fetchData(collection, itemId) {
     return {
         data: {
             ...result[0],
-            collection: {
-                title: result[1].title,
-            },
             dataset: {
-                title: result[2].title
+                title: result[1].title
             }
         },
         status: 200

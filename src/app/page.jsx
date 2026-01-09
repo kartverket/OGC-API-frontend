@@ -1,35 +1,35 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { fetchCollections, fetchHome, /*fetchThumbnail*/ } from '@/utils/api';
+import { fetchHome } from '@/utils/api';
+import { fetchData } from './helpers';
 import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
-import { ServiceInfoCard, DeveloperCard } from '@/components';
+import { ServiceInfoCard, DeveloperCard, ErrorPage } from '@/components';
 import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
 import styles from './page.module.scss';
 
-async function fetchPageData() {
-    const responses = await Promise.all([
-        fetchHome(), 
-        fetchCollections(), 
-        /*fetchThumbnail()*/
-    ]);
+
+export async function generateMetadata() {
+    const data = await fetchHome();
 
     return {
-        ...responses[0],
-        collectionCount: responses[1].collections.length,
-        // thumbnailUrl: responses[2]
+        title: `${data.title}  | OGC API | Kartverket`,
     };
 }
 
 export default async function Home() {
-    const page = await fetchPageData()
+    const { data, status } = await fetchData();
+
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
+    }
 
     return (
         <div className={styles.page}>
             <div className={styles.top}>
                 <div>
-                    <Heading level={1} data-size="sm">{page.title}</Heading>
-                    <Paragraph data-size="sm">{page.description}</Paragraph>
+                    <Heading level={1} data-size="sm">{data.title}</Heading>
+                    <Paragraph data-size="sm">{data.description}</Paragraph>
                 </div>
 
                 <Image
@@ -51,7 +51,7 @@ export default async function Home() {
                                         Bla gjennom datasettet
                                     </Paragraph>
                                     <Paragraph data-size="xs">
-                                        Bla gjennom de {page.collectionCount} collections som datasettet inneholder
+                                        Bla gjennom de {data.collectionCount} collections som datasettet inneholder
                                     </Paragraph>
                                 </div>
 

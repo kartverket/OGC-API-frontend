@@ -1,112 +1,41 @@
-'use client'
-
-import { use, useEffect, useState } from 'react';
-import useSWR from 'swr';
-import { buildApiUrl, fetcher } from './helpers';
+import { fetchData } from './helpers';
 import { Heading, Spinner } from '@digdir/designsystemet-react';
 import ItemsProvider from '@/context/ItemsProvider';
-import MapProvider from '@/context/MapProvider';
-import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
-import { transformExtent } from '@/utils/map/helpers';
-import { Breadcrumbs, ItemsMap, ItemsTable } from '@/components';
+import ItemsMapProvider from '@/context/ItemsMapProvider';
+import { Breadcrumbs, ErrorPage, ItemsMap, ItemsPage, ItemsTable } from '@/components';
 import FilterCard from '@/components/FilterCard';
 import styles from './page.module.scss';
+import { fetchCollection, fetchHome } from '@/utils/api/server';
 
+export async function generateMetadata({ params }) {
+    const { collection } = await params;
 
-export default function Items({ params, searchParams }) {
-    const { collection } = use(params);
-    const _searchParams = use(searchParams)
-    const apiUrl = buildApiUrl(collection, _searchParams);
-    const { data: _data = null, isLoading } = useSWR({ apiUrl, collection }, fetcher, { revalidateOnFocus: false });
-    const [data, setData] = useState(null);
-    const [bbox, setBbox] = useState(null);
+    const promises = [
+        fetchCollection(collection),
+        fetchHome()
+    ];
 
-    useEffect(
-        () => {
-            if (_data !== null) {
-                setData(_data);
-            }
-        },
-        [_data]
-    );
+    const result = await Promise.all(promises);
 
-    useEffect(
-        () => {
-            if (data === null) {
-                return;
-            }
+    return {
+        title: `Items | ${result[0].title} | Collections | ${result[1].title}  | OGC API | Kartverket`
+    };
+}
 
-            const bboxStr = _searchParams.bbox;
-            let bbox = bboxStr !== undefined ? parseBboxStr(bboxStr) : null;
+export default async function Items({ params, searchParams }) {
+    const { collection } = await params;
+    const _searchParams = await searchParams;
+    const { data, status } = await fetchData(collection);
 
-            if (!isBboxValid(bbox)) {
-                bbox = transformExtent(data.collection.extent.bbox, data.collection.extent.crs, 'EPSG:4326');
-            }
-
-            setBbox(bbox);
-        },
-        [data, _searchParams]
-    )
-
-    if (data === null || bbox === null) {
-        return null;
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
     }
 
     return (
-        <>
-            <Breadcrumbs
-                breadcrumbs={{
-                    '/': data.datasetTitle,
-                    '/collections': 'Collections',
-                    [`/collections/${collection}`]: data.collection.title,
-                    [`/collections/${collection}/items`]: 'Items',
-                }}
-            />
-
-            <div className={styles.page}>
-                <Heading level={1} data-size="sm" className={styles.heading}>{data.collection.title}</Heading>
-
-                <div className={styles.content}>
-                    {
-                        isLoading && (
-                            <div className={styles.overlay}>
-                                <Spinner aria-label="Laster data..." data-size="xl" />
-                            </div>
-                        )
-                    }
-
-                    <div className={styles.top}>
-                        <MapProvider data={data}>
-                            <ItemsProvider>
-                                <div className={styles.topLeft}>
-                                    <ItemsMap
-                                        bbox={bbox}
-                                        onBboxChange={setBbox}
-                                        width={567}
-                                        height={675}
-                                    />
-                                </div>
-
-                                <div className={styles.topRight}>
-                                    <FilterCard
-                                        data={data}
-                                        bbox={bbox}
-                                        onBboxChange={setBbox}
-                                    />
-                                </div>
-                            </ItemsProvider>
-                        </MapProvider>
-                    </div>
-
-                    <div className={styles.bottom}>
-                        {
-                            data.features.length > 0 && (
-                                <ItemsTable data={data} />
-                            )
-                        }
-                    </div>
-                </div>
-            </div>
-        </>
+        <ItemsPage
+            srvData={data}
+            collection={collection}
+            searchParams={_searchParams}
+        />
     );
 }

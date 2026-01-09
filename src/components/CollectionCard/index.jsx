@@ -79,7 +79,7 @@ export default function CollectionCard({ collection }) {
                             <Link asChild>
                                 <NextLink href={`/collections/${collection.id}`}>
                                     Vis detaljert info
-                                    <ArrowRightIcon title="a11y-title" fontSize="28px" />
+                                    <ArrowRightIcon fontSize="28px" />
                                 </NextLink>
                             </Link>
                         </div>

@@ -1,14 +1,11 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
-import { zoomToExtent } from '@/utils/map/map';
-import { useMap } from '@/context/MapProvider';
 import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
 import styles from './Map.module.scss';
 
-export default function Map({ width, height }) {
-    const map = useMap();
+export default function Map({ map, width, height }) {
     const mapElementRef = useRef(null);
 
     useEffect(
@@ -18,7 +15,6 @@ export default function Map({ width, height }) {
             }
 
             map.setTarget(mapElementRef.current);
-            // zoomToExtent(map, defaultExtent);
         },
         [map]
     );

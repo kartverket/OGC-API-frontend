@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import styles from '@/components/Error/Error.module.scss';
+import styles from '@/components/ErrorPage/ErrorPage.module.scss';
 
 
 export default function Error({ error, reset }) {

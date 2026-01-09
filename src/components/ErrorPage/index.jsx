@@ -1,12 +1,17 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
+import { notFound, useRouter } from 'next/navigation';
 import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import styles from '@/components/ErrorPage/ErrorPage.module.scss';
+import { getErrorData } from './helpers';
+import styles from './ErrorPage.module.scss';
 
 
-export default function NotFound() {
+export default function ErrorPage({ status }) {
+    if (status === 404) {
+        notFound()
+    }
+
     const router = useRouter();
 
     function goBack(event) {
@@ -14,13 +19,15 @@ export default function NotFound() {
         router.back();
     }
 
+    const { code, text, title } = getErrorData(status);
+
     return (
         <>
             <div className={styles.page}>
-                <Heading level={1} data-size="sm" className={styles.heading}>404: Siden ble ikke funnet</Heading>
+                <Heading level={1} data-size="sm" className={styles.heading}>{code}: {title}</Heading>
 
                 <Paragraph data-size="sm">
-                    Vi kunne dessverre ikke finne siden du så etter.<br/>
+                    {text}<br />
                     <Link href="#" onClick={goBack}>Gå tilbake</Link> eller til <Link asChild><NextLink href="/">forsiden</NextLink></Link> for å komme bort fra denne siden.
                 </Paragraph>
             </div>

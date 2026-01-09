@@ -1,19 +1,40 @@
 import { Map, View } from 'ol';
+import { featureCollection as createFeatureCollection } from '@turf/helpers';
+import proj4 from 'proj4';
 import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
 import { createBaseMap } from './baseMap';
-import { getLayer, getProjection } from './helpers';
+import { getLayer } from './helpers';
 import basemap from '@/config/basemap';
 import './setup';
-import proj4 from 'proj4';
+
 
 const MAP_PADDING = [50, 50, 50, 50];
 
-export async function createMap() {
+export async function createItemsMap() {
     const map = new Map({
         layers: [
             await createBaseMap(),
             createEmptyFeaturesLayer(),
             createBboxFeatureLayer()
+        ]
+    });
+
+    map.setView(new View({
+        padding: MAP_PADDING,
+        projection: basemap.projection,
+        maxZoom: basemap.maxZoom
+    }));
+
+    return map;
+}
+
+export async function createItemMap(feature) {
+    const featureCollection = createFeatureCollection([feature]);
+
+    const map = new Map({
+        layers: [
+            await createBaseMap(),
+            createFeaturesLayer(featureCollection)
         ]
     });
 
@@ -32,7 +53,7 @@ export function setFeatureCollection(map, featureCollection) {
     setFeatures(vectorLayer, featureCollection);
 }
 
-export function zoomToExtent(map, defaultExtent) {
+export function zoomToExtent(map, defaultExtent = {}) {
     const mapSize = map.getSize();
 
     if (mapSize === undefined) {

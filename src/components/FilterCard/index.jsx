@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { debounce, roundDecimals } from '@/utils/helper';
-import { useMap } from '@/context/MapProvider';
+import { useItemsMap } from '@/context/ItemsMapProvider';
 import { useItems } from '@/context/ItemsProvider';
 import { getSizeAndPositionFromBbox } from '../ItemsMap/helpers';
 import { extend } from 'ol/extent';
@@ -17,22 +17,22 @@ import { EqualsIcon, FilterIcon, PencilIcon, XMarkIcon } from '@navikt/aksel-ico
 import styles from './FilterCard.module.scss';
 
 
-export default function FilterCard({ data, bbox, onBboxChange }) {
+export default function FilterCard({ data }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const map = useItemsMap();
+    const { bbox, setBbox, setSizeAndPosition, sizeAndPositionRef, bboxEdit, setBboxEdit } = useItems();
     const [selectedField, setSelectedField] = useState('');
     const [filterValue, setFilterValue] = useState('');
-    const [_bbox, setBbox] = useState(bbox.map(coordinate => coordinate.toString()));
+    const [bboxFilter, setBboxFilter] = useState(bbox.map(coordinate => coordinate.toString()));
     const viewBoundsRef = useRef(null);
     const bboxRef = useRef(null);
-    const map = useMap();
-    const { setSizeAndPosition, sizeAndPositionRef, bboxEdit, setBboxEdit } = useItems();
 
     useEffect(
         () => {
             if (bbox !== null) {
-                setBbox(bbox.map(coordinate => coordinate.toString()));
+                setBboxFilter(bbox.map(coordinate => coordinate.toString()));
             }
         },
         [bbox]
@@ -91,7 +91,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
 
     function addBboxFilter() {
         const field = 'bbox';
-        const value = _bbox.join(',');
+        const value = bboxFilter.join(',');
         const clone = [...selectedFilters];
         const index = clone.findIndex(filter => filter.field === field);
 
@@ -105,7 +105,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
             setSelectedFilters(clone);
         }
 
-        const parsed = parseBbox(_bbox);
+        const parsed = parseBbox(bboxFilter);
         bboxRef.current = null;
 
         setBboxFeature(map, parsed);
@@ -152,11 +152,11 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
     }
 
     function startEditBbox() {
-        bboxRef.current = _bbox;
+        bboxRef.current = bboxFilter;
         toggleBboxFeature(map, false);
 
         const featuresExtent = getFeaturesExtent(map);
-        const bboxExtent = getBboxExtent(_bbox);
+        const bboxExtent = getBboxExtent(bboxFilter);
         const combinedExtent = extend(featuresExtent, bboxExtent)
         const combinedPoly = bboxPolygon(combinedExtent);
 
@@ -188,7 +188,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
         if (bboxRef.current !== null) {
             const parsed = parseBbox(bboxRef.current);
             bboxRef.current = null;
-            onBboxChange(parsed);
+            setBbox(parsed);
         }
 
         toggleBboxFeature(map, true);
@@ -196,7 +196,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
     }
 
     function handleBboxChange(value, index) {
-        const clone = [..._bbox];
+        const clone = [...bboxFilter];
         clone.splice(index, 1, roundDecimals(value, 6));
 
         if (!isBboxValid(clone)) {
@@ -212,8 +212,8 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
 
         const parsed = parseBbox(clone);
 
-        setBbox(clone)
-        onBboxChange(parsed);
+        setBboxFilter(clone)
+        setBbox(parsed);
     }
 
     function renderControl() {
@@ -320,7 +320,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="minLon"
-                                value={_bbox[0]}
+                                value={bboxFilter[0]}
                                 onChange={event => handleBboxChange(event.target.value, 0)}
                                 step="any"
                                 data-size="sm"
@@ -332,7 +332,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="minLat"
-                                value={_bbox[1]}
+                                value={bboxFilter[1]}
                                 onChange={event => handleBboxChange(event.target.value, 1)}
                                 step="any"
                                 data-size="sm"
@@ -344,7 +344,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="maxLon"
-                                value={_bbox[2]}
+                                value={bboxFilter[2]}
                                 onChange={event => handleBboxChange(event.target.value, 2)}
                                 step="any"
                                 data-size="sm"
@@ -356,7 +356,7 @@ export default function FilterCard({ data, bbox, onBboxChange }) {
                             <Input
                                 type="number"
                                 id="maxLat"
-                                value={_bbox[3]}
+                                value={bboxFilter[3]}
                                 onChange={event => handleBboxChange(event.target.value, 3)}
                                 step="any"
                                 data-size="sm"

@@ -1,4 +1,6 @@
 import { API_BASE_URL } from '@/config/constants.client';
+import { ApiError } from './api-error';
+import { getReasonPhrase } from 'http-status-codes';
 
 
 export async function fetchHome() {
@@ -19,6 +21,7 @@ export async function fetchCollection(collection) {
 
 export async function fetchQueryables(collection) {
     const url = `${API_BASE_URL}/collections/${collection}/queryables?f=json`;
+    const response = await fetch(url);
 
     return await _fetch(url);
 }

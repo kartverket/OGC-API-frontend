@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Rnd } from 'react-rnd';
 import { unByKey } from 'ol/Observable';
-import { useMap } from '@/context/MapProvider';
+import { useItemsMap } from '@/context/ItemsMapProvider';
 import { useItems } from '@/context/ItemsProvider';
 import { debounce } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
@@ -12,12 +12,13 @@ import { Map } from '@/components';
 import styles from './ItemsMap.module.scss';
 
 
-export default function ItemsMap({ bbox, onBboxChange, width, height }) {
-    const map = useMap();
-    const { sizeAndPosition, setSizeAndPosition, sizeAndPositionRef, bboxEdit } = useItems();
+export default function ItemsMap({ width, height }) {
+    const map = useItemsMap();
+    const { bbox, setBbox, sizeAndPosition, setSizeAndPosition, sizeAndPositionRef, bboxEdit } = useItems();
     const boxElRef = useRef(null);
     const containerElRef = useRef(null);
-
+    const eventListenerKeyRef = useRef(null);
+    
     useEffect(
         () => {
             if (map === null || bbox === null || !bboxEdit) {
@@ -32,8 +33,6 @@ export default function ItemsMap({ bbox, onBboxChange, width, height }) {
         },
         [map, bbox, bboxEdit]
     );
-
-    const eventListenerKeyRef = useRef(null);
 
     useEffect(
         () => {
@@ -96,6 +95,7 @@ export default function ItemsMap({ bbox, onBboxChange, width, height }) {
     return (
         <div ref={containerElRef} className={styles.container}>
             <Map
+                map={map}
                 width={width}
                 height={height}
             />
@@ -124,7 +124,7 @@ export default function ItemsMap({ bbox, onBboxChange, width, height }) {
                             sizeAndPositionRef.current = sizeAndPosition;
 
                             const bbox = getBboxFromSizeAndPosition(map, sizeAndPosition);
-                            onBboxChange(bbox);
+                            setBbox(bbox);
                         }}
                         onResizeStop={(event, direction, ref, delta, position) => {
                             const sizeAndPosition = {
@@ -137,7 +137,7 @@ export default function ItemsMap({ bbox, onBboxChange, width, height }) {
                             sizeAndPositionRef.current = sizeAndPosition;
 
                             const bbox = getBboxFromSizeAndPosition(map, sizeAndPosition);
-                            onBboxChange(bbox);
+                            setBbox(bbox);
                         }}
                         className={styles.bbox}
                     >

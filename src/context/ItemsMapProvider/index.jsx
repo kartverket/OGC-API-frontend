@@ -2,14 +2,14 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
+import { createItemsMap, createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
 import { setBboxFeature } from '@/utils/map/featuresLayer';
 
 
 const CRS84_URI = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
 
-export default function MapProvider({ data, children }) {
+export default function ItemsMapProvider({ data, children }) {
     const [map, setMap] = useState(null);
     const searchParams = useSearchParams();
     const initRef = useRef(true);
@@ -23,7 +23,7 @@ export default function MapProvider({ data, children }) {
             initRef.current = false;
 
             (async () => {
-                setMap(await createMap());
+                setMap(await createItemsMap());
             })();
         },
         []
@@ -80,11 +80,11 @@ export default function MapProvider({ data, children }) {
     );
 
     return (
-        <MapContext.Provider value={map}>
+        <ItemsMapContext.Provider value={map}>
             {children}
-        </MapContext.Provider>
+        </ItemsMapContext.Provider>
     );
 }
 
-export const MapContext = createContext({});
-export const useMap = () => useContext(MapContext);
+export const ItemsMapContext = createContext({});
+export const useItemsMap = () => useContext(ItemsMapContext);

@@ -1,24 +1,30 @@
-import { fetchCollections } from '@/utils/api';
+import { fetchHome } from '@/utils/api';
+import { fetchData } from './helpers';
 import { Heading } from '@digdir/designsystemet-react';
-import { Breadcrumbs, CollectionCard } from '@/components';
+import { Breadcrumbs, CollectionCard, ErrorPage } from '@/components';
 import styles from './page.module.scss';
 
 
-export const metadata = {
-    title: 'Collections | Administrative enheter | OGC API | Kartverket',
-    icons: {
-        icon: '/gfx/favicon.png'
-    }
-};
+export async function generateMetadata() {
+    const data = await fetchHome();
+
+    return {
+        title: `Collections | ${data.title}  | OGC API | Kartverket`,
+    };
+}
 
 export default async function Collections() {
-    const page = await fetchCollections()
+    const { data, status } = await fetchData();
+
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
+    }
 
     return (
         <>
             <Breadcrumbs
                 breadcrumbs={{
-                    '/': 'Administrative enheter',
+                    '/': data.dataset.title,
                     '/collections': 'Collections'
                 }}
             />
@@ -27,9 +33,7 @@ export default async function Collections() {
                 <Heading level={1} data-size="sm" className={styles.heading}>Innhold i datasettet</Heading>
 
                 <div className={styles.collections}>
-                    {
-                        page.collections.map(collection => <CollectionCard key={collection.id} collection={collection} />)
-                    }
+                    {data.collections.map(collection => <CollectionCard key={collection.id} collection={collection} />)}
                 </div>
             </div>
         </>

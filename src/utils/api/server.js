@@ -1,6 +1,5 @@
-import { getReasonPhrase } from 'http-status-codes';
 import { API_BASE_URL, SKIP_SSG } from '@/config/constants';
-import { ApiError } from './api-error';
+import { getResponse } from './utils';
 
 
 export async function fetchHome() {
@@ -78,15 +77,14 @@ export async function fetchItem(collection, id) {
     return await getResponse(response);
 }
 
-export function getStatus(error) {
-    if (error instanceof ApiError) {
-        return {
-            data: null,
-            status: error.status.code
-        }
-    } else {
-        throw error;
-    }
+export async function fetchQueryables(collection) {
+    const url = `${API_BASE_URL}/collections/${collection}/queryables?f=json`;
+
+    const response = await fetch(url, {
+        cache: SKIP_SSG ? 'no-store' : 'force-cache'
+    });
+
+    return await getResponse(response);
 }
 
 async function _fetchCollection(name) {
@@ -109,19 +107,3 @@ async function _fetchItemCount(collection) {
         count: data.numberMatched
     };
 }
-
-async function getResponse(response) {
-    if (response.ok) {
-        return await response.json();
-    }
-
-    const reason = getReasonPhrase(response.status);
-    const message = `${response.status} (${reason})`;
-
-    throw new ApiError(message, {
-        code: response.status,
-        text: response.statusText,
-        reason
-    });    
-}
-

@@ -1,74 +1,50 @@
-// 'use client'
+import { Fragment } from 'react';
+import NextLink from 'next/link';
+import { fetchData } from './helpers';
+import { Card, Heading, Link } from '@digdir/designsystemet-react';
+import { Breadcrumbs, ErrorPage, ItemMap } from '@/components';
+import { ArrowLeftIcon, ArrowRightIcon } from '@navikt/aksel-icons';
+import styles from './page.module.css';
 
-import { fetchCollection, fetchHome, fetchItem } from '@/utils/api';
-import React from 'react';
-import { Heading } from '@digdir/designsystemet-react';
-import { Breadcrumbs } from '@/components';
-import styles from './page.module.scss';
-import { MapImage } from '@/components';
-import { notFound } from 'next/navigation';
-
-async function fetchPageData(collection, itemId) {
-    const promises = [
-        fetchItem(collection, itemId),
-        fetchCollection(collection),
-        fetchHome(),
-    ];
-
-    let result;
-
-    try {
-        result = await Promise.all(promises);
-        
-    } catch (error) {
-        throw error
-    }
-
-    return {
-        ...result[0],
-        collection: {
-            title: result[1].title,
-        },
-        dataset: {
-            title: result[2].title
-        }
-    }
-}
 
 export default async function Item({ params }) {
     const { collection, item } = await params;
-    const data = await fetchPageData(collection, item);
+    const { data, status } = await fetchData(collection, item);
 
-    console.log(data)
-
-    function ItemDetails({ data }) {
-        if (!data) return <p>Ingen data</p>;
-
-        const obj =
-            data.type === "Feature" ? data.properties :
-                data.type === "FeatureCollection" ? data.features[0]?.properties :
-                    data;
-
-        if (!obj || typeof obj !== "object") return <p>Ingen data</p>;
-
-        return (
-            <div className={styles.details}>
-                <div className={styles.header}>
-                    <div>Property</div><div>Value</div>
-                </div>
-
-                {Object.entries(obj).map(([k, v]) => (
-                    <React.Fragment key={k}>
-                        <div className={styles.key}>{k}</div>
-                        <div className={styles.val}>
-                            {typeof v === "object" ? JSON.stringify(v) : String(v ?? "")}
-                        </div>
-                    </React.Fragment>
-                ))}
-            </div>
-        );
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
     }
 
+    function renderValue(value) {
+        return value !== null && value !== '' ?
+            value.toString() :
+            '-';
+    }
+
+    function renderDetails() {
+        return (
+            <Card className={styles.itemCard}>
+                <div className={styles.details}>
+                    <div className={styles.header}>
+                        <div>Egenskap</div>
+                        <div>Verdi</div>
+                    </div>
+
+                    <div className={styles.property}>id</div>
+                    <div className={styles.value}>{data.id}</div>
+
+                    {
+                        Object.entries(data.properties).map(([propName, value]) => (
+                            <Fragment key={propName}>
+                                <div className={styles.property}>{propName}</div>
+                                <div className={styles.value}>{renderValue(value)}</div>
+                            </Fragment>
+                        ))
+                    }
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <>
@@ -87,19 +63,28 @@ export default async function Item({ params }) {
 
                 <div className={styles.content}>
                     <div className={styles.map}>
-                        {/* <MapImage
-                            featureCollection={data.geometry}
-                            options={{
-
-                                padding: [30, 30, 30, 30],
-                                constrainResolution: false
-                            }}
-                        /> */}
-                    </div>
-                    <div className={styles.infocard}>
-                        {/* <ItemDetails data={data.properties} /> */}
+                        <ItemMap data={data} />
                     </div>
 
+                    <div className={styles.infoCard}>
+                        {renderDetails()}
+
+                        <div className={styles.nextPrevLinks}>
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection}/items/${data.prev}`}>
+                                    <ArrowLeftIcon fontSize="28px" />
+                                    Forrige item
+                                </NextLink>
+                            </Link>
+
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection}/items/${data.next}`}>
+                                    Neste item
+                                    <ArrowRightIcon fontSize="28px" />
+                                </NextLink>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
