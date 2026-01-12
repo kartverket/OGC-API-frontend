@@ -15,7 +15,7 @@ import {
   CheckmarkIcon,
 } from "@navikt/aksel-icons";
 import CopyIcon from "@/assets/gfx/icon-copy.svg";
-import styles from "./DeveloperCard.module.scss";
+import styles from "./DeveloperCard.module.css";
 import NextLink from "next/link";
 import { buildApiUrl } from "@/config/apiConfig";
 

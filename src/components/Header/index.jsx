@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { Link } from '@digdir/designsystemet-react';
-import styles from './Header.module.scss';
+import styles from './Header.module.css';
 
 
 export default function Header() {

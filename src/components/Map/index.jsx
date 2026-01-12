@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
-import styles from './Map.module.scss';
+import styles from './Map.module.css';
 
 export default function Map({ featureCollection, defaultExtent, width, height }) {
     const [map, setMap] = useState(null);

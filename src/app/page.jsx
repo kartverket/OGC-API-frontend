@@ -10,7 +10,7 @@ import {
 import { ChevronRightIcon, PackageFillIcon } from "@navikt/aksel-icons";
 import { ServiceInfoCard, DeveloperCard } from "@/components";
 import ThumbnailImg from "@/assets/gfx/dataset-thumbnail.png";
-import styles from "./page.module.scss";
+import styles from "./page.module.css";
 
 async function fetchPageData() {
   const responses = await Promise.all([
@@ -63,7 +63,6 @@ export default async function Home() {
                     datasettet inneholder
                   </Paragraph>
                 </div>
-
                 <ChevronRightIcon title="a11y-title" fontSize="36px" />
               </CardBlock>
             </NextLink>

@@ -1,7 +1,7 @@
 import { fetchCollections } from '@/utils/api';
 import { Heading } from '@digdir/designsystemet-react';
 import { Breadcrumbs, CollectionCard } from '@/components';
-import styles from './page.module.scss';
+import styles from './page.module.css';
 
 
 export const metadata = {

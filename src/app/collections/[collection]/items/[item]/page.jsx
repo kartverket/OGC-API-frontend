@@ -2,7 +2,7 @@ import { fetchHome, fetchItem } from '@/utils/api';
 import React from 'react';
 import { Heading } from '@digdir/designsystemet-react';
 import { Breadcrumbs } from '@/components';
-import styles from './page.module.scss';
+import styles from './page.module.css';
 import { MapImage } from '@/components';
 
 async function fetchPageData(collection, itemId) {

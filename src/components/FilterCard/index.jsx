@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Card, Heading, Label, Select, Field, Button, Input, Chip } from '@digdir/designsystemet-react';
 import { EqualsIcon, FilterIcon } from '@navikt/aksel-icons';
 import { getControlTypeFromField, getFields } from './helpers';
-import styles from './FilterCard.module.scss';
+import styles from './FilterCard.module.css';
 
 export default function FilterCard({ data }) {
     const router = useRouter();
