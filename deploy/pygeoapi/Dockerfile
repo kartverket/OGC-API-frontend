@@ -1,4 +1,4 @@
-FROM geopython/pygeoapi:0.22.0
+FROM geopython/pygeoapi:latest
 
 
 # Add your custom process script
