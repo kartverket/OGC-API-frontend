@@ -15,11 +15,8 @@ EXPOSE 5000 9090
 
 ENV PYTHONPATH="/pygeoapi"
 ENV WSGI_APP=pygeoapi.entrypoint_dnd:app
+ENV PROMETHEUS_MULTIPROC_DIR=/tmp
 
-# Using gthread worker class to support prometheus metrics to work with multiple workers on a different port than the application port
-ENV WSGI_WORKER_CLASS=gthread
-ENV WSGI_WORKERS=2
-ENV WSGI_THREADS=4
 
 USER 150:150
 

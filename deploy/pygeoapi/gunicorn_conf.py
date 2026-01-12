@@ -1,9 +1,14 @@
 # /pygeoapi/gunicorn_conf.py
 
-from prometheus_client import start_http_server
+# Docs: https://github.com/rycus86/prometheus_flask_exporter under the WSGI-section
+
+from prometheus_flask_exporter.multiprocess import GunicornPrometheusMetrics
 
 
-# Start Prometheus metrics server on port 9090 when the gunicorn application is ready (but before it is forked)
+# Start Prometheus metrics server on port 9090
 def when_ready(server):
-    start_http_server(9090, addr="0.0.0.0")
-    print("Prometheus metrics server started on :9090")
+    GunicornPrometheusMetrics.start_http_server_when_ready(9090)
+
+
+def child_exit(server, worker):
+    GunicornPrometheusMetrics.mark_process_dead_on_child_exit(worker.pid)

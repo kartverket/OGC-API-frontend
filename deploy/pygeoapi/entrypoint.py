@@ -1,8 +1,8 @@
 # /pygeoapi/entrypoint.py
-from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_flask_exporter.multiprocess import GunicornPrometheusMetrics
 
-# Import the fully configured APP, this is what
+# Import the fully configured APP
 from pygeoapi.flask_app import APP as app
 
-# Just attach metrics to their existing app
-metrics = PrometheusMetrics(app)
+# Attach metrics the existing app
+metrics = GunicornPrometheusMetrics(app)

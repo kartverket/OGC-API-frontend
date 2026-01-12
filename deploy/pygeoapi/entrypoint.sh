@@ -103,11 +103,9 @@ start_gunicorn() {
     echo "Starting gunicorn name=${CONTAINER_NAME} on ${CONTAINER_HOST}:${CONTAINER_PORT} with ${WSGI_WORKERS} workers and SCRIPT_NAME=${SCRIPT_NAME}"
     exec /venv/bin/gunicorn --workers ${WSGI_WORKERS} \
         --worker-class=${WSGI_WORKER_CLASS} \
-        --threads ${WSGI_THREADS:-4} \
         --timeout ${WSGI_WORKER_TIMEOUT} \
         --name=${CONTAINER_NAME} \
         --bind ${CONTAINER_HOST}:${CONTAINER_PORT} \
-        --preload \
         --config /pygeoapi/gunicorn_conf_dnd.py \
         ${@} \
         ${WSGI_APP}
