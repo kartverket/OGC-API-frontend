@@ -17,28 +17,23 @@ COPY . .
 
 RUN bun run build
 
-
-FROM base AS runner
+# For production, remove -dev from image (non-root and no shell)
+FROM dhi.io/bun:1-alpine3.22-dev AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-
-RUN addgroup --system --gid 150 nodejs \
-    && adduser --system --uid 150 -G nodejs nextjs
-
-COPY --from=builder /app/public ./public
-
-RUN mkdir .next && chown nextjs:nodejs .next
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-EXPOSE 3000
-
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+USER 150:150
+
+COPY --from=builder --chown=150:150 /app/public ./public
+COPY --from=builder --chown=150:150 /app/.next/standalone ./
+COPY --from=builder --chown=150:150 /app/.next/static ./.next/static
+
+EXPOSE 3000
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://0.0.0.0:3000/ || exit 1
+     CMD ["bun","-e","fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 
 CMD ["bun", "server.js"]

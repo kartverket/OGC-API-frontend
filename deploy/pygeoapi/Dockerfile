@@ -22,3 +22,6 @@ ENV WSGI_WORKERS=2
 ENV WSGI_THREADS=4
 
 USER 150:150
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD [ "python3", "-c", "import urllib.request, sys; sys.exit(0) if urllib.request.urlopen('http://localhost:5000/').getcode() == 200 else sys.exit(1)" ]
