@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: var(--ds-size-2);
 
-    >* {
+    & > * {
         margin: 0;
     }
 }
@@ -14,7 +14,7 @@
     gap: 3px;
     margin-bottom: var(--ds-size-3);
 
-    h2 {
+    & h2 {
         font-size: var(--ds-font-size-3);
     }
 }
@@ -27,12 +27,12 @@
     column-gap: var(--ds-size-2);
     row-gap: var(--ds-size-4);
 
-    &>* {
+    & > * {
         display: flex;
         align-items: center;
     }
 
-    .url {
+    & .url {
         flex: 1;
         border-radius: var(--ds-border-radius-md);
         background: var(--ds-color-surface-tinted);
@@ -40,7 +40,7 @@
         font-family: RobotoMono;
     }
 
-    button {
+    & button {
         border: 0 none;
         background: none;
         padding: 0;

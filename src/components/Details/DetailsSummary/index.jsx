@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import styles from '../Details.module.scss';
+import styles from '../Details.module.css';
 
 export default function DetailsSummary({ children }) {
     const id = useId();

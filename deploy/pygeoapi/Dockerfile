@@ -13,7 +13,7 @@ RUN /venv/bin/python3 -m pip install prometheus_client prometheus_flask_exporter
 
 EXPOSE 5000 9090
 
-ENV PYTHONPATH="/pygeoapi:${PYTHONPATH}"
+ENV PYTHONPATH="/pygeoapi"
 ENV WSGI_APP=pygeoapi.entrypoint_dnd:app
 
 # Using gthread worker class to support prometheus metrics to work with multiple workers on a different port than the application port

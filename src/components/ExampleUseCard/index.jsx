@@ -3,7 +3,7 @@
 import { Card, Heading } from '@digdir/designsystemet-react';
 import { TerminalIcon } from '@navikt/aksel-icons';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
-import styles from './ExampleUseCard.module.scss';
+import styles from './ExampleUseCard.module.css';
 import { Fragment } from 'react';
 
 export default function ExampleUseCard({ collection }) {

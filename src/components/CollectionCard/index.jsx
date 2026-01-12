@@ -3,7 +3,7 @@ import NextLink from "next/link";
 import { getCrsCode } from "@/utils/helper";
 import { Card, Heading, Link } from "@digdir/designsystemet-react";
 import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
-import styles from "./CollectionCard.module.scss";
+import styles from "./CollectionCard.module.css";
 import { fetchItems } from "@/utils/api";
 
 export default async function CollectionCard({ collection }) {

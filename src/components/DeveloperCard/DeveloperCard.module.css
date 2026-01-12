@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: var(--ds-size-2);
 
-    >* {
+    & > * {
         margin: 0;
     }
 }
@@ -14,7 +14,7 @@
     gap: 3px;
     margin-bottom: var(--ds-size-3);
 
-    h2 {
+    & h2 {
         font-size: var(--ds-font-size-3);
     }
 }
@@ -24,7 +24,7 @@
     align-items: center;
     gap: var(--ds-size-2);
 
-    .url {
+    & .url {
         flex: 1;
         border-radius: var(--ds-border-radius-md);
         background: var(--ds-color-surface-tinted);
@@ -33,7 +33,7 @@
         font-size: var(--ds-font-size-2);
     }
 
-    button {
+    & button {
         border: 0 none;
         background: none;
         padding: 0;
@@ -68,7 +68,7 @@
     gap: var(--ds-size-2);
     --dsc-link-text-decoration-thickness--hover: .125em;
 
-    >a {
+    & > a {
         display: flex;
         justify-content: space-between;
         text-decoration: none;
@@ -94,13 +94,13 @@
     display: flex;
     flex-direction: column;
 
-    .text {
+    & .text {
         font-size: var(--ds-font-size-2);
         font-weight: var(--ds-font-weight-medium);
         margin: var(--ds-size-2) 0;
     }
 
-    .buttonRow {
+    & .buttonRow {
         display: flex;
         gap: var(--ds-size-4)
     }

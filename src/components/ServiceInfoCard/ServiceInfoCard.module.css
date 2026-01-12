@@ -1,47 +1,47 @@
 .serviceInfoCard {
     border: 0 none;
 
-    .cardBlock {
-        >* {
+    & .cardBlock {
+        & > * {
             margin: 0;
         }
 
-        .heading {
+        & .heading {
             display: flex;
             align-items: center;
             gap: 3px;
             margin-bottom: var(--ds-size-3);
 
-            h2 {
+            & h2 {
                 font-size: var(--ds-font-size-3);
             }
         }
 
-        .info {
+        & .info {
             display: flex;
             flex-direction: column;
             font-size: var(--ds-font-size-2);
 
-            >div {
+            & > div {
                 display: flex;
                 align-items: center;
                 padding: 8px 0;
             }
 
-            .label {
+            & .label {
                 width: 160px;
                 font-weight: 500;
             }
 
-            .value {
+            & .value {
                 font-weight: 400;
             }
 
-            .keywords {
+            & .keywords {
                 display: flex;
                 gap: 8px;
 
-                span {
+                & span {
                     background: var(--ds-color-surface-tinted);
                     border-radius: var(--ds-border-radius-sm);
                     padding: 4px 8px;
@@ -49,23 +49,22 @@
             }
         }
 
-        .contactInfo {
+        & .contactInfo {
             display: flex;
             flex-direction: column;
             font-size: var(--ds-font-size-2);
 
-            .details {
+            & .details {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
                 margin: 0;
-                // height: 0;
 
-                .label {
+                & .label {
                     font-weight: 500;
                 }
 
-                .value {
+                & .value {
                     font-weight: 400;
                 }
             }

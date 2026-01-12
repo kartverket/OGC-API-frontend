@@ -1,12 +1,10 @@
-@use '@/styles/variables' as *;
-
 .page {
     display: flex;
     flex-direction: column;
     gap: 21px;
-    max-width: $page-width;
+    max-width: var(--page-width);
     width: 100%;
-    padding: $main-padding;
+    padding: var(--main-padding);
     box-sizing: border-box;
 }
 
@@ -16,13 +14,13 @@
     gap: 21px;
     width: 60%;
 
-    >div {
+    & > div {
         display: flex;
         flex-direction: column;
         gap: 16px;
     }
 
-    img {
+    & img {
         width: auto;
     }
 }
@@ -46,20 +44,20 @@
 }
 
 .collectionsCard {
-    .cardBlock {
+    & .cardBlock {
         display: flex;
         align-items: center;
         gap: 8px;
 
-        >* {
+        & > * {
             margin: 0;
         }
 
-        .content {
+        & .content {
             flex: 1;
         }
 
-        .title {
+        & .title {
             font-weight: 500;
         }
     }
@@ -69,7 +67,7 @@
     .top {
         width: 100%;
 
-        img {
+        & img {
             display: none;
         }
     }

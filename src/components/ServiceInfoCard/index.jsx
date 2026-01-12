@@ -1,7 +1,7 @@
 import { Card, CardBlock, Heading, Link } from "@digdir/designsystemet-react";
 import { Details, DetailsContent, DetailsSummary } from "..";
 import { InformationSquareIcon } from "@navikt/aksel-icons";
-import styles from "./ServiceInfoCard.module.scss";
+import styles from "./ServiceInfoCard.module.css";
 
 export default function ServiceInfoCard() {
   return (

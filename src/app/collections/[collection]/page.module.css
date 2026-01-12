@@ -1,12 +1,10 @@
-@use '@/styles/variables' as *;
-
 .page {
     display: flex;
     flex-direction: column;
     gap: var(--ds-size-18);
-    max-width: $page-width;
+    max-width: var(--page-width);
     width: 100%;
-    padding: $main-padding;
+    padding: var(--main-padding);
     box-sizing: border-box;
 }
 
@@ -20,13 +18,13 @@
     align-items: flex-start;
     gap: var(--ds-size-18);
 
-    .left {
+    & .left {
         display: flex;
         flex-direction: column;
         gap: var(--ds-size-9);
     }
 
-    .map {
+    & .map {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -37,13 +35,13 @@
         box-sizing: border-box;
         width: 292px;
 
-        .wrapper {
+        & .wrapper {
             width: 195px;
             height: 260px;
             padding: 10px;
         }
 
-        h4 {
+        & h4 {
             font-size: var(--ds-font-size-2);
             color: var(--ds-color-neutral-text-subtle);
         }
@@ -83,11 +81,11 @@
     align-items: center;
     gap: 8px;
 
-    span {
+    & span {
         flex: 1;
     }
 
-    &>* {
+    & > * {
         margin: 0;
     }
 }

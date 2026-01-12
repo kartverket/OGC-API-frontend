@@ -6,7 +6,7 @@ import { buildApiUrl, fetcher } from "./helpers";
 import { Heading, Spinner } from "@digdir/designsystemet-react";
 import { Breadcrumbs, ItemsTable, Map } from "@/components";
 import FilterCard from "@/components/FilterCard";
-import styles from "./page.module.scss";
+import styles from "./page.module.css";
 
 export default function Items({ params, searchParams }) {
   const { collection } = use(params);
