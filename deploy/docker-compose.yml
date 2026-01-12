@@ -41,7 +41,7 @@ services:
       - POSTGRES_PASSWORD=qwer1234
       - CONTAINER_PORT=5000
       - PYGEOAPI_OPENAPI=/apiconfig/openapi.yml
-      - PYGEOAPI_CONFIG=/apiconfig/local.config.yml
+      - PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
     healthcheck:
       test: [
         "CMD-SHELL",
