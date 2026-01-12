@@ -11,7 +11,7 @@ RUN  chmod +x /entrypoint.sh
 
 RUN /venv/bin/python3 -m pip install prometheus_client prometheus_flask_exporter
 
-EXPOSE 5000 9090
+EXPOSE 5000 8181
 
 ENV PYTHONPATH="/pygeoapi"
 ENV WSGI_APP=pygeoapi.entrypoint_dnd:app

@@ -5,9 +5,9 @@
 from prometheus_flask_exporter.multiprocess import GunicornPrometheusMetrics
 
 
-# Start Prometheus metrics server on port 9090
+# Start Prometheus metrics server on separate port
 def when_ready(server):
-    GunicornPrometheusMetrics.start_http_server_when_ready(9090)
+    GunicornPrometheusMetrics.start_http_server_when_ready(8181)
 
 
 def child_exit(server, worker):
