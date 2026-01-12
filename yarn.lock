@@ -4321,7 +4321,7 @@ __metadata:
     react-dom: "npm:19.1.0"
     react-rnd: "npm:^10.5.2"
     sass-embedded: "npm:^1.93.2"
-    swr: "npm:^2.3.6"
+    swr: "npm:^2.3.8"
   languageName: unknown
   linkType: soft
 
@@ -5466,15 +5466,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.3.6":
-  version: 2.3.6
-  resolution: "swr@npm:2.3.6"
+"swr@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "swr@npm:2.3.8"
   dependencies:
     dequal: "npm:^2.0.3"
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/9534f350982e36a3ae0a13da8c0f7da7011fc979e77f306e60c4e5db0f9b84f17172c44f973441ba56bb684b69b0d9838ab40011a6b6b3e32d0cd7f3d5405f99
+  checksum: 10c0/ee879100fc14a9d3a9f453842cb838027f3eba728e1b33be4998eea2f612d4822a5f70815c64cceb554ba36d9120fe3d7fed63597642823f204752750208fd8e
   languageName: node
   linkType: hard
 
@@ -5645,7 +5645,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.4.0":
+"use-sync-external-store@npm:^1.6.0":
   version: 1.6.0
   resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
