@@ -1,9 +1,9 @@
 'use client';
 
-import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
-import { transformExtent } from '@/utils/map/helpers';
-import { useSearchParams } from 'next/navigation';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { isBboxValid, parseBboxStr, transformExtent } from '@/utils/map/helpers';
+
 
 export default function ItemsProvider({ data, children }) {
     const [bbox, setBbox] = useState(null);

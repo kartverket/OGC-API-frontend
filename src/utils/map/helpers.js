@@ -45,6 +45,50 @@ export function transformExtent(extent, sourceProj, destProj, precision = -1) {
     ];
 }
 
+export function parseBbox(bbox) {
+    return bbox.map(coordinate => Number.parseFloat(coordinate));
+}
+
+export function parseBboxStr(bboxStr) {
+    if (bboxStr === null) {
+        return null;
+    }
+
+    return parseBbox(bboxStr.split(','));
+}
+
+export function isBboxValid(bbox) {
+    if (!Array.isArray(bbox) || bbox.length !== 4) {
+        return false;
+    }
+
+    const parsed = parseBbox(bbox);
+    const [minLon, minLat, maxLon, maxLat] = parsed;
+
+    if (![minLon, minLat, maxLon, maxLat].every(coordinate => Number.isFinite(coordinate))) {
+        return false;
+    }
+
+    if (
+        minLon < -180 || minLon > 180 ||
+        maxLon < -180 || maxLon > 180 ||
+        minLat < -90 || minLat > 90 ||
+        maxLat < -90 || maxLat > 90
+    ) {
+        return false;
+    }
+
+    if (minLon > maxLon || minLat > maxLat) {
+        return false;
+    }
+
+    if (minLon === maxLon || minLat === maxLat) {
+        return false;
+    }
+
+    return true;
+}
+
 function getCrsName(geoJson) {
     return geoJson?.crs?.properties?.name || null;
 }

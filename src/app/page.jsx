@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { fetchHome } from '@/utils/api';
-import { fetchData } from './helpers';
+import { createMetadata, fetchData } from './helpers';
 import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import { ServiceInfoCard, DeveloperCard, ErrorPage } from '@/components';
@@ -9,13 +8,7 @@ import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
 import styles from './page.module.scss';
 
 
-export async function generateMetadata() {
-    const data = await fetchHome();
-
-    return {
-        title: `${data.title}  | OGC API | Kartverket`,
-    };
-}
+export const generateMetadata = async () => createMetadata();
 
 export default async function Home() {
     const { data, status } = await fetchData();

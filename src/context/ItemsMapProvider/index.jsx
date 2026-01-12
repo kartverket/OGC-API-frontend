@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createItemsMap, createMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
-import { isBboxValid, parseBboxStr } from '@/components/FilterCard/helpers';
+import { createItemsMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 import { setBboxFeature } from '@/utils/map/featuresLayer';
+import { isBboxValid, parseBboxStr } from '@/utils/map/helpers';
 
 
 const CRS84_URI = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';

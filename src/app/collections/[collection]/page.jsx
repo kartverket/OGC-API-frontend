@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { fetchCollection } from '@/utils/api';
+import { createMetadata, fetchData } from './helpers';
 import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { Breadcrumbs, DatasetInfoCard, ExampleUseCard } from '@/components';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
@@ -8,9 +8,15 @@ import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from './page.module.scss';
 
 
+export const generateMetadata = async ({ params }) => createMetadata(params);
+
 export default async function Collection({ params }) {
     const { collection } = await params;
-    const data = await fetchCollection(collection);
+    const { data, status } = await fetchData(collection);
+
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
+    }
 
     return (
         <>
@@ -50,18 +56,14 @@ export default async function Collection({ params }) {
                             </Card>
 
                             {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
+
+                            <ExampleUseCard collection={collection} />
                         </div>
                     </div>
                     <div className={styles.right}>
                         <DatasetInfoCard collection={data} />
                     </div>
                 </div>  
-
-                <div className={styles.bottom}>
-                    <div className={styles.bottomLeft}>
-                        <ExampleUseCard collection={collection} />
-                    </div>
-                </div>
             </div>
         </>
     );

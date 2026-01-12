@@ -7,6 +7,7 @@ export { default as DetailsSummary } from './Details/DetailsSummary';
 export { default as DeveloperCard } from './DeveloperCard';
 export { default as ErrorPage } from './ErrorPage';
 export { default as ExampleUseCard } from './ExampleUseCard';
+export { default as FilterCard } from './FilterCard';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';
 export { default as ItemMap } from './ItemMap';

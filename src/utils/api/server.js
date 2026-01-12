@@ -51,27 +51,11 @@ export async function fetchCollection(name) {
     }
 }
 
-export async function fetchItems(collection, searchParams) {
-    let url = `${API_BASE_URL}/collections/${collection}/items?f=json`;
-
-    const queryStr = Object.entries(searchParams)
-        .map(entry => `&${entry[0]}=${entry[1]}`)
-        .join('');
-
-    url += queryStr;
-
-    const response = await fetch(url, {
-        cache: 'no-store'
-    });
-
-    return await getResponse(response);
-}
-
 export async function fetchItem(collection, id) {
     const url = `${API_BASE_URL}/collections/${collection}/items/${id}?f=json`;
 
     const response = await fetch(url, {
-        cache: SKIP_SSG ? 'no-store' : 'force-cache'
+        cache: 'no-store'
     });
 
     return await getResponse(response);

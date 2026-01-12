@@ -1,6 +1,4 @@
 import { API_BASE_URL } from '@/config/constants.client';
-import { fetchItems } from '@/utils/api/client';
-import { getStatus } from '@/utils/api/utils';
 
 
 export function buildApiUrl(collection, searchParams) {
@@ -12,15 +10,4 @@ export function buildApiUrl(collection, searchParams) {
     return queryStr !== '' ?
         `${baseUrl}&${queryStr}` :
         baseUrl;
-}
-
-export async function fetcher({ apiUrl }) {
-    try {
-        return {
-            data: await fetchItems(apiUrl),
-            status: 200
-        };
-    } catch (error) {
-        return getStatus(error);
-    }
 }

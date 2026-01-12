@@ -1,4 +1,4 @@
-import { fetchCollections, fetchHome, getStatus } from '@/utils/api';
+import { fetchCollections, fetchHome } from '@/utils/api/server';
 
 
 export async function fetchData() {
@@ -12,7 +12,7 @@ export async function fetchData() {
     try {
         result = await Promise.all(promises);
     } catch (error) {
-        return getStatus(error);
+        return createErrorResponse(error);
     }
 
     return {
@@ -23,5 +23,17 @@ export async function fetchData() {
             }
         },
         status: 200
+    };
+}
+
+export async function createMetadata() {
+    const { data, status } = await fetchHome();
+   
+    if (status !== 200) {
+        return null;
+    }
+
+    return {
+        title: `Collections | ${data.title}  | OGC API | Kartverket`,
     };
 }

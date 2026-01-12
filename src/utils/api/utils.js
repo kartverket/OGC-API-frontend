@@ -17,7 +17,7 @@ export async function getResponse(response) {
     });    
 }
 
-export function getStatus(error) {
+export function createErrorResponse(error) {
     if (error instanceof ApiError) {
         return {
             data: null,

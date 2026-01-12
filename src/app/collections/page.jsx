@@ -1,17 +1,10 @@
-import { fetchHome } from '@/utils/api';
-import { fetchData } from './helpers';
+import { createMetadata, fetchData } from './helpers';
 import { Heading } from '@digdir/designsystemet-react';
 import { Breadcrumbs, CollectionCard, ErrorPage } from '@/components';
 import styles from './page.module.scss';
 
 
-export async function generateMetadata() {
-    const data = await fetchHome();
-
-    return {
-        title: `Collections | ${data.title}  | OGC API | Kartverket`,
-    };
-}
+export const generateMetadata = async () => createMetadata();
 
 export default async function Collections() {
     const { data, status } = await fetchData();

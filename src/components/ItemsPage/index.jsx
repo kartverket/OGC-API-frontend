@@ -1,32 +1,36 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
-import { buildApiUrl, fetcher } from './helpers';
-import { Heading, Spinner } from '@digdir/designsystemet-react';
+import useSWRImmutable from 'swr/immutable'
+import { fetchItems } from '@/utils/api/client';
 import ItemsProvider from '@/context/ItemsProvider';
 import ItemsMapProvider from '@/context/ItemsMapProvider';
-import { Breadcrumbs, ItemsMap, ItemsTable } from '@/components';
-import FilterCard from '@/components/FilterCard';
+import { buildApiUrl } from './helpers';
+import { Heading, Spinner } from '@digdir/designsystemet-react';
+import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/components';
 import styles from './ItemsPage.module.scss';
 
 
 export default function Items({ srvData, collection, searchParams }) {
     const apiUrl = buildApiUrl(collection, searchParams);
-    const { data: _data = null, isLoading } = useSWR({ apiUrl, collection }, fetcher, { revalidateOnFocus: false });
+    const { data: _data = null, error = null, isLoading } = useSWRImmutable(apiUrl, fetchItems, { refreshInterval: 0 });
     const [data, setData] = useState(null);
 
     useEffect(
         () => {
             if (_data !== null) {
                 setData({
-                    ..._data.data,
+                    ..._data,
                     ...srvData
                 });
             }
         },
         [_data, srvData]
     );
+
+    if (error !== null) {
+        return <ErrorPage status={error.status.code} />
+    }
 
     if (data === null) {
         return null;

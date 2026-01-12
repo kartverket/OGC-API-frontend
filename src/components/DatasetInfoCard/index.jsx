@@ -95,7 +95,7 @@ export default function DatasetInfoCard({ collection }) {
                     </Details>
                     <Details>
                         <DetailsSummary>Koordinatsystemer</DetailsSummary>
-                        <DetailsContent>
+                        <DetailsContent className={styles.detailsContent}>
                             <ListUnordered data-size="sm">
                                 {
                                     collection.crs.map(crs => {
@@ -108,66 +108,10 @@ export default function DatasetInfoCard({ collection }) {
                     </Details>
                     <Details>
                         <DetailsSummary>Storage CRS</DetailsSummary>
-                        <DetailsContent>Lorem ipsum</DetailsContent>
+                        <DetailsContent className={styles.detailsContent}>{getCrsCode(collection.storageCrs)}</DetailsContent>
                     </Details>
                 </Card>
-
             </div>
-
-            {/* <div className={styles.contactInfo}>
-                        <Card>
-                            <u-details className="ds-details" data-variant="default" role="group">
-                                <u-summary aria-expanded="false" role="button" slot="summary" tabindex="0">Kontaktinfo</u-summary>
-
-                                <div className={styles.details}>
-                                    <div>
-                                        <div className={styles.label}>URL</div>
-                                        <div className={styles.value}>
-                                            <Link href="https://www.kartverket.no">https://www.kartverket.no</Link>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={styles.label}>E-post</div>
-                                        <div className={styles.value}>
-                                            <Link href="mailto:post@kartverket.no">post@kartverket.no</Link>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={styles.label}>Telefon</div>
-                                        <div className={styles.value}>
-                                            <Link href="tel:32 11 80 00">32 11 80 00</Link>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={styles.label}>Kontakt-URL</div>
-                                        <div className={styles.value}>
-                                            <Link href="https://www.kartverket.no/om-kartverket/kontakt-oss">https://www.kartverket.no/om-kartverket/kontakt-oss</Link>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={styles.label}>Adresse</div>
-                                        <div className={styles.value}>
-                                            Karverksveien 21<br />
-                                            3511 Hønefoss<br />
-                                            Norge
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={styles.label}>Kontortid</div>
-                                        <div className={styles.value}>
-                                            Mandag - fredag: 09:00 - 15:00
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className={styles.label}>Kontaktinstruksjoner:</div>
-                                        <div className={styles.value}>
-                                            Sentralbord fra 09:00
-                                        </div>
-                                    </div>
-                                </div>
-                            </u-details>
-                        </Card>
-                    </div> */}
         </Card>
     )
 }

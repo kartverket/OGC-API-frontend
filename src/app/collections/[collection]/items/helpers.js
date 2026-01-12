@@ -1,5 +1,5 @@
 import { fetchCollection, fetchHome, fetchQueryables } from '@/utils/api/server';
-import { getStatus } from '@/utils/api/utils';
+import { createErrorResponse } from '@/utils/api/utils';
 
 
 export async function fetchData(collection) {
@@ -14,7 +14,7 @@ export async function fetchData(collection) {
     try {
         result = await Promise.all(promises);
     } catch (error) {
-        return getStatus(error);
+        return createErrorResponse(error);
     }
 
     return {
@@ -33,4 +33,23 @@ export async function fetchData(collection) {
         },
         status: 200
     };
+}
+
+export async function createMetadata(params) {
+    const { collection } = await params;
+
+    const promises = [
+        fetchCollection(collection),
+        fetchHome()
+    ];
+
+    try {
+        const result = await Promise.all(promises);
+
+        return {
+            title: `Items | ${result[0].title} | Collections | ${result[1].title}  | OGC API | Kartverket`
+        };
+    } catch {
+        return null;
+    }
 }

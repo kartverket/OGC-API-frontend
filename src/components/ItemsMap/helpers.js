@@ -1,7 +1,5 @@
 import { roundDecimals } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
-import bboxPolygon from '@turf/bbox-polygon';
-import booleanContains from '@turf/boolean-contains';
 import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 
 
@@ -33,15 +31,6 @@ export function getBboxFromSizeAndPosition(map, { x, y, width, height }) {
     const maxXMaxY = map.getCoordinateFromPixel(topRight);
 
     return transformExtent([minXminY[0], minXminY[1], maxXMaxY[0], maxXMaxY[1]], 'EPSG:3857', 'EPSG:4326', 6);
-}
-
-export function bboxWithinView(map, bbox) {
-    const view = map.getView();
-    const extent = view.calculateExtent(map.getSize());
-    const viewPoly = bboxPolygon(extent);        
-    const bboxPoly = bboxPolygon(bbox);
-
-    return booleanContains(viewPoly, bboxPoly);
 }
 
 export function getMouseWheelZoomInteraction(map) {

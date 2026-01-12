@@ -38,7 +38,7 @@ export function getCurrentPage(searchParams) {
 
     const limit = getLimit(searchParams);
 
-    return offset / limit;
+    return (offset / limit) + 1;
 }
 
 export function getItemsShowingText(searchParams, defaultLimits, data) {

@@ -1,9 +1,9 @@
-import { fetchCollection, fetchHome, fetchItem } from '@/utils/api/server';
+import { fetchCollection, fetchHome, fetchQueryables } from '@/utils/api/server';
 
 
-export async function fetchData(collection, itemId) {
+export async function fetchData(collection) {
     const promises = [
-        fetchItem(collection, itemId),
+        fetchQueryables(collection),
         fetchCollection(collection),
         fetchHome()
     ];
@@ -20,7 +20,7 @@ export async function fetchData(collection, itemId) {
         data: {
             ...result[0],
             collection: {
-                title: result[1].title,
+                title: result[1].title
             },
             dataset: {
                 title: result[2].title
@@ -31,7 +31,7 @@ export async function fetchData(collection, itemId) {
 }
 
 export async function createMetadata(params) {
-    const { collection, item } = await params;
+    const { collection } = await params;
 
     const promises = [
         fetchCollection(collection),
@@ -42,7 +42,7 @@ export async function createMetadata(params) {
         const result = await Promise.all(promises);
 
         return {
-            title: `${item} | Items | ${result[0].title} | Collections | ${result[1].title}  | OGC API | Kartverket`
+            title: `Queryables | ${result[0].title} | Collections | ${result[1].title}  | OGC API | Kartverket`
         };
     } catch {
         return null;

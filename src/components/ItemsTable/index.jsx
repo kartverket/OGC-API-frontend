@@ -38,7 +38,7 @@ export default function ItemsTable({ data }) {
         setLimit(value);
         setCurrentPage(1);
 
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams(window.location.search);
 
         params.set('limit', value);
         params.delete('offset');
@@ -49,7 +49,7 @@ export default function ItemsTable({ data }) {
         setCurrentPage(value);
 
         const offset = (value - 1) * limit;
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams(window.location.search);
 
         params.set('offset', offset);
         router.push(`${pathname}?${params}`, { scroll: false });
@@ -125,6 +125,7 @@ export default function ItemsTable({ data }) {
                     <Table stickyHeader={true} zebra={true} data-size="sm" className={styles.table}>
                         <TableHead>
                             <TableRow>
+                                <TableHeaderCell>id</TableHeaderCell>
                                 {
                                     columnNames.map(name => (
                                         <TableHeaderCell key={name}>{name}</TableHeaderCell>
@@ -136,6 +137,7 @@ export default function ItemsTable({ data }) {
                             {
                                 features.map(feature => (
                                     <TableRow key={feature.id} onClick={() => goToItem(feature.id)}>
+                                        <TableCell>{feature.id}</TableCell>
                                         {
                                             Object.entries(feature.properties).map(entry => (
                                                 <TableCell key={`${feature.id}-${entry[0]}`}>
