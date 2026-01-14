@@ -8,7 +8,7 @@ import ItemsMapProvider from '@/context/ItemsMapProvider';
 import { buildApiUrl } from './helpers';
 import { Heading, Spinner } from '@digdir/designsystemet-react';
 import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/components';
-import styles from './ItemsPage.module.scss';
+import styles from './ItemsPage.module.css';
 
 
 export default function Items({ srvData, collection, searchParams }) {

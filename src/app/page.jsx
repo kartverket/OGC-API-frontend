@@ -5,7 +5,7 @@ import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-reac
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import { ServiceInfoCard, DeveloperCard, ErrorPage } from '@/components';
 import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
-import styles from './page.module.scss';
+import styles from './page.module.css';
 
 
 export const generateMetadata = async () => createMetadata();
@@ -56,17 +56,11 @@ export default async function Home() {
 
                     <DeveloperCard />
                 </div>
-                <ChevronRightIcon title="a11y-title" fontSize="36px" />
-              </CardBlock>
-            </NextLink>
-          </Card>
-          <DeveloperCard />
-        </div>
 
-        <div className={styles.right}>
-          <ServiceInfoCard />
+                <div className={styles.right}>
+                    <ServiceInfoCard />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }

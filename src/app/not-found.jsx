@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import styles from '@/components/ErrorPage/ErrorPage.module.scss';
+import styles from '@/components/ErrorPage/ErrorPage.module.css';
 
 
 export default function NotFound() {
@@ -15,7 +15,6 @@ export default function NotFound() {
     }
 
     return (
-        <>
             <div className={styles.page}>
                 <Heading level={1} data-size="sm" className={styles.heading}>404: Siden ble ikke funnet</Heading>
 
@@ -24,6 +23,5 @@ export default function NotFound() {
                     <Link href="#" onClick={goBack}>Gå tilbake</Link> eller til <Link asChild><NextLink href="/">forsiden</NextLink></Link> for å komme bort fra denne siden.
                 </Paragraph>
             </div>
-        </>
     );
 }

@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
 import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
 import { getErrorData } from './helpers';
-import styles from './ErrorPage.module.scss';
+import styles from './ErrorPage.module.css';
 
 
 export default function ErrorPage({ status }) {

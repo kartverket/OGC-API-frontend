@@ -10,13 +10,11 @@ export async function fetchData(collection) {
     ];
 
     
-
-        const [queryables, collectionData, homeData] = await Promise.all(promises);
+    let queryables, collectionData, homeData;
+    try {[queryables, collectionData, homeData] = await Promise.all(promises);
     } catch (error) {
         return createErrorResponse(error);
     }
-
-    try {
     return {
         data: {
             queryables: queryables,

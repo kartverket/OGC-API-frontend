@@ -8,8 +8,8 @@ import { useItems } from '@/context/ItemsProvider';
 import { debounce } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
 import { getBboxFromSizeAndPosition, getMouseWheelZoomInteraction, getSizeAndPositionFromBbox } from './helpers';
-import { Map } from '@/components';
-import styles from './ItemsMap.module.scss';
+import { MapComponent } from '@/components';
+import styles from './ItemsMap.module.css';
 
 
 export default function ItemsMap({ width, height }) {
@@ -42,7 +42,7 @@ export default function ItemsMap({ width, height }) {
 
             const onMoveEnd = debounce(() => {
                 const bbox = getBboxFromSizeAndPosition(map, sizeAndPositionRef.current);
-                onBboxChange(bbox);
+                setBbox(bbox);
             }, 250);
 
             if (bboxEdit) {
@@ -94,7 +94,7 @@ export default function ItemsMap({ width, height }) {
 
     return (
         <div ref={containerElRef} className={styles.container}>
-            <Map
+            <MapComponent
                 map={map}
                 width={width}
                 height={height}

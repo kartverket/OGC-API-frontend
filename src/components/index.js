@@ -14,6 +14,6 @@ export { default as ItemMap } from './ItemMap';
 export { default as ItemsMap } from './ItemsMap';
 export { default as ItemsPage } from './ItemsPage';
 export { default as ItemsTable } from './ItemsTable';
-export { default as Map } from './Map';
+export { default as MapComponent } from './Map';
 export { default as MapImage } from './MapImage';
 export { default as ServiceInfoCard } from './ServiceInfoCard';

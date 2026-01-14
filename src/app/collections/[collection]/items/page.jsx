@@ -1,25 +1,22 @@
-import { createMetadata, fetchData } from './helpers';
-import { ErrorPage, ItemsPage} from '@/components';
-
-
+import { createMetadata, fetchData } from "./helpers";
+import { ErrorPage, ItemsPage } from "@/components";
 
 export const generateMetadata = async ({ params }) => createMetadata(params);
 
 export default async function Items({ params, searchParams }) {
-    const { collection } = await params;
-    const _searchParams = await searchParams;
-    const { data, status } = await fetchData(collection);
+  const { collection } = await params;
+  const _searchParams = await searchParams;
+  const { data, status } = await fetchData(collection);
 
-    if (status !== 200) {
-        return <ErrorPage status={status} />;
-    }
-  }, [_data]);
+  if (status !== 200) {
+    return <ErrorPage status={status} />;
+  }
 
-    return (
-        <ItemsPage
-            srvData={data}
-            collection={collection}
-            searchParams={_searchParams}
-        />
-    );
+  return (
+    <ItemsPage
+      srvData={data}
+      collection={collection}
+      searchParams={_searchParams}
+    />
+  );
 }

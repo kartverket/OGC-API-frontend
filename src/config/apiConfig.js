@@ -31,5 +31,6 @@ export function buildApiUrl(path) {
   // Remove trailing slash from baseUrl and ensure path starts with /
   const cleanBaseUrl = baseUrl.replace(/\/$/, '');
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  console.log(`path: ${cleanBaseUrl}${cleanPath}`)
   return `${cleanBaseUrl}${cleanPath}`;
 }

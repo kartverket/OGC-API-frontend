@@ -1,3 +1,7 @@
+.container {
+    position: relative;
+}
+
 .bbox {
     background: #1A589F4D;
     border: 2px solid #1A589F;
