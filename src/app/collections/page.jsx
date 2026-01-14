@@ -1,37 +1,37 @@
-import { fetchCollections } from '@/utils/api';
-import { Heading } from '@digdir/designsystemet-react';
-import { Breadcrumbs, CollectionCard } from '@/components';
-import styles from './page.module.css';
+import { createMetadata, fetchData } from "./helpers";
+import { Heading } from "@digdir/designsystemet-react";
+import { Breadcrumbs, CollectionCard, ErrorPage } from "@/components";
+import styles from "./page.module.css";
 
-
-export const metadata = {
-    title: 'Collections | Administrative enheter | OGC API | Kartverket',
-    icons: {
-        icon: '/gfx/favicon.png'
-    }
-};
+export const generateMetadata = async () => createMetadata();
 
 export default async function Collections() {
-    const page = await fetchCollections()
+  const { data, status } = await fetchData();
 
-    return (
-        <>
-            <Breadcrumbs
-                breadcrumbs={{
-                    '/': 'Administrative enheter',
-                    '/collections': 'Collections'
-                }}
-            />
+  if (status !== 200) {
+    return <ErrorPage status={status} />;
+  }
 
-            <div className={styles.page}>
-                <Heading level={1} data-size="sm" className={styles.heading}>Innhold i datasettet</Heading>
+  return (
+    <>
+      <Breadcrumbs
+        breadcrumbs={{
+          "/": data.dataset.title,
+          "/collections": "Collections",
+        }}
+      />
 
-                <div className={styles.collections}>
-                    {
-                        page.collections.map(collection => <CollectionCard key={collection.id} collection={collection} />)
-                    }
-                </div>
-            </div>
-        </>
-    );
+      <div className={styles.page}>
+        <Heading level={1} data-size="sm" className={styles.heading}>
+          Innhold i datasettet
+        </Heading>
+
+        <div className={styles.collections}>
+          {data.collections.map((collection) => (
+            <CollectionCard key={collection.id} collection={collection} />
+          ))}
+        </div>
+      </div>
+    </>
+  );
 }

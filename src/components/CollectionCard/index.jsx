@@ -1,15 +1,16 @@
 import Image from "next/image";
 import NextLink from "next/link";
-import { getCrsCode } from "@/utils/helper";
+import { getCrsCode } from "@/utils/map/helpers";
 import { Card, Heading, Link } from "@digdir/designsystemet-react";
 import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
 import styles from "./CollectionCard.module.css";
-import { fetchItems } from "@/utils/api";
+import { fetchItems } from "@/utils/api.client";
 
 export default async function CollectionCard({ collection }) {
-
   // Fetch one item to check geometry type
-  const itemsData = await fetchItems(collection.id, { limit: 1 });
+  const itemsData = await fetchItems(
+    `collections/${collection.id}/items?limit=1`,
+  );
   const geometryType = itemsData.features?.[0]?.geometry?.type || null;
 
   // Determine which icon to use based on geometry type (default to polygon)

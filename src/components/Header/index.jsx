@@ -4,12 +4,13 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { Link } from '@digdir/designsystemet-react';
+import { API_BASE_URL } from '@/config/constants.client';
 import styles from './Header.module.css';
 
 
 export default function Header() {
     const pathname = usePathname();
-    const jsonLink = `${pathname}?f=json`
+    const jsonLink = `${API_BASE_URL}${pathname}?f=json`
 
     return (
         <div className={styles.header}>

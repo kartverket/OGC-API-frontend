@@ -1,18 +1,40 @@
 import { Map, View } from 'ol';
-import { createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
+import { featureCollection as createFeatureCollection } from '@turf/helpers';
+import proj4 from 'proj4';
+import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
 import { createBaseMap } from './baseMap';
-import { getLayer, getProjection } from './helpers';
+import { getLayer } from './helpers';
 import basemap from '@/config/basemap';
 import './setup';
-import proj4 from 'proj4';
+
 
 const MAP_PADDING = [50, 50, 50, 50];
 
-export async function createMap() {
+export async function createItemsMap() {
     const map = new Map({
         layers: [
             await createBaseMap(),
-            createEmptyFeaturesLayer()
+            createEmptyFeaturesLayer(),
+            createBboxFeatureLayer()
+        ]
+    });
+
+    map.setView(new View({
+        padding: MAP_PADDING,
+        projection: basemap.projection,
+        maxZoom: basemap.maxZoom
+    }));
+
+    return map;
+}
+
+export async function createItemMap(feature) {
+    const featureCollection = createFeatureCollection([feature]);
+
+    const map = new Map({
+        layers: [
+            await createBaseMap(),
+            createFeaturesLayer(featureCollection)
         ]
     });
 
@@ -31,7 +53,7 @@ export function setFeatureCollection(map, featureCollection) {
     setFeatures(vectorLayer, featureCollection);
 }
 
-export function zoomToExtent(map, defaultExtent) {
+export function zoomToExtent(map, defaultExtent = {}) {
     const mapSize = map.getSize();
 
     if (mapSize === undefined) {
@@ -44,7 +66,7 @@ export function zoomToExtent(map, defaultExtent) {
     view.fit(extent, mapSize);
 }
 
-function getExtent(map, defaultExtent) {   
+export function getExtent(map, defaultExtent) {   
     const vectorLayer = getLayer(map, 'features');
     const vectorSource = vectorLayer.getSource();
 
@@ -57,7 +79,7 @@ function getExtent(map, defaultExtent) {
     return getExtentFromBBox(bbox, crs);
 }
 
-function getExtentFromBBox(bbox, crs) {
+export function getExtentFromBBox(bbox, crs) {
     const [minX, maxX] = proj4(crs, 'EPSG:3857', [bbox[0], bbox[1]]);
     const [minY, maxY] = proj4(crs, 'EPSG:3857', [bbox[2], bbox[3]]);
 

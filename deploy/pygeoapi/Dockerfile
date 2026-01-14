@@ -1,6 +1,5 @@
 FROM geopython/pygeoapi:latest
 
-
 # Add your custom process script
 COPY distinct_values.py /pygeoapi/distinct_values.py
 

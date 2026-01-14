@@ -1,34 +1,32 @@
-import Image from "next/image";
-import NextLink from "next/link";
-import { fetchCollection } from "@/utils/api";
-import { bboxToFeatureCollection } from "./helpers";
-import { Card, Heading, Link, Paragraph } from "@digdir/designsystemet-react";
-import {
-  Breadcrumbs,
-  DatasetInfoCard,
-  ExampleUseCard,
-  MapImage,
-} from "@/components";
-import { ChevronRightIcon, PackageFillIcon } from "@navikt/aksel-icons";
-import thumbnail from "@/assets/gfx/collection-thumbnail.png";
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { createMetadata, fetchData } from './helpers';
+import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
+import { Breadcrumbs, DatasetInfoCard, ExampleUseCard } from '@/components';
+import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
+import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from "./page.module.css";
 
-export default async function Collection({ params }) {
-  const { collection } = await params;
-  const data = await fetchCollection(collection);
-  // const geonorgeLink = data.links.find(link => link.rel === 'related');
-  const bbox = data.extent.spatial.bbox[0];
-  const featureCollection = bboxToFeatureCollection(bbox);
 
-  return (
-    <>
-      <Breadcrumbs
-        breadcrumbs={{
-          "/": "Administrative enheter",
-          "/collections": "Collections",
-          [`/collections/${data.id}`]: data.title,
-        }}
-      />
+export const generateMetadata = async ({ params }) => createMetadata(params);
+
+export default async function Collection({ params }) {
+    const { collection } = await params;
+    const { data, status } = await fetchData(collection);
+
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
+    }
+
+    return (
+        <>
+            <Breadcrumbs
+                breadcrumbs={{
+                    '/': 'Administrative enheter',
+                    '/collections': 'Collections',
+                    [`/collections/${data.id}`]: data.title
+                }}
+            />
 
       <div className={styles.page}>
         <div className={styles.top}>
@@ -64,40 +62,16 @@ export default async function Collection({ params }) {
                 </NextLink>
               </Card>
 
-              {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
-            </div>
-          </div>
-          <div className={styles.right}>
-            <DatasetInfoCard collection={data} />
+                            {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
-            {/* <div className={styles.map}>
-                            <Heading data-size="2xs" level={4}>Geografisk utstrekning av datasettet</Heading>
-
-                            <div className={styles.wrapper}>
-                                <MapImage
-                                    featureCollection={featureCollection}
-                                    options={{
-                                        width: 195,
-                                        height: 260,
-                                        padding: [6, 6, 6, 6],
-                                        constrainResolution: false
-                                    }}
-                                />
-                            </div>
-                        </div> */}
-          </div>
-        </div>
-
-        <div className={styles.bottom}>
-          <div className={styles.bottomLeft}>
-            <ExampleUseCard collection={collection} />
-          </div>
-
-          {/* <div className={styles.bottomRight}>
+                            <ExampleUseCard collection={collection} />
+                        </div>
+                    </div>
+                    <div className={styles.right}>
                         <DatasetInfoCard collection={data} />
-                    </div> */}
-        </div>
-      </div>
-    </>
-  );
+                    </div>
+                </div>  
+            </div>
+        </>
+    );
 }

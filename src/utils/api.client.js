@@ -4,12 +4,13 @@ export const fetcher = (...args) => fetch(...args).then(response => response.jso
 
 // The functions below accept both absolute or relative URL paths
 export async function fetchHome() {
-    const response = await fetch(buildApiUrl(`/?f=json`));
+    const response = await fetch(buildApiUrl(`?f=json`));
     return await response.json();
 }
 
 export async function fetchItems(url) {
-    const response = await fetch(buildApiUrl(url));
+    const separator = url.includes('?') ? '&' : '?';
+    const response = await fetch(buildApiUrl(`${url}${separator}f=json`));
     return await response.json();
 }
 

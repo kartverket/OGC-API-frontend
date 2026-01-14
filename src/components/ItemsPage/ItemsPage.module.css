@@ -1,0 +1,39 @@
+.page {
+    max-width: var(--page-width);
+    width: 100%;
+    padding: var(--main-padding);
+    box-sizing: border-box;
+}
+
+.heading {
+    margin-bottom: var(--ds-size-2);
+}
+
+.top {
+    display: flex;
+    gap: var(--ds-size-8);
+
+    & .topRight {
+        flex: 1;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-4);
+    position: relative;
+}
+
+.overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}

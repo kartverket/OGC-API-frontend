@@ -2,6 +2,7 @@
 
 import { Card, Heading } from '@digdir/designsystemet-react';
 import { TerminalIcon } from '@navikt/aksel-icons';
+import { API_BASE_URL } from '@/config/constants.client';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
 import { Fragment } from 'react';
@@ -12,8 +13,8 @@ export default function ExampleUseCard({ collection }) {
     }
 
     const examples = {
-        'QGIS': `/collections/${collection}/items?f=json`,
-        'ArcGIS Online': `/collections/${collection}/items`
+        'QGIS': `${API_BASE_URL}/collections/${collection}/items?f=json`,
+        'ArcGIS Online': `${API_BASE_URL}/collections/${collection}/items`
     };
 
     return (

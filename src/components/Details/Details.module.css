@@ -41,6 +41,7 @@
     outline: none;
     padding: var(--ds-size-2) var(--ds-size-4);
     position: relative;
+    user-select: none;
 
     &:hover {
         background: var(--ds-color-surface-tinted);

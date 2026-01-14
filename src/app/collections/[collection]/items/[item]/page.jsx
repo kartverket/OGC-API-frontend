@@ -1,67 +1,79 @@
-import { fetchHome, fetchItem } from '@/utils/api';
-import React from 'react';
-import { Heading } from '@digdir/designsystemet-react';
-import { Breadcrumbs } from '@/components';
+import { Fragment } from 'react';
+import NextLink from 'next/link';
+import { createMetadata, fetchData } from './helpers';
+import { Card, Heading, Link } from '@digdir/designsystemet-react';
+import { Breadcrumbs, Details, DetailsContent, DetailsSummary, ErrorPage, ItemMap } from '@/components';
+import { ArrowLeftIcon, ArrowRightIcon } from '@navikt/aksel-icons';
 import styles from './page.module.css';
-import { MapImage } from '@/components';
 
-async function fetchPageData(collection, itemId) {
-    const promises = [
-        fetchHome(),
-        fetchItem(collection, itemId)
-    ];
 
-    const result = await Promise.all(promises);
-
-    return {
-        ...result[1],
-        datasetTitle: result[0].title
-    }
-}
+export const generateMetadata = async ({ params }) => createMetadata(params);
 
 export default async function Item({ params }) {
     const { collection, item } = await params;
-    const data = await fetchPageData(collection, item);
-    const collectionTitle = data.links.find(link => link.rel === 'collection').title;
-    const feature = data;
+    const { data, status } = await fetchData(collection, item);
 
-
-    function ItemDetails({ data }) {
-        if (!data) return <p>Ingen data</p>;
-
-        const obj =
-            data.type === "Feature" ? data.properties :
-                data.type === "FeatureCollection" ? data.features[0]?.properties :
-                    data;
-
-        if (!obj || typeof obj !== "object") return <p>Ingen data</p>;
-
-        return (
-            <div className={styles.details}>
-                <div className={styles.header}>
-                    <div>Property</div><div>Value</div>
-                </div>
-
-                {Object.entries(obj).map(([k, v]) => (
-                    <React.Fragment key={k}>
-                        <div className={styles.key}>{k}</div>
-                        <div className={styles.val}>
-                            {typeof v === "object" ? JSON.stringify(v) : String(v ?? "")}
-                        </div>
-                    </React.Fragment>
-                ))}
-            </div>
-        );
+    if (status !== 200) {
+        return <ErrorPage status={status} />;
     }
 
+    function renderValue(value) {
+        return value !== null && value !== '' ?
+            value.toString() :
+            '-';
+    }
+
+    function renderDetails() {
+        return (
+            <Card className={styles.itemCard}>
+                <div className={styles.cardContent}>
+                    <div className={styles.details}>
+                        <div className={styles.header}>
+                            <div>Egenskap</div>
+                            <div>Verdi</div>
+                        </div>
+
+                        <div className={styles.property}>id</div>
+                        <div className={styles.value}>{data.id}</div>
+
+                        {
+                            Object.entries(data.properties).map(([propName, value]) => (
+                                <Fragment key={propName}>
+                                    <div className={styles.property}>{propName}</div>
+                                    <div className={styles.value}>{renderValue(value)}</div>
+                                </Fragment>
+                            ))
+                        }
+                    </div>
+
+                    <Card className={styles.linkCard}>
+                        <Details>
+                            <DetailsSummary>Links</DetailsSummary>
+                            <DetailsContent className={styles.detailsLinks}>
+                                {
+                                    data.links
+                                        .filter(link => link.title !== undefined)
+                                        .map(link => (
+                                            <Link key={link.href} asChild>
+                                                <NextLink href={link.href}>{link.title}</NextLink>
+                                            </Link>
+                                        ))
+                                }
+                            </DetailsContent>
+                        </Details>
+                    </Card>
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <>
             <Breadcrumbs
                 breadcrumbs={{
-                    '/': data.datasetTitle,
+                    '/': data.dataset.title,
                     '/collections': 'Collections',
-                    [`/collections/${collection}`]: collectionTitle,
+                    [`/collections/${collection}`]: data.collection.title,
                     [`/collections/${collection}/items`]: 'Items',
                     [`/collections/${collection}/items/${data.id}`]: data.id,
                 }}
@@ -69,21 +81,31 @@ export default async function Item({ params }) {
 
             <div className={styles.page}>
                 <Heading level={1} data-size="sm" className={styles.heading}>{data.id}</Heading>
+
                 <div className={styles.content}>
                     <div className={styles.map}>
-                        <MapImage
-                            featureCollection={data.geometry}
-                            options={{
-
-                                padding: [30, 30, 30, 30],
-                                constrainResolution: false
-                            }}
-                        />
-                    </div>
-                    <div className={styles.infocard}>
-                        <ItemDetails data={data.properties} />
+                        <ItemMap data={data} />
                     </div>
 
+                    <div className={styles.infoCard}>
+                        {renderDetails()}
+
+                        <div className={styles.nextPrevLinks}>
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection}/items/${data.prev}`} scroll={false}>
+                                    <ArrowLeftIcon fontSize="28px" />
+                                    Forrige item
+                                </NextLink>
+                            </Link>
+
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection}/items/${data.next}`} scroll={false}>
+                                    Neste item
+                                    <ArrowRightIcon fontSize="28px" />
+                                </NextLink>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

@@ -1,14 +1,13 @@
 import { API_BASE_URL, SKIP_SSG } from '@/config/constants';
-// import { METADATA_ID } from '@/config/constants.client';
+import { getResponse } from './utils';
 
-export const fetcher = (...args) => fetch(...args).then(response => response.json());
 
 export async function fetchHome() {
     const response = await fetch(`${API_BASE_URL}?f=json`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
-    return await response.json();
+    return await getResponse(response);
 }
 
 export async function fetchCollections() {
@@ -38,7 +37,7 @@ export async function fetchCollections() {
         }
     }
 
-    const itemCounts = await Promise.all(promises)
+    const itemCounts = await Promise.all(promises);
 
     return {
         ...data,
@@ -63,53 +62,32 @@ export async function fetchCollection(name) {
     }
 }
 
-export async function fetchItems(collection, searchParams) {
-    let url = `${API_BASE_URL}/collections/${collection}/items?f=json`;
-    
-    const queryStr = Object.entries(searchParams)
-        .map(entry => `&${entry[0]}=${entry[1]}`)
-        .join('');
-
-    url += queryStr;
+export async function fetchItem(collection, id) {
+    const url = `${API_BASE_URL}/collections/${collection}/items/${id}?f=json`;
 
     const response = await fetch(url, {
         cache: 'no-store'
     });
 
-    return await response.json();
+    return await getResponse(response);
 }
 
-export async function fetchItem(collection, id) {
-    const url = `${API_BASE_URL}/collections/${collection}/items/${id}`;
+export async function fetchQueryables(collection) {
+    const url = `${API_BASE_URL}/collections/${collection}/queryables?f=json`;
 
     const response = await fetch(url, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
-    return await response.json();
+    return await getResponse(response);
 }
-
-// export async function fetchThumbnail() {
-//     const baseUrl = 'https://kartkatalog.geonorge.no/api/getdata';
-//     const url = `${baseUrl}/${METADATA_ID}`;
-
-//     const response = await fetch(url, {
-//         cache: SKIP_SSG ? 'no-store' : 'force-cache'
-//     });
-
-//     const data = await response.json();
-//     const thumbnails = data.Thumbnails || [];
-//     const thumbnail = thumbnails.find(thumbnail => thumbnail.Type === 'original');
-
-//     return thumbnail?.URL || null;
-// }
 
 async function _fetchCollection(name) {
     const response = await fetch(`${API_BASE_URL}/collections/${name}?f=json`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
-    return await response.json();
+    return await getResponse(response);
 }
 
 async function _fetchItemCount(collection) {
@@ -117,7 +95,7 @@ async function _fetchItemCount(collection) {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
-    const data = await response.json();
+    const data = await getResponse(response);
 
     return {
         collectionId: collection,

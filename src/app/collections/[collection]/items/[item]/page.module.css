@@ -5,47 +5,97 @@
     box-sizing: border-box;
 }
 
-.content {
-    display: flex;
-    flex-direction: row;
-    gap: var(--ds-size-10);
-}
-
 .heading {
     margin-bottom: var(--ds-size-2);
 }
 
-.infocard {
-    background-color: white;
-    margin-right: var(--ds-size-5);
-    border-radius: 8px;
+.content {
+    display: flex;
+    flex-direction: row;
+    gap: var(--ds-size-15);
+}
+
+.itemCard {
+    border: 0 none;
+    margin-bottom: var(--ds-size-3);
+
+    &>* {
+        margin: 0;
+    }
 }
 
 .details {
     display: grid;
     grid-template-columns: 220px 1fr;
-    gap: 6px 16px;
-    padding: 14px 16px;
+    margin-bottom: var(--ds-size-3);
 
-    & .header {
-        grid-column: 1 / -1;
+    .header {
         display: contents;
-    }
-
-    & .header > div {
-        font-size: var(--ds-size-4);
-        font-weight: 600;
+        grid-column: 1 / -1;
+        font-size: var(--ds-font-size-2);
+        font-weight: 700;
+        color: var(--ds-color-neutral-text-subtle);
         text-transform: uppercase;
-        padding-bottom: var(--ds-size-2);
     }
 
-    & .key,
-    & .val {
-        padding: 6px 0;
-        font-size: var(--ds-size-4);
+    .property {
+        font-weight: 500;
+    }
+
+    .value {
+        font-weight: 400;
+        word-break: break-word;
+    }
+
+    .property,
+    .value {
+        font-size: var(--ds-font-size-3);
+        color: var(--ds-color-neutral-text-default);
+    }
+
+    .header>div,
+    .property,
+    .value {
+        padding: var(--ds-size-2) 0;
     }
 }
 
-.map {
-    height: 400px;
+.nextPrevLinks {
+    display: flex;
+    justify-content: space-between;
+
+    a {
+        display: flex;
+        justify-content: space-between;
+        text-decoration: none;
+
+        &:visited {
+            color: var(--ds-color-text-subtle);
+        }
+
+        &:hover {
+            color: var(--ds-color-text-default);
+            text-decoration: underline;
+            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
+            text-underline-offset: .27em;
+        }
+
+        &:active {
+            background: none;
+        }
+
+        &:first-child svg {
+            margin-right: var(--ds-size-1);
+        }
+
+        &:last-child svg {
+            margin-left: var(--ds-size-1);
+        }
+    }
+}
+
+.detailsLinks > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-2);
 }
