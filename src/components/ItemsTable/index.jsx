@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Pagination, Select, SelectOption, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, usePagination } from '@digdir/designsystemet-react';
 import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
-import styles from './ItemsTable.module.scss';
+import styles from './ItemsTable.module.css';
 
 const LIMITS = {
     '20': '20 (standard)',

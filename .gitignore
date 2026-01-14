@@ -45,3 +45,9 @@ deploy/volumes/postgis
 # proxy-certs
 nginx.crt
 nginx.key
+
+# yarn
+.yarn/
+
+# docker
+deploy/volumes/apiconfig/

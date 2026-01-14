@@ -25,19 +25,20 @@ export default async function Home() {
                     <Paragraph data-size="sm">{data.description}</Paragraph>
                 </div>
 
-                <Image
-                    src={ThumbnailImg}
-                    height="136"
-                    alt="Thumbnail"
-                />
-            </div>
+        <Image src={ThumbnailImg} height="136" alt="Thumbnail" />
+      </div>
 
-            <div className={styles.main}>
-                <div className={styles.left}>
-                    <Card asChild data-variant="tinted" data-color="accent" className={styles.collectionsCard}>
-                        <NextLink href="/collections">
-                            <CardBlock className={styles.cardBlock}>
-                                <PackageFillIcon title="a11y-title" fontSize="36px" />
+      <div className={styles.main}>
+        <div className={styles.left}>
+          <Card
+            asChild
+            data-variant="tinted"
+            data-color="accent"
+            className={styles.collectionsCard}
+          >
+            <NextLink href="/collections">
+              <CardBlock className={styles.cardBlock}>
+                <PackageFillIcon title="a11y-title" fontSize="36px" />
 
                                 <div className={styles.content}>
                                     <Paragraph data-size="sm" className={styles.title}>
@@ -55,11 +56,17 @@ export default async function Home() {
 
                     <DeveloperCard />
                 </div>
-
-                <div className={styles.right}>
-                    <ServiceInfoCard />
-                </div>
-            </div>
+                <ChevronRightIcon title="a11y-title" fontSize="36px" />
+              </CardBlock>
+            </NextLink>
+          </Card>
+          <DeveloperCard />
         </div>
-    );
+
+        <div className={styles.right}>
+          <ServiceInfoCard />
+        </div>
+      </div>
+    </div>
+  );
 }

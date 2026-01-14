@@ -1,19 +1,19 @@
-name: Frontend
+name: Pygoapi
 # This workflow builds the frontend image and pushes it to the GitHub Container Registry.
 # It is triggered on pushes to the main branch, specifically when changes are made to the "geonorge-server" directory.
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'deploy/**'
+    paths:
+      - "deploy/pygeoapi/**"
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  NAME: kartverket/datadeling-ogcapi-frontend
+  NAME: kartverket/datadeling-ogcapi-pygeoapi
 
 jobs:
-  build_frontend:
+  build_pygeoapi:
     name: Build image
     runs-on: ubuntu-latest
     permissions:
@@ -26,15 +26,11 @@ jobs:
       version: ${{ steps.set_output.outputs.version }}
       tags: ${{ steps.meta.outputs.tags }}
       commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
-      image_digest: ${{ steps.build_frontend.outputs.digest }}
-      
+      image_digest: ${{ steps.build_pygeoapi.outputs.digest }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Get package version
-        id: pkg
-        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
       - name: Extract Docker metadata
         id: meta
@@ -43,7 +39,6 @@ jobs:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}
           tags: |
             type=sha,format=long
-            ${{ steps.pkg.outputs.version }}
 
       - name: Get commit message
         id: get_commit_message
@@ -54,13 +49,6 @@ jobs:
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
 
-      - name: Login to DHI (dhi.io)
-        uses: docker/login-action@v3
-        with:
-          registry: dhi.io
-          username: ${{ secrets.DHI_USERNAME }}
-          password: ${{ secrets.DHI_TOKEN }}
-
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
         with:
@@ -69,10 +57,10 @@ jobs:
           password: ${{ github.token }}
 
       - name: Build docker image and push
-        id: build_frontend
+        id: build_pygeoapi
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: deploy/pygeoapi
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
@@ -80,13 +68,13 @@ jobs:
       - name: Summarize Image Digest and Set Output
         id: set_output
         run: |
-          echo "Full Image URL: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME }}:${{ steps.meta.outputs.version }}@${{steps.build_frontend.outputs.digest}}" >> $GITHUB_STEP_SUMMARY
-          echo "version=${{ github.ref_name }}@${{steps.build_frontend.outputs.digest}}" >> $GITHUB_OUTPUT
+          echo "Full Image URL: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME }}:${{ steps.meta.outputs.version }}@${{steps.build_pygeoapi.outputs.digest}}" >> $GITHUB_STEP_SUMMARY
+          echo "version=${{ github.ref_name }}@${{steps.build_pygeoapi.outputs.digest}}" >> $GITHUB_OUTPUT
 
   run-pharos:
     name: Run Pharos
     runs-on: ubuntu-latest
-    needs: build_frontend
+    needs: build_pygeoapi
     # Only run on pushes to default branch
     if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
     permissions:
@@ -98,10 +86,10 @@ jobs:
       - name: "Run Pharos"
         uses: kartverket/pharos@v0.5.0
         with:
-          image_url: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}@${{ needs.build_frontend.outputs.image_digest }}
+          image_url: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}@${{ needs.build_pygeoapi.outputs.image_digest }}
 
   # deploy:
-  #     needs: [build_frontend]
+  #     needs: [build_pygeoapi]
   #     name: Deploy
   #     permissions:
   #       id-token: write

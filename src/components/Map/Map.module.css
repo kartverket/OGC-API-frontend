@@ -1,7 +1,7 @@
 .mapContainer {
     position: relative;
 
-    .map {
+    & .map {
         border-radius: var(--ds-border-radius-sm);
         background-color: #dddddd;
         width: 100%;
@@ -9,7 +9,7 @@
         overflow: hidden;
     }
 
-    .buttons {
+    & .buttons {
         display: flex;
         flex-direction: column;
         gap: 6px;

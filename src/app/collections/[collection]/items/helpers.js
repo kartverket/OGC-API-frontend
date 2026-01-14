@@ -9,26 +9,26 @@ export async function fetchData(collection) {
         fetchHome()
     ];
 
-    let result;
+    
 
-    try {
-        result = await Promise.all(promises);
+        const [queryables, collectionData, homeData] = await Promise.all(promises);
     } catch (error) {
         return createErrorResponse(error);
     }
 
+    try {
     return {
         data: {
-            queryables: result[0],
+            queryables: queryables,
             collection: {
-                title: result[1].title,
+                title: collectionData.title,
                 extent: {
-                    bbox: result[1].extent.spatial.bbox[0],
-                    crs: result[1].extent.spatial.crs
+                    bbox: collectionData.extent.spatial.bbox[0],
+                    crs: collectionData.extent.spatial.crs
                 }
             },
             dataset: {
-                title: result[2].title
+                title: homeData.title
             }
         },
         status: 200

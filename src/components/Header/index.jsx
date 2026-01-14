@@ -5,7 +5,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { Link } from '@digdir/designsystemet-react';
 import { API_BASE_URL } from '@/config/constants.client';
-import styles from './Header.module.scss';
+import styles from './Header.module.css';
 
 
 export default function Header() {

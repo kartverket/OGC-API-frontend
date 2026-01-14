@@ -1,4 +1,4 @@
-import styles from '../Details.module.scss';
+import styles from '../Details.module.css';
 
 export default function DetailsContent({ className, children }) {
     return (

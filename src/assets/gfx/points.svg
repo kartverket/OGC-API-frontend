@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--gis" preserveAspectRatio="xMidYMid meet">
+  <!-- Circle at top left -->
+  <circle cx="32.55" cy="23.55" r="8" fill="none" stroke="#000000" stroke-width="7"/>
+  <!-- Circle at top right -->
+  <circle cx="73.55" cy="32.55" r="8" fill="none" stroke="#000000" stroke-width="7"/>
+  <!-- Circle at bottom left -->
+  <circle cx="12.55" cy="66.55" r="8" fill="none" stroke="#000000" stroke-width="7"/>
+  <!-- Circle at bottom right -->
+  <circle cx="87.55" cy="76.55" r="9" fill="none" stroke="#000000" stroke-width="7"/>
+</svg>

@@ -2,8 +2,8 @@ import { getCrsCode } from '@/utils/map/helpers';
 import { Card, Heading, Link, ListUnordered, ListItem } from '@digdir/designsystemet-react';
 import { Details, DetailsContent, DetailsSummary } from '..';
 import { InformationSquareIcon } from '@navikt/aksel-icons';
-import styles from './DatasetInfoCard.module.scss';
-
+import styles from './DatasetInfoCard.module.css';
+import { getCrsCode } from '@/utils/helper';
 
 export default function DatasetInfoCard({ collection }) {
     return (

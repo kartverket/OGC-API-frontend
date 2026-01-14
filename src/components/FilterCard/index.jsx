@@ -15,7 +15,7 @@ import { isBboxValid, parseBbox } from '@/utils/map/helpers';
 import { getControlTypeFromField, getFields, getMapViewBounds, isWithinBounds, getFeaturesExtent, getBboxExtent } from './helpers';
 import { Card, Heading, Label, Select, Field, Button, Input, Chip } from '@digdir/designsystemet-react';
 import { EqualsIcon, FilterIcon, PencilIcon, XMarkIcon } from '@navikt/aksel-icons';
-import styles from './FilterCard.module.scss';
+import styles from './FilterCard.module.css';
 
 
 export default function FilterCard({ data }) {

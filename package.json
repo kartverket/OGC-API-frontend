@@ -1,37 +1,41 @@
 {
-    "name": "ogc-api-frontend",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev --turbopack",
-        "build": "next build --turbopack",
-        "start": "next start",
-        "lint": "biome check",
-        "format": "biome format --write"
-    },
-    "dependencies": {
-        "@digdir/designsystemet-css": "^1.6.0",
-        "@digdir/designsystemet-react": "^1.6.0",
-        "@digdir/designsystemet-theme": "^1.6.0",
-        "@navikt/aksel-icons": "^7.32.1",
-        "@turf/bbox": "^7.3.1",
-        "@turf/bbox-polygon": "^7.2.0",
-        "@turf/boolean-within": "^7.3.1",
-        "@turf/helpers": "^7.2.0",
-        "fast-sort": "^3.4.1",
-        "http-status-codes": "^2.3.0",
-        "next": "15.5.4",
-        "ol": "^10.6.1",
-        "proj4": "^2.19.10",
-        "react": "19.1.0",
-        "react-dom": "19.1.0",
-        "react-rnd": "^10.5.2",
-        "swr": "^2.3.8"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "2.2.0",
-        "@digdir/designsystemet": "^1.6.0",
-        "@svgr/webpack": "^8.1.0",
-        "sass-embedded": "^1.93.2"
-    }
+  "name": "ogc-api-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "biome check",
+    "format": "biome format --write"
+  },
+  "dependencies": {
+    "@digdir/designsystemet-css": "^1.9.0",
+    "@digdir/designsystemet-react": "^1.9.0",
+    "@digdir/designsystemet-theme": "^1.9.0",
+    "@navikt/aksel-icons": "^7.37.0",
+    "@turf/bbox": "^7.3.1",
+    "@turf/bbox-polygon": "^7.3.1",
+    "@turf/boolean-within": "^7.3.1",
+    "@turf/helpers": "^7.3.1",
+    "fast-sort": "^3.4.1",
+    "http-status-codes": "^2.3.0",
+    "next": "^16.1.1",
+    "ol": "^10.7.0",
+    "proj4": "^2.20.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "sass": "^1.97.1",
+    "react-rnd": "^10.5.2",
+    "swr": "^2.3.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "@digdir/designsystemet": "^1.9.0",
+    "@svgr/webpack": "^8.1.0",
+    "sass-embedded": "^1.97.1"
+  },
+  "resolutions": {
+    "glob": "^11.1.0"
+  }
 }

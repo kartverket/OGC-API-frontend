@@ -2,6 +2,7 @@ import { createMetadata, fetchData } from './helpers';
 import { ErrorPage, ItemsPage} from '@/components';
 
 
+
 export const generateMetadata = async ({ params }) => createMetadata(params);
 
 export default async function Items({ params, searchParams }) {
@@ -12,6 +13,7 @@ export default async function Items({ params, searchParams }) {
     if (status !== 200) {
         return <ErrorPage status={status} />;
     }
+  }, [_data]);
 
     return (
         <ItemsPage

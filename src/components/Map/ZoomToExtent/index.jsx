@@ -1,6 +1,6 @@
 import { getLayer } from '@/utils/map/helpers';
 import IconExtent from '@/assets/gfx/icon-extent.svg';
-import styles from './ZoomToExtent.module.scss';
+import styles from './ZoomToExtent.module.css';
 
 export default function ZoomToExtent({ map }) {
     function zoomToExtent() {

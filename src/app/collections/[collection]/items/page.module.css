@@ -1,9 +1,7 @@
-@use '@/styles/variables' as *;
-
 .page {
-    max-width: $page-width;
+    max-width: var(--page-width);
     width: 100%;
-    padding: $main-padding;
+    padding: var(--main-padding);
     box-sizing: border-box;
 }
 
@@ -15,7 +13,7 @@
     display: flex;
     gap: var(--ds-size-8);
 
-    .topRight {
+    & .topRight {
         flex: 1;
     }
 }

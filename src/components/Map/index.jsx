@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
-import styles from './Map.module.scss';
+import styles from './Map.module.css';
 
 export default function Map({ map, width, height }) {
     const mapElementRef = useRef(null);
