@@ -1,4 +1,5 @@
 import { fetchCollections, fetchHome } from '@/utils/api/server';
+import { createErrorResponse } from '@/utils/api/utils';
 
 
 export async function fetchData() {
