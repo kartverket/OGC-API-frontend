@@ -9,6 +9,7 @@ RUN bun install
 
 FROM base AS builder
 WORKDIR /app
+ENV API_BASE_URL=http://localhost:5000
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_SSG=true
 
