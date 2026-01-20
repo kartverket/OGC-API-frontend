@@ -2,7 +2,7 @@
 
 import { Card, Heading } from '@digdir/designsystemet-react';
 import { TerminalIcon } from '@navikt/aksel-icons';
-import { API_BASE_URL } from '@/config/constants.client';
+import { getApiBaseUrl } from '@/config/apiConfig';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
 import { Fragment } from 'react';
@@ -12,9 +12,10 @@ export default function ExampleUseCard({ collection }) {
         await navigator.clipboard.writeText(url);
     }
 
+    const apiBaseUrl = getApiBaseUrl();
     const examples = {
-        'QGIS': `${API_BASE_URL}/collections/${collection}/items?f=json`,
-        'ArcGIS Online': `${API_BASE_URL}/collections/${collection}/items`
+        'QGIS': `${apiBaseUrl}/collections/${collection}/items?f=json`,
+        'ArcGIS Online': `${apiBaseUrl}/collections/${collection}/items`
     };
 
     return (

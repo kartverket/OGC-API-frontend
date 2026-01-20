@@ -1,12 +1,13 @@
-import { createMetadata, fetchData } from "./helpers";
+import { fetchCollectionsPageData } from "@/services/pageData";
+import { createCollectionsMetadata } from "@/services/pageMetadata";
 import { Heading } from "@digdir/designsystemet-react";
 import { Breadcrumbs, CollectionCard, ErrorPage } from "@/components";
 import styles from "./page.module.css";
 
-export const generateMetadata = async () => createMetadata();
+export const generateMetadata = async () => createCollectionsMetadata();
 
 export default async function Collections() {
-  const { data, status } = await fetchData();
+  const { data, status } = await fetchCollectionsPageData();
 
   if (status !== 200) {
     return <ErrorPage status={status} />;

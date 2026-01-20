@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { createMetadata, fetchData } from './helpers';
+import { fetchCollectionPageData } from '@/services/pageData';
+import { createCollectionMetadata } from '@/services/pageMetadata';
 import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { Breadcrumbs, DatasetInfoCard, ExampleUseCard } from '@/components';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
@@ -8,11 +9,14 @@ import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from "./page.module.css";
 
 
-export const generateMetadata = async ({ params }) => createMetadata(params);
+export async function generateMetadata({ params }) {
+    const { collection } = await params;
+    return createCollectionMetadata(collection);
+}
 
 export default async function Collection({ params }) {
     const { collection } = await params;
-    const { data, status } = await fetchData(collection);
+    const { data, status } = await fetchCollectionPageData(collection);
 
     if (status !== 200) {
         return <ErrorPage status={status} />;

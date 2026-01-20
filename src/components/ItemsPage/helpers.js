@@ -1,13 +1,4 @@
-import { API_BASE_URL } from '@/config/constants.client';
+import { buildItemsApiUrl } from '@/config/apiConfig';
 
-
-export function buildApiUrl(collection, searchParams) {
-    const baseUrl = `${API_BASE_URL}/collections/${collection}/items?f=json`;
-
-    const queryStr = Object.entries(searchParams)
-        .map(entry => `${entry[0]}=${entry[1]}`).join('&');
-
-    return queryStr !== '' ?
-        `${baseUrl}&${queryStr}` :
-        baseUrl;
-}
+// Re-export for use within ItemsPage component
+export { buildItemsApiUrl as buildApiUrl };
