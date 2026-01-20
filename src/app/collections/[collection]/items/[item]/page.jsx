@@ -1,17 +1,21 @@
 import { Fragment } from 'react';
 import NextLink from 'next/link';
-import { createMetadata, fetchData } from './helpers';
+import { fetchItemPageData } from '@/services/pageData';
+import { createItemMetadata } from '@/services/pageMetadata';
 import { Card, Heading, Link } from '@digdir/designsystemet-react';
 import { Breadcrumbs, Details, DetailsContent, DetailsSummary, ErrorPage, ItemMap } from '@/components';
 import { ArrowLeftIcon, ArrowRightIcon } from '@navikt/aksel-icons';
 import styles from './page.module.css';
 
 
-export const generateMetadata = async ({ params }) => createMetadata(params);
+export async function generateMetadata({ params }) {
+    const { collection, item } = await params;
+    return createItemMetadata(collection, item);
+}
 
 export default async function Item({ params }) {
     const { collection, item } = await params;
-    const { data, status } = await fetchData(collection, item);
+    const { data, status } = await fetchItemPageData(collection, item);
 
     if (status !== 200) {
         return <ErrorPage status={status} />;

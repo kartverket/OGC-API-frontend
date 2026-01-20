@@ -38,7 +38,7 @@ function DeveloperCard() {
   const [copied, setCopied] = useState(false);
 
   async function copyUrl() {
-    await navigator.clipboard.writeText(origin);
+    await navigator.clipboard.writeText(buildApiUrl(""));
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -48,7 +48,7 @@ function DeveloperCard() {
   return (
     <DeveloperCardWrapper>
       <div className={styles.urlCopy}>
-        <div className={styles.url}>{origin}</div>
+        <div className={styles.url}>{buildApiUrl("")}</div>
         <button
           type="button"
           onClick={copyUrl}

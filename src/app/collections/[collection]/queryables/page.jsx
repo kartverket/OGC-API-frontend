@@ -1,14 +1,18 @@
-import { createMetadata, fetchData } from './helpers';
+import { fetchQueryablesPageData } from '@/services/pageData';
+import { createQueryablesMetadata } from '@/services/pageMetadata';
 import { Card, Heading, ListItem, ListUnordered } from '@digdir/designsystemet-react';
 import { Breadcrumbs } from '@/components';
 import styles from './page.module.css';
 
 
-export const generateMetadata = async ({ params }) => createMetadata(params);
+export async function generateMetadata({ params }) {
+    const { collection } = await params;
+    return createQueryablesMetadata(collection);
+}
 
 export default async function Queryables({ params }) {
     const { collection } = await params;
-    const { data, status } = await fetchData(collection);
+    const { data, status } = await fetchQueryablesPageData(collection);
 
     if (status !== 200) {
         return <ErrorPage status={status} />;

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { createMetadata, fetchData } from './helpers';
+import { fetchHomePageData } from '@/services/pageData';
+import { createHomeMetadata } from '@/services/pageMetadata';
 import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import { ServiceInfoCard, DeveloperCard, ErrorPage } from '@/components';
@@ -8,10 +9,10 @@ import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
 import styles from './page.module.css';
 
 
-export const generateMetadata = async () => createMetadata();
+export const generateMetadata = async () => createHomeMetadata();
 
 export default async function Home() {
-    const { data, status } = await fetchData();
+    const { data, status } = await fetchHomePageData();
 
     if (status !== 200) {
         return <ErrorPage status={status} />;
