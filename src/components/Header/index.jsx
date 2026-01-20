@@ -7,9 +7,16 @@ import NextLink from "next/link";
 import { Link } from "@digdir/designsystemet-react";
 import { buildApiUrl } from "@/config/apiConfig";
 import styles from "./Header.module.css";
+import { useEffect, useState } from "react";
 
 export default function Header() {
-  const jsonLink = `${buildApiUrl(usePathname())}?f=json`;
+  const pathname = usePathname();
+  const [jsonLink, setJsonLink] = useState("");
+  
+//   Need to use useEffect here to avoid hydration mismatch on page refresh
+  useEffect(() => {
+    setJsonLink(`${buildApiUrl(pathname)}?f=json`);
+  }, [pathname]);
 
   return (
     <div className={styles.header}>
