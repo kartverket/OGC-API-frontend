@@ -8,11 +8,18 @@ import { fetchItems } from "@/utils/api.client";
 
 export default async function CollectionCard({ collection }) {
   // Fetch one item to check geometry type
-  const itemsData = await fetchItems(
-    `collections/${collection.id}/items?limit=1`,
-  );
-  const geometryType = itemsData.features?.[0]?.geometry?.type || null;
-
+  let geometryType = null;
+  try {
+    const itemsData = await fetchItems(
+      `collections/${collection.id}/items?limit=1`,
+    );
+    geometryType = itemsData.features?.[0]?.geometry?.type || null;
+  } catch (error) {
+    console.error(
+      `[CollectionCard] Failed to fetch items for collection ${collection.id}:`,
+      error,
+    );
+  }
   // Determine which icon to use based on geometry type (default to polygon)
   let geometryIconPath = "/gfx/polygon.svg";
 
@@ -90,7 +97,7 @@ export default async function CollectionCard({ collection }) {
               </span>
 
               <div className={styles.keywords}>
-                {collection.keywords.map((keyword) => (
+                {((Array.isArray(collection.keywords) ? collection.keywords : [])).map((keyword) => (
                   <span key={keyword} className={styles.tag}>
                     {keyword}
                   </span>

@@ -91,14 +91,20 @@ async function _fetchCollection(name) {
 }
 
 async function _fetchItemCount(collection) {
-    const response = await fetch(`${API_BASE_URL}/collections/${collection}/items?f=json&resulttype=hits`, {
+    const response = await fetch(`${API_BASE_URL}/collections/${collection}/items?f=json&limit=1`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
 
-    const data = await getResponse(response);
+    if (!response.ok) {
+        console.error(
+            '[fetchItemCount] Failed to fetch item count for collection:',
+            collection,
+            response.status,
+            response.statusText
+        );
+        return { collectionId: collection, count: 0 };
+    }
 
-    return {
-        collectionId: collection,
-        count: data.numberMatched
-    };
+    const data = await getResponse(response);
+    return { collectionId: collection, count: data?.numberMatched ?? 0 };
 }
