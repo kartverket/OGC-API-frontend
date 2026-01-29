@@ -1,8 +1,23 @@
-import { API_BASE_URL, SKIP_SSG } from '@/config/constants';
+import "server-only";
+
+import { SKIP_SSG } from '@/config/constants';
 import { getResponse } from './utils';
+import { getApiBaseUrlServer } from './baseUrl.server';
+
+
+function requireBaseUrl() {
+    const baseUrl = getApiBaseUrlServer();
+
+    if (!baseUrl || typeof baseUrl !== 'string') {
+        throw new Error('API_BASE_URL is not configured on the server.');
+    }
+
+    return baseUrl;
+}
 
 
 export async function fetchHome() {
+    const API_BASE_URL = requireBaseUrl();
     const response = await fetch(`${API_BASE_URL}?f=json`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
@@ -11,6 +26,7 @@ export async function fetchHome() {
 }
 
 export async function fetchCollections() {
+    const API_BASE_URL = requireBaseUrl();
     const url = `${API_BASE_URL}/collections?f=json`;
 
     const response = await fetch(url, {
@@ -63,6 +79,7 @@ export async function fetchCollection(name) {
 }
 
 export async function fetchItem(collection, id) {
+    const API_BASE_URL = requireBaseUrl();
     const url = `${API_BASE_URL}/collections/${collection}/items/${id}?f=json`;
 
     const response = await fetch(url, {
@@ -73,6 +90,7 @@ export async function fetchItem(collection, id) {
 }
 
 export async function fetchQueryables(collection) {
+    const API_BASE_URL = requireBaseUrl();
     const url = `${API_BASE_URL}/collections/${collection}/queryables?f=json`;
 
     const response = await fetch(url, {
@@ -83,6 +101,7 @@ export async function fetchQueryables(collection) {
 }
 
 async function _fetchCollection(name) {
+    const API_BASE_URL = requireBaseUrl();
     const response = await fetch(`${API_BASE_URL}/collections/${name}?f=json`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
@@ -91,6 +110,7 @@ async function _fetchCollection(name) {
 }
 
 async function _fetchItemCount(collection) {
+    const API_BASE_URL = requireBaseUrl();
     const response = await fetch(`${API_BASE_URL}/collections/${collection}/items?f=json&limit=1`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });

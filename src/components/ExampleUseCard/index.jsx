@@ -5,18 +5,41 @@ import { TerminalIcon } from '@navikt/aksel-icons';
 import { getApiBaseUrl } from '@/config/apiConfig';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 export default function ExampleUseCard({ collection }) {
     async function copyUrl(url) {
         await navigator.clipboard.writeText(url);
     }
 
-    const apiBaseUrl = getApiBaseUrl();
-    const examples = {
-        'QGIS': `${apiBaseUrl}/collections/${collection}/items?f=json`,
-        'ArcGIS Online': `${apiBaseUrl}/collections/${collection}/items`
-    };
+    const [apiBaseUrl, setApiBaseUrl] = useState(null);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        (async () => {
+            const url = await getApiBaseUrl();
+            if (!cancelled) {
+                setApiBaseUrl(prev => prev === url ? prev : url);
+            }
+        })();
+
+        return () => { cancelled = true; };
+    }, []);
+
+    const examples = useMemo(
+        () => {
+            if (!apiBaseUrl) {
+                return {};
+            }
+
+            return {
+                'QGIS': `${apiBaseUrl}/collections/${collection}/items?f=json`,
+                'ArcGIS Online': `${apiBaseUrl}/collections/${collection}/items`
+            };
+        },
+        [apiBaseUrl, collection]
+    );
 
     return (
         <Card className={styles.developerCard}>
@@ -35,6 +58,7 @@ export default function ExampleUseCard({ collection }) {
                             <button
                                 onClick={() => copyUrl(entry[1])}
                                 aria-label="Kopier URL"
+                                disabled={!apiBaseUrl}
                             >
                                 <CopyIcon title="a11y-title" width="28px" />
                             </button>

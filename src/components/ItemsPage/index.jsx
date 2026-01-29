@@ -12,7 +12,25 @@ import styles from './ItemsPage.module.css';
 
 
 export default function Items({ srvData, collection, searchParams }) {
-    const apiUrl = buildApiUrl(collection, searchParams);
+    const [apiUrl, setApiUrl] = useState(null);
+    const searchKey = new URLSearchParams(searchParams).toString();
+
+    useEffect(
+        () => {
+            let cancelled = false;
+
+            (async () => {
+                const url = await buildApiUrl(collection, searchParams);
+                if (!cancelled) {
+                    setApiUrl(prev => prev === url ? prev : url);
+                }
+            })();
+
+            return () => { cancelled = true; };
+        },
+        [collection, searchKey]
+    );
+
     const { data: _data = null, error = null, isLoading } = useSWRImmutable(apiUrl, fetchItems, { refreshInterval: 0 });
     const [data, setData] = useState(null);
 
