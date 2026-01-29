@@ -19,7 +19,7 @@ COPY . .
 RUN bun run build
 
 # For production, remove -dev from image (non-root and no shell)
-FROM dhi.io/bun:1-alpine3.22-dev AS runner
+FROM dhi.io/bun:1-alpine3.22 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
