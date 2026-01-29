@@ -12,10 +12,21 @@ import { useEffect, useState } from "react";
 export default function Header() {
   const pathname = usePathname();
   const [jsonLink, setJsonLink] = useState("");
-  
-//   Need to use useEffect here to avoid hydration mismatch on page refresh
+
+  // Need to use useEffect here to avoid hydration mismatch on page refresh
   useEffect(() => {
-    setJsonLink(`${buildApiUrl(pathname)}?f=json`);
+    let cancelled = false;
+
+    (async () => {
+      const url = await buildApiUrl(pathname);
+      const next = `${url}?f=json`;
+
+      if (!cancelled) {
+        setJsonLink(prev => prev === next ? prev : next);
+      }
+    })();
+
+    return () => { cancelled = true; };
   }, [pathname]);
 
   return (
@@ -31,7 +42,7 @@ export default function Header() {
 
       <div className={styles.links}>
         <Link asChild data-size="sm">
-          <NextLink href={jsonLink} target="_blank">
+          <NextLink href={jsonLink || "#"} target="_blank" aria-disabled={!jsonLink}>
             JSON
           </NextLink>
         </Link>

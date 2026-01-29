@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Card,
@@ -17,7 +17,7 @@ import {
 import CopyIcon from "@/assets/gfx/icon-copy.svg";
 import styles from "./DeveloperCard.module.css";
 import NextLink from "next/link";
-import { buildApiUrl } from "@/config/apiConfig";
+import { getApiBaseUrl } from "@/config/apiConfig";
 
 function DeveloperCardWrapper({ children }) {
   return (
@@ -34,11 +34,49 @@ function DeveloperCardWrapper({ children }) {
 }
 
 function DeveloperCard() {
-  const origin = window.location.origin;
   const [copied, setCopied] = useState(false);
+  const [apiBaseUrl, setApiBaseUrl] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      const url = await getApiBaseUrl();
+      if (!cancelled) {
+        setApiBaseUrl(prev => prev === (url ?? "") ? prev : (url ?? ""));
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, []);
+
+  const links = useMemo(
+    () => {
+      if (!apiBaseUrl) {
+        return {
+          root: "",
+          swagger: "",
+          openapi: "",
+          conformance: ""
+        };
+      }
+
+      return {
+        root: apiBaseUrl,
+        swagger: `${apiBaseUrl}/openapi?f=html`,
+        openapi: `${apiBaseUrl}/openapi?f=json`,
+        conformance: `${apiBaseUrl}/conformance?f=html`
+      };
+    },
+    [apiBaseUrl]
+  );
 
   async function copyUrl() {
-    await navigator.clipboard.writeText(buildApiUrl(""));
+    if (!links.root) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(links.root);
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -48,12 +86,13 @@ function DeveloperCard() {
   return (
     <DeveloperCardWrapper>
       <div className={styles.urlCopy}>
-        <div className={styles.url}>{buildApiUrl("")}</div>
+        <div className={styles.url}>{links.root}</div>
         <button
           type="button"
           onClick={copyUrl}
           aria-label="Kopier URL"
           className={styles.copyButton}
+          disabled={!links.root}
         >
           {copied ? (
             <CheckmarkIcon title="Kopiert!" width="28px" height="28px" />
@@ -65,20 +104,20 @@ function DeveloperCard() {
 
       <div className={styles.links}>
         <Link asChild>
-          <NextLink href={buildApiUrl("/openapi?f=html")} target="_blank">
+          <NextLink href={links.swagger} target="_blank">
             Swagger UI
             <ArrowRightIcon title="a11y-title" fontSize="28px" />
           </NextLink>
         </Link>
         <Link asChild></Link>
         <Link asChild>
-          <NextLink href={buildApiUrl("/openapi?f=json")} target="_blank">
+          <NextLink href={links.openapi} target="_blank">
             OpenAPI Document
             <ArrowRightIcon title="a11y-title" fontSize="28px" />
           </NextLink>
         </Link>
         <Link asChild>
-          <NextLink href={buildApiUrl("/conformance?f=html")} target="_blank">
+          <NextLink href={links.conformance} target="_blank">
             Conformance
             <ArrowRightIcon title="a11y-title" fontSize="28px" />
           </NextLink>

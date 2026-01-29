@@ -1,32 +1,50 @@
+let _cachedBaseUrl = null;
+let _inFlight = null;
+
+
 /**
  * Gets the API base URL based on the current environment.
- * - Client-side: Uses NEXT_PUBLIC_API_BASE_URL if set, otherwise derives from window.location
- * - Server-side: Uses API_BASE_URL environment variable
- * @returns {string|undefined} The API base URL
+ * - Client-side: fetches runtime config from Next server
+ * - Server-side: returns process.env.API_BASE_URL (since this file must remain client-safe, we avoid server-only imports)
+ * @returns {Promise<string|undefined>} The API base URL
  */
-export function getApiBaseUrl() {
-  // Client-side: derive API URL from current domain
+export async function getApiBaseUrl() {
+  // Client-side: ask server for runtime config
   if (typeof window !== "undefined") {
-    // NEXT_PUBLIC_API_BASE_URL used for local development
-    if (process.env.NEXT_PUBLIC_API_BASE_URL) {
-      return process.env.NEXT_PUBLIC_API_BASE_URL;
+    if (_cachedBaseUrl) {
+      return _cachedBaseUrl;
     }
 
-    // Localhost fallback for development without env var
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      console.warn('No NEXT_PUBLIC_API_BASE_URL set for localhost. Using default.');
-      return 'http://localhost:5000';
+    if (_inFlight) {
+      return await _inFlight;
     }
 
-    // Production: construct api.mydomain from current domain
-    const protocol = window.location.protocol;
-    return `${protocol}//api.${hostname}`;
+    _inFlight = (async () => {
+      const response = await fetch('/api/runtime-config', { cache: 'no-store' });
+
+      if (!response.ok) {
+        console.warn('Failed to load runtime-config:', response.status, response.statusText);
+        return undefined;
+      }
+
+      const data = await response.json();
+      const url = data?.apiBaseUrl;
+
+      if (url && typeof url === 'string' && url.trim().length > 0) {
+        _cachedBaseUrl = url.replace(/\/+$/, '');
+        return _cachedBaseUrl;
+      }
+
+      return undefined;
+    })();
+
+    return await _inFlight;
   }
 
-  // Server-side: use absolute URL from environment
-  if (process.env.API_BASE_URL) {
-    return process.env.API_BASE_URL;
+  // Server-side fallback (only used if this module is executed server-side)
+  const url = process.env.API_BASE_URL;
+  if (url && typeof url === 'string' && url.trim().length > 0) {
+    return url.replace(/\/+$/, '');
   }
 
   console.warn("Missing API_BASE_URL env var");
@@ -36,11 +54,11 @@ export function getApiBaseUrl() {
 /**
  * Builds a complete API URL from a path.
  * @param {string} path - The API path (e.g., '/collections' or 'collections')
- * @returns {string} The complete API URL
+ * @returns {Promise<string>} The complete API URL
  * @throws {Error} If API base URL is not configured
  */
-export function buildApiUrl(path) {
-  const baseUrl = getApiBaseUrl();
+export async function buildApiUrl(path) {
+  const baseUrl = await getApiBaseUrl();
   if (!baseUrl) {
     throw new Error('API base URL is not configured properly.');
   }
@@ -54,10 +72,10 @@ export function buildApiUrl(path) {
  * Builds the API URL for fetching collection items with query parameters.
  * @param {string} collection - The collection name
  * @param {Object} searchParams - Query parameters (limit, offset, filters, etc.)
- * @returns {string} The complete API URL
+ * @returns {Promise<string>} The complete API URL
  */
-export function buildItemsApiUrl(collection, searchParams) {
-  const baseUrl = buildApiUrl(`/collections/${collection}/items?f=json`);
+export async function buildItemsApiUrl(collection, searchParams) {
+  const baseUrl = await buildApiUrl(`/collections/${collection}/items?f=json`);
 
   const queryStr = Object.entries(searchParams)
     .map(([key, value]) => `${key}=${value}`)
