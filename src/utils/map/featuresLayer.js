@@ -1,7 +1,7 @@
 import { Vector as VectorSource } from 'ol/source';
 import { Vector as VectorLayer } from 'ol/layer';
 import GeoJSON from 'ol/format/GeoJSON';
-import { bboxStyle, polygonStyle } from './styles';
+import { bboxStyle, featureStyle } from './styles';
 import { getLayer, getProjection } from './helpers';
 import { fromExtent } from 'ol/geom/Polygon';
 import { Feature } from 'ol';
@@ -25,7 +25,7 @@ export function createEmptyFeaturesLayer() {
     });
 
     vectorLayer.set('id', 'features');
-    vectorLayer.setStyle(polygonStyle);
+    vectorLayer.setStyle(featureStyle);
 
     return vectorLayer;
 }

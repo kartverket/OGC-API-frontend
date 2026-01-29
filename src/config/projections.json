@@ -5,6 +5,11 @@
         "proj4": "+proj=longlat +datum=WGS84 +no_defs +type=crs"
     },
     {
+        "code": "OGC:CRS84H",
+        "uri": "http://www.opengis.net/def/crs/OGC/0/CRS84h",
+        "proj4": "+proj=longlat +datum=WGS84 +no_defs +type=crs"
+    },
+    {
         "code": "EPSG:3006",
         "uri": "http://www.opengis.net/def/crs/EPSG/0/3006",
         "proj4": "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
