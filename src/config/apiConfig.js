@@ -83,3 +83,9 @@ export async function buildItemsApiUrl(collection, searchParams) {
 
   return queryStr !== '' ? `${baseUrl}&${queryStr}` : baseUrl;
 }
+
+export function joinApiUrl(baseUrl, path) {
+  const cleanBaseUrl = (baseUrl || "").replace(/\/+$/, "");
+  const cleanPath = path && path.startsWith("/") ? path : `/${path || ""}`;
+  return `${cleanBaseUrl}${cleanPath}`;
+}

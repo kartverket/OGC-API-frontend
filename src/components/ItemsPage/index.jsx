@@ -1,47 +1,49 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import useSWRImmutable from 'swr/immutable'
 import { fetchItems } from '@/utils/api/client';
 import ItemsProvider from '@/context/ItemsProvider';
 import ItemsMapProvider from '@/context/ItemsMapProvider';
-import { buildApiUrl } from './helpers';
 import { Heading, Spinner } from '@digdir/designsystemet-react';
 import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/components';
 import styles from './ItemsPage.module.css';
 
+import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
+import { joinApiUrl } from '@/config/apiConfig';
+
 
 export default function Items({ srvData, collection, searchParams }) {
-    const [apiUrl, setApiUrl] = useState(null);
+    const { apiBaseUrl } = useApiBaseUrlSWR();
     const searchKey = new URLSearchParams(searchParams).toString();
 
-    useEffect(
+    const apiUrl = useMemo(
         () => {
-            let cancelled = false;
+            if (!apiBaseUrl) {
+                return null;
+            }
 
-            (async () => {
-                const url = await buildApiUrl(collection, searchParams);
-                if (!cancelled) {
-                    setApiUrl(prev => prev === url ? prev : url);
-                }
-            })();
+            const base = `/collections/${collection}/items?f=json`;
+            const path = searchKey ? `${base}&${searchKey}` : base;
 
-            return () => { cancelled = true; };
+            return joinApiUrl(apiBaseUrl, path);
         },
-        [collection, searchKey]
+        [apiBaseUrl, collection, searchKey]
     );
 
-    const { data: _data = null, error = null, isLoading } = useSWRImmutable(apiUrl, fetchItems, { refreshInterval: 0 });
-    const [data, setData] = useState(null);
+    const { data: _data = null, error = null, isLoading } =
+        useSWRImmutable(apiUrl, fetchItems, { refreshInterval: 0 });
 
-    useEffect(
+    const data = useMemo(
         () => {
-            if (_data !== null) {
-                setData({
-                    ..._data,
-                    ...srvData
-                });
+            if (_data === null) {
+                return null;
             }
+
+            return {
+                ..._data,
+                ...srvData
+            };
         },
         [_data, srvData]
     );

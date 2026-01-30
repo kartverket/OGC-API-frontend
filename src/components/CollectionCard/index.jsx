@@ -4,16 +4,14 @@ import { getCrsCode } from "@/utils/map/helpers";
 import { Card, Heading, Link } from "@digdir/designsystemet-react";
 import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
 import styles from "./CollectionCard.module.css";
-import { fetchItems } from "@/utils/api.client";
+import { fetchCollection } from "@/utils/api/server";
 
 export default async function CollectionCard({ collection }) {
   // Fetch one item to check geometry type
   let geometryType = null;
   try {
-    const itemsData = await fetchItems(
-      `collections/${collection.id}/items?limit=1`,
-    );
-    geometryType = itemsData.features?.[0]?.geometry?.type || null;
+    const itemsData = await fetchCollection(collection.id);
+    geometryType = itemsData.geometryType || null;
   } catch (error) {
     console.error(
       `[CollectionCard] Failed to fetch items for collection ${collection.id}:`,

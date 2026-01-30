@@ -2,6 +2,7 @@ import { fetchCollectionsPageData } from "@/services/pageData";
 import { createCollectionsMetadata } from "@/services/pageMetadata";
 import { Heading } from "@digdir/designsystemet-react";
 import { Breadcrumbs, CollectionCard, ErrorPage } from "@/components";
+// import CollectionCard from "@/components/CollectionCard";
 import styles from "./page.module.css";
 
 export const generateMetadata = async () => createCollectionsMetadata();

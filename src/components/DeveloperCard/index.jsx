@@ -17,7 +17,7 @@ import {
 import CopyIcon from "@/assets/gfx/icon-copy.svg";
 import styles from "./DeveloperCard.module.css";
 import NextLink from "next/link";
-import { getApiBaseUrl } from "@/config/apiConfig";
+import { useApiBaseUrlSWR } from "@/config/apiConfig.swr";
 
 function DeveloperCardWrapper({ children }) {
   return (
@@ -35,20 +35,7 @@ function DeveloperCardWrapper({ children }) {
 
 function DeveloperCard() {
   const [copied, setCopied] = useState(false);
-  const [apiBaseUrl, setApiBaseUrl] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      const url = await getApiBaseUrl();
-      if (!cancelled) {
-        setApiBaseUrl(prev => prev === (url ?? "") ? prev : (url ?? ""));
-      }
-    })();
-
-    return () => { cancelled = true; };
-  }, []);
+  const { apiBaseUrl } = useApiBaseUrlSWR();
 
   const links = useMemo(
     () => {
