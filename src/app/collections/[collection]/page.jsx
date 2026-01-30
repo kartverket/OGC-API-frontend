@@ -8,6 +8,8 @@ import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from "./page.module.css";
 
+// Force runtime reading (needed for config file access)
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
     const { collection } = await params;
@@ -72,7 +74,7 @@ export default async function Collection({ params }) {
                         </div>
                     </div>
                     <div className={styles.right}>
-                        <DatasetInfoCard collection={data} />
+                        <DatasetInfoCard collection={data} metadata={data.metadata} />
                     </div>
                 </div>  
             </div>

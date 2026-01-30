@@ -1,0 +1,85 @@
+import "server-only";
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+
+const CONFIG_PATH = process.env.PYGEOAPI_CONFIG_PATH_FRONTEND || '/volumes/pygeoapi-config.yml';
+
+let cachedConfig = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 600 * 1000; // 10 minutes
+
+function readConfigFile() {
+    const now = Date.now();
+
+    if (cachedConfig && (now - cacheTimestamp) < CACHE_TTL) {
+        return cachedConfig;
+    }
+
+    try {
+        const fileContent = readFileSync(CONFIG_PATH, 'utf8');
+        cachedConfig = parse(fileContent);
+        cacheTimestamp = now;
+        return cachedConfig;
+    } catch (error) {
+        console.error(`Failed to read pygeoapi config from ${CONFIG_PATH}:`, error.message);
+        return null;
+    }
+}
+
+export function getPygeoapiConfig() {
+    return readConfigFile();
+}
+
+export function getMetadata() {
+    const config = readConfigFile();
+    console.log('[pygeoapi.js] Loaded metadata:', config?.metadata);
+    return config?.metadata || null;
+}
+
+export function getResources() {
+    const config = readConfigFile();
+    return config?.resources || null;
+}
+
+export function getCollections() {
+    const resources = getResources();
+    if (!resources) return [];
+
+    return Object.entries(resources)
+        .filter(([_, resource]) => resource.type === 'collection')
+        .map(([id, resource]) => ({
+            id,
+            title: resource.title?.en || resource.title || id,
+            description: resource.description?.en || resource.description?.no || resource.description || '',
+            keywords: resource.keywords?.en || resource.keywords?.no || resource.keywords || [],
+            bbox: resource.extents?.spatial?.bbox || {},
+        }));
+}
+
+export function getCollection(collectionId) {
+    const resources = getResources();
+    if (!resources) return null;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return null;
+
+    return {
+        id: collectionId,
+        title: resource.title?.en || resource.title || collectionId,
+        description: resource.description?.en || resource.description?.no || resource.description || '',
+        keywords: resource.keywords?.en || resource.keywords?.no || resource.keywords || [],
+        bbox: resource.extents?.spatial?.bbox || {},
+    };
+}
+
+export function getDatasetTitle() {
+    const metadata = getMetadata();
+    return metadata?.identification?.title?.en || metadata?.identification?.title || 'Dataset';
+}
+
+export function getDatasetDescription() {
+    const metadata = getMetadata();
+    return metadata?.identification?.description?.en || metadata?.identification?.description || '';
+}
+
+// 

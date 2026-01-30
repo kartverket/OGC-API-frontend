@@ -5,6 +5,9 @@ import { Breadcrumbs, CollectionCard, ErrorPage } from "@/components";
 // import CollectionCard from "@/components/CollectionCard";
 import styles from "./page.module.css";
 
+// Force runtime reading (needed for config file access)
+export const dynamic = 'force-dynamic';
+
 export const generateMetadata = async () => createCollectionsMetadata();
 
 export default async function Collections() {
