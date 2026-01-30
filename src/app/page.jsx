@@ -8,6 +8,8 @@ import { ServiceInfoCard, DeveloperCard, ErrorPage } from '@/components';
 import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
 import styles from './page.module.css';
 
+// Force runtime reading (needed for config file access)
+export const dynamic = 'force-dynamic';
 
 export const generateMetadata = async () => createHomeMetadata();
 
@@ -59,7 +61,7 @@ export default async function Home() {
                 </div>
 
                 <div className={styles.right}>
-                    <ServiceInfoCard />
+                    <ServiceInfoCard metadata={data.metadata} />
                 </div>
             </div>
         </div>

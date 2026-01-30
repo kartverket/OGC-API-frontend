@@ -67,11 +67,11 @@ export default async function CollectionCard({ collection }) {
                 </span>
               )}
             </div>
-
-            <div className={styles.updated}>
+            {/* Commented out, as we don't have updated info yet */}
+            {/* <div className={styles.updated}>
               <div className={styles.label}>Oppdatert</div>
               <div className={styles.value}>21.10.2025</div>
-            </div>
+            </div> */}
           </div>
 
           <div className={styles.middle}>

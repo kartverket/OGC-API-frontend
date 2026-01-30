@@ -3,9 +3,8 @@ import { Card, Heading, Link, ListUnordered, ListItem } from '@digdir/designsyst
 import { Details, DetailsContent, DetailsSummary } from '..';
 import { InformationSquareIcon } from '@navikt/aksel-icons';
 import styles from './DatasetInfoCard.module.css';
-// import { getCrsCode } from '@/utils/helper';
 
-export default function DatasetInfoCard({ collection }) {
+export default function DatasetInfoCard({ collection, metadata }) {
     return (
         <Card className={styles.datasetInfoCard}>
             <div className={styles.heading}>
@@ -24,19 +23,7 @@ export default function DatasetInfoCard({ collection }) {
                 </div>
                 <div>
                     <div className={styles.label}>Tilbyder</div>
-                    <div className={styles.value}>Kartverket</div>
-                </div>
-                <div>
-                    <div className={styles.label}>Dekning</div>
-                    <div className={styles.value}>Hele Norge</div>
-                </div>
-                <div >
-                    <div className={styles.label}>Oppdateringsfrekvens</div>
-                    <div className={styles.value}>Etter behov</div>
-                </div>
-                <div >
-                    <div className={styles.label}>Sist oppdatert</div>
-                    <div className={styles.value}>14.10.2025</div>
+                    <div className={styles.value}>{metadata?.provider?.name || 'Kartverket'}</div>
                 </div>
             </div>
 
@@ -49,45 +36,25 @@ export default function DatasetInfoCard({ collection }) {
                                 <div>
                                     <div className={styles.label}>URL</div>
                                     <div className={styles.value}>
-                                        <Link href="https://www.kartverket.no">https://www.kartverket.no</Link>
+                                        <Link href={metadata?.contact?.url || 'https://www.kartverket.no'}>
+                                            {metadata?.contact?.url || 'https://www.kartverket.no'}
+                                        </Link>
                                     </div>
                                 </div>
                                 <div>
                                     <div className={styles.label}>E-post</div>
                                     <div className={styles.value}>
-                                        <Link href="mailto:post@kartverket.no">post@kartverket.no</Link>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={styles.label}>Telefon</div>
-                                    <div className={styles.value}>
-                                        <Link href="tel:32 11 80 00">32 11 80 00</Link>
+                                        <Link href={`mailto:${metadata?.contact?.email || 'post@kartverket.no'}`}>
+                                            {metadata?.contact?.email || 'post@kartverket.no'}
+                                        </Link>
                                     </div>
                                 </div>
                                 <div>
                                     <div className={styles.label}>Kontakt-URL</div>
                                     <div className={styles.value}>
-                                        <Link href="https://www.kartverket.no/om-kartverket/kontakt-oss">https://www.kartverket.no/om-kartverket/kontakt-oss</Link>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={styles.label}>Adresse</div>
-                                    <div className={styles.value}>
-                                        Karverksveien 21<br />
-                                        3511 Hønefoss<br />
-                                        Norge
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={styles.label}>Kontortid</div>
-                                    <div className={styles.value}>
-                                        Mandag - fredag: 09:00 - 15:00
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={styles.label}>Kontaktinstruksjoner:</div>
-                                    <div className={styles.value}>
-                                        Sentralbord fra 09:00
+                                        <Link href={metadata?.contact?.contactUrl || 'https://www.kartverket.no/om-kartverket/kontakt-oss'}>
+                                            {metadata?.contact?.contactUrl || 'https://www.kartverket.no/om-kartverket/kontakt-oss'}
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

@@ -37,14 +37,38 @@
                 font-weight: 400;
             }
 
+            & .keywordsRow {
+                display: flex;
+                padding: 8px 0;
+                align-items: flex-start;
+            }
+
             & .keywords {
                 display: flex;
-                gap: 8px;
+                flex-wrap: wrap;
+                gap: 6px;
+                flex: 1;
 
                 & span {
                     background: var(--ds-color-surface-tinted);
                     border-radius: var(--ds-border-radius-sm);
                     padding: 4px 8px;
+                    font-size: var(--ds-font-size-1);
+                }
+            }
+
+            & .moreButton {
+                background: var(--ds-color-accent-surface-default);
+                color: var(--ds-color-accent-text-default);
+                border: none;
+                border-radius: var(--ds-border-radius-sm);
+                padding: 4px 8px;
+                font-size: var(--ds-font-size-1);
+                cursor: pointer;
+                white-space: nowrap;
+
+                &:hover {
+                    background: var(--ds-color-accent-surface-hover);
                 }
             }
         }
