@@ -5,29 +5,16 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import NextLink from "next/link";
 import { Link } from "@digdir/designsystemet-react";
-import { buildApiUrl } from "@/config/apiConfig";
 import styles from "./Header.module.css";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import { useApiBaseUrlSWR } from "@/config/apiConfig.swr";
+import { joinApiUrl } from "@/config/apiConfig";
+
 
 export default function Header() {
   const pathname = usePathname();
-  const [jsonLink, setJsonLink] = useState("");
-
-  // Need to use useEffect here to avoid hydration mismatch on page refresh
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      const url = await buildApiUrl(pathname);
-      const next = `${url}?f=json`;
-
-      if (!cancelled) {
-        setJsonLink(prev => prev === next ? prev : next);
-      }
-    })();
-
-    return () => { cancelled = true; };
-  }, [pathname]);
+  const { apiBaseUrl } = useApiBaseUrlSWR();
+  const jsonLink = apiBaseUrl ? `${joinApiUrl(apiBaseUrl, pathname)}?f=json` : "";
 
   return (
     <div className={styles.header}>
@@ -42,7 +29,15 @@ export default function Header() {
 
       <div className={styles.links}>
         <Link asChild data-size="sm">
-          <NextLink href={jsonLink || "#"} target="_blank" aria-disabled={!jsonLink}>
+          <NextLink
+            href={jsonLink || "#"}
+            target="_blank"
+            aria-disabled={!jsonLink}
+            // optional: make it actually non-clickable when disabled
+            onClick={(e) => {
+              if (!jsonLink) e.preventDefault();
+            }}
+          >
             JSON
           </NextLink>
         </Link>

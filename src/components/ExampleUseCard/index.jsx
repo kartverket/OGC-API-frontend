@@ -2,7 +2,7 @@
 
 import { Card, Heading } from '@digdir/designsystemet-react';
 import { TerminalIcon } from '@navikt/aksel-icons';
-import { getApiBaseUrl } from '@/config/apiConfig';
+import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
 import { Fragment, useEffect, useMemo, useState } from 'react';
@@ -12,20 +12,7 @@ export default function ExampleUseCard({ collection }) {
         await navigator.clipboard.writeText(url);
     }
 
-    const [apiBaseUrl, setApiBaseUrl] = useState(null);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        (async () => {
-            const url = await getApiBaseUrl();
-            if (!cancelled) {
-                setApiBaseUrl(prev => prev === url ? prev : url);
-            }
-        })();
-
-        return () => { cancelled = true; };
-    }, []);
+    const { apiBaseUrl } = useApiBaseUrlSWR();
 
     const examples = useMemo(
         () => {

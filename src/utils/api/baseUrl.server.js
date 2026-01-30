@@ -1,5 +1,3 @@
-import "server-only";
-
 export function getApiBaseUrlServer() {
   const url = process.env.API_BASE_URL;
 

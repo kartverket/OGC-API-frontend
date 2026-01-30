@@ -1,5 +1,3 @@
-import "server-only";
-
 import { SKIP_SSG } from '@/config/constants';
 import { getResponse } from './utils';
 import { getApiBaseUrlServer } from './baseUrl.server';
@@ -74,7 +72,8 @@ export async function fetchCollection(name) {
 
     return {
         ...result[0],
-        itemCount: result[1].count
+        itemCount: result[1].count,
+        geometryType: result[1].geometryType
     }
 }
 
@@ -126,5 +125,5 @@ async function _fetchItemCount(collection) {
     }
 
     const data = await getResponse(response);
-    return { collectionId: collection, count: data?.numberMatched ?? 0 };
+    return { collectionId: collection, count: data?.numberMatched ?? 0, geometryType: data?.features?.[0]?.geometry?.type || null };
 }
