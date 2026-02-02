@@ -1,6 +1,6 @@
 import { SKIP_SSG } from '@/config/constants';
 import { getResponse } from './utils';
-import { getApiBaseUrlServer } from './baseUrl.server';
+import { getApiBaseUrlServer } from './baseUrl';
 
 
 function requireBaseUrl() {
