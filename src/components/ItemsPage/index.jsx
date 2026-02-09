@@ -5,7 +5,7 @@ import useSWRImmutable from 'swr/immutable'
 import { fetchItems } from '@/utils/api/client';
 import ItemsProvider from '@/context/ItemsProvider';
 import ItemsMapProvider from '@/context/ItemsMapProvider';
-import { Heading, Spinner } from '@digdir/designsystemet-react';
+import { Heading, Paragraph, Spinner } from '@digdir/designsystemet-react';
 import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/components';
 import styles from './ItemsPage.module.css';
 
@@ -32,7 +32,7 @@ export default function Items({ srvData, collection, searchParams }) {
     );
 
     const { data: _data = null, error = null, isLoading } =
-        useSWRImmutable(apiUrl, fetchItems, { refreshInterval: 0 });
+        useSWRImmutable(apiUrl, fetchItems, { refreshInterval: 0, keepPreviousData: true });
 
     const data = useMemo(
         () => {
