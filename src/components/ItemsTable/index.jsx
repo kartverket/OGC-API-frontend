@@ -1,6 +1,5 @@
 'use client'
 
-import { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Pagination, Select, SelectOption, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, usePagination } from '@digdir/designsystemet-react';
 import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
@@ -19,39 +18,33 @@ export default function ItemsTable({ data }) {
     const searchParams = useSearchParams();
     const features = data.features;
     const columnNames = Object.keys(features[0].properties);
-    const limits = getLimits(searchParams, LIMITS);
-    const [limit, setLimit] = useState(getLimit(searchParams) || Object.keys(LIMITS)[0]);
-    const [currentPage, setCurrentPage] = useState(getCurrentPage(searchParams));
-    const totalPages = useMemo(() => Math.ceil(data.numberMatched / limit), [limit, data.numberMatched]);
-    const itemsShowingText = useMemo(() => getItemsShowingText(searchParams, LIMITS, data), [searchParams, data]);
 
-    const { pages, prevButtonProps, nextButtonProps, hasNext, hasPrevious } =
+    const limit = getLimit(searchParams) || parseInt(Object.keys(LIMITS)[0], 10);
+    const currentPage = getCurrentPage(searchParams);
+    const limits = getLimits(searchParams, LIMITS);
+    const totalPages = Math.ceil(data.numberMatched / limit);
+    const itemsShowingText = getItemsShowingText(searchParams, LIMITS, data);
+
+    const { pages, prevButtonProps, nextButtonProps } =
         usePagination({
             currentPage,
-            setCurrentPage,
+            setCurrentPage: () => {},
             onChange: handlePaginationChange,
             totalPages,
             showPages: 3,
         });
 
     function handleLimitChange(value) {
-        setLimit(value);
-        setCurrentPage(1);
-
-        const params = new URLSearchParams(window.location.search);
-
+        const params = new URLSearchParams(searchParams.toString());
         params.set('limit', value);
         params.delete('offset');
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
     function handlePaginationChange(_, value) {
-        setCurrentPage(value);
-
-        const offset = (value - 1) * limit;
-        const params = new URLSearchParams(window.location.search);
-
-        params.set('offset', offset);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('offset', (value - 1) * limit);
+        params.set('limit', limit);
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
