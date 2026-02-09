@@ -1,7 +1,7 @@
 "use client";
 // Needs to be a client component to use usePathname
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import NextLink from "next/link";
 import { Link } from "@digdir/designsystemet-react";
@@ -13,8 +13,15 @@ import { joinApiUrl } from "@/config/apiConfig";
 
 export default function Header() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { apiBaseUrl } = useApiBaseUrlSWR();
-  const jsonLink = apiBaseUrl ? `${joinApiUrl(apiBaseUrl, pathname)}?f=json` : "";
+
+  const jsonLink = useMemo(() => {
+    if (!apiBaseUrl) return "";
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("f", "json");
+    return `${joinApiUrl(apiBaseUrl, pathname)}?${params.toString()}`;
+  }, [apiBaseUrl, pathname, searchParams]);
 
   return (
     <div className={styles.header}>
