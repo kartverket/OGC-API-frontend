@@ -58,9 +58,8 @@ export default function FilterCard({ data }) {
         [map]
     );
 
-    const [selectedFilters, setSelectedFilters] = useState(() => {
+    const selectedFilters = useMemo(() => {
         const fields = getFields([], data.queryables);
-
         fields.push('bbox');
 
         return [...searchParams]
@@ -69,18 +68,13 @@ export default function FilterCard({ data }) {
                 field: entry[0],
                 value: entry[1]
             }));
-    });
+    }, [searchParams, data.queryables]);
 
     const controlType = useMemo(() => getControlTypeFromField(selectedField, data.queryables), [selectedField, data.queryables]);
     const fields = useMemo(() => getFields(selectedFilters, data.queryables), [selectedFilters, data.queryables]);
     const hasBboxFilter = useMemo(() => selectedFilters.some(filter => filter.field === 'bbox'), [selectedFilters]);
 
     function addFilter() {
-        setSelectedFilters([
-            ...selectedFilters,
-            { field: selectedField, value: filterValue }
-        ]);
-
         setSelectedField('');
         setFilterValue('');
 
@@ -91,21 +85,6 @@ export default function FilterCard({ data }) {
     }
 
     function addBboxFilter() {
-        const field = 'bbox';
-        const value = bboxFilter.join(',');
-        const clone = [...selectedFilters];
-        const index = clone.findIndex(filter => filter.field === field);
-
-        if (index === -1) {
-            setSelectedFilters([
-                ...selectedFilters,
-                { field, value }
-            ]);
-        } else {
-            clone.splice(index, 1, { field, value });
-            setSelectedFilters(clone);
-        }
-
         const parsed = parseBbox(bboxFilter);
         bboxRef.current = null;
 
@@ -113,7 +92,7 @@ export default function FilterCard({ data }) {
         setBboxEdit(false);
 
         const params = new URLSearchParams(searchParams);
-        params.set(field, value);
+        params.set('bbox', bboxFilter.join(','));
 
         router.push(`${pathname}?${params}`, { scroll: false });
     }
@@ -121,25 +100,18 @@ export default function FilterCard({ data }) {
     function removeAllFilters() {
         cancelEditBbox();
 
-        const filters = [...selectedFilters];
-        setSelectedFilters([]);
-
         const params = new URLSearchParams(searchParams);
-        filters.forEach(({ field }) => params.delete(field));
+        selectedFilters.forEach(({ field }) => { params.delete(field); });
 
         router.push(`${pathname}?${params}`, { scroll: false });
     }
 
     function removeFilter(index) {
-        const filters = [...selectedFilters];
-        const filter = filters[index];
+        const filter = selectedFilters[index];
 
         if (filter.field === 'bbox') {
             cancelEditBbox();
         }
-
-        filters.splice(index, 1);
-        setSelectedFilters(filters);
 
         const params = new URLSearchParams(searchParams);
         params.delete(filter.field);
