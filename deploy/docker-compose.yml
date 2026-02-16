@@ -53,8 +53,6 @@ services:
   postgis:
     build:
       context: ./postgis
-      platforms:
-        - linux/amd64
     platform: linux/amd64
     ports:
       - "5432:5432"
