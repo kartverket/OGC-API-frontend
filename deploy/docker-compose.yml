@@ -62,12 +62,6 @@ services:
       - DB_NAME=pygeoapi_test
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=qwer1234
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d pygeoapi_test"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
     restart: always
     networks:
       - pygeoapi-network
@@ -77,4 +71,4 @@ networks:
     driver: bridge
 
 volumes:
-    postgres_data:
+  postgres_data:
