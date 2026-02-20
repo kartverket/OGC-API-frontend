@@ -23,8 +23,11 @@ Frontenden leser per nå metadata fra pygeoapi sin YAML-konfigurasjonsfil for å
 - **I Docker:** `/volumes/pygeoapi-config.yml` (default)
 - **Lokal utvikling:** Sett miljøvariabelen `PYGEOAPI_CONFIG_PATH_FRONTEND` i `.env.local`:
   ```
-  PYGEOAPI_CONFIG_PATH=./deploy/volumes/pygeoapi-config.yml
+  PYGEOAPI_CONFIG_PATH_FRONTEND=./deploy/volumes/pygeoapi-config.yml
+  API_BASE_URL=http://localhost:5001
+  API_BASE_URL_PUBLIC=http://localhost:5001
   ```
+- Om man kjører lokalt med Colima må man starte med `colima start --arch aarch64`
 
 **Arkitektur:**
 
