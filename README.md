@@ -27,7 +27,7 @@ Frontenden leser per nå metadata fra pygeoapi sin YAML-konfigurasjonsfil for å
   API_BASE_URL=http://localhost:5001
   API_BASE_URL_PUBLIC=http://localhost:5001
   ```
-- Om man kjører lokalt med Colima må man starte med `colima start --arch aarch64`
+- Om man kjører lokalt med Colima må man starte med `colima start --arch x86_64`
 
 **Arkitektur:**
 
