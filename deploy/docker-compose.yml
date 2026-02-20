@@ -11,7 +11,8 @@ services:
       - API_BASE_URL=http://pygeoapi:5000
       - DATASET_URL=http://localhost:3000
     depends_on:
-      - pygeoapi
+      pygeoapi:
+        condition: service_healthy
     networks:
       - pygeoapi-network
 
