@@ -33,7 +33,7 @@ services:
       - ./volumes/apiconfig:/apiconfig
       - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
     environment:
-      - PUBLIC_URL=http://localhost:5000/
+      - PUBLIC_URL=http://localhost:5001/
       - POSTGRES_HOST=postgis
       - POSTGRES_DB=pygeoapi_test
       - POSTGRES_USER=postgres
