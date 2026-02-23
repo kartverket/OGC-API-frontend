@@ -28,12 +28,12 @@ services:
     build:
       context: ./pygeoapi
     ports:
-      - "5000:5000"
+      - "5001:5000"
     volumes:
       - ./volumes/apiconfig:/apiconfig
       - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
     environment:
-      - PUBLIC_URL=http://localhost:5000/
+      - PUBLIC_URL=http://localhost:5001/
       - POSTGRES_HOST=postgis
       - POSTGRES_DB=pygeoapi_test
       - POSTGRES_USER=postgres
@@ -55,18 +55,28 @@ services:
   postgis:
     build:
       context: ./postgis
+    platform: linux/amd64
     ports:
       - "5432:5432"
     volumes:
-      - ./volumes/postgis:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - DB_NAME=pygeoapi_test
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=qwer1234k
+      - POSTGRES_PASSWORD=qwer1234
     restart: always
     networks:
       - pygeoapi-network
-    
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
 networks:
   pygeoapi-network:
     driver: bridge
+
+volumes:
+  postgres_data:
