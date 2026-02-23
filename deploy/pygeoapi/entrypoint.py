@@ -14,9 +14,13 @@ if _openapi_file and os.path.exists(_openapi_file):
         _spec = yaml.safe_load(_f)
 
     paths = _spec.get('paths', {}) if isinstance(_spec, dict) else {}
-    removed = [paths[p].pop('post') for p in paths if re.search(r'/collections/[^/]+/items$', p) and 'post' in paths[p]]
+    removed_any = False
+    for p in paths:
+        if re.search(r'/collections/[^/]+/items$', p) and 'post' in paths[p]:
+            paths[p].pop('post')
+            removed_any = True
 
-    if removed:
+    if removed_any:
         with open(_openapi_file, 'w') as _f:
             yaml.dump(_spec, _f, allow_unicode=True, sort_keys=False)
 
