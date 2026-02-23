@@ -34,7 +34,9 @@ from pygeoapi.flask_app import APP as app
 def block_unwanted_post():
     if request.method == 'POST':
         if request.path.endswith('/items'):
-            return make_response('Method Not Allowed', 405)
+            response = make_response('Method Not Allowed', 405)
+            response.headers['Allow'] = 'GET, OPTIONS'
+            return response
 
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
