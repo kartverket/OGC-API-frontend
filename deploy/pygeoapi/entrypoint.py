@@ -29,11 +29,11 @@ from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMet
 from flask import request, make_response
 from pygeoapi.flask_app import APP as app
 
-# Blocking POST endpoints /items, as they are not standard
+# Blocking POST endpoints /collections/{id}/items, as they are not standard
 @app.before_request
 def block_unwanted_post():
     if request.method == 'POST':
-        if request.path.endswith('/items'):
+        if re.search(r'^/collections/[^/]+/items$', request.path):
             response = make_response('Method Not Allowed', 405)
             response.headers['Allow'] = 'GET, OPTIONS'
             return response
