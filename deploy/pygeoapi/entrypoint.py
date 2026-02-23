@@ -14,15 +14,20 @@ if _openapi_file and os.path.exists(_openapi_file):
         _spec = yaml.safe_load(_f)
 
     paths = _spec.get('paths', {}) if isinstance(_spec, dict) else {}
-    removed_any = False
-    for p in paths:
-        if re.search(r'/collections/[^/]+/items$', p) and 'post' in paths[p]:
-            paths[p].pop('post')
-            removed_any = True
+    _spec = None
+    try:
+        with open(_openapi_file) as _f:
+            _spec = yaml.safe_load(_f)
+    except yaml.YAMLError as exc:
+        print(f"Failed to parse OpenAPI spec at {_openapi_file}: {exc}")
 
-    if removed_any:
-        with open(_openapi_file, 'w') as _f:
-            yaml.dump(_spec, _f, allow_unicode=True, sort_keys=False)
+    if isinstance(_spec, dict):
+        paths = _spec.get('paths', {})
+        removed = [paths[p].pop('post') for p in paths if re.search(r'/collections/[^/]+/items$', p) and 'post' in paths[p]]
+
+        if removed:
+            with open(_openapi_file, 'w') as _f:
+                yaml.dump(_spec, _f, allow_unicode=True, sort_keys=False)
 
 
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
