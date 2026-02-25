@@ -1,7 +1,6 @@
 import os
 import yaml
 import fcntl
-import re
 
 def remove_post_endpoints(pattern):
     """
