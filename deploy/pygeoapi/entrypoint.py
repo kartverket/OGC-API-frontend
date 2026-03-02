@@ -7,13 +7,13 @@ _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 # Remove POST endpoints from /collections/{id}/items in the generated OpenAPI spec.
 # This MUST run before importing APP, because pygeoapi reads and caches openapi.yml
 # into memory at import time. Modifying the file afterwards has no effect on what
-# the API serves.
 remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
-
 
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 from flask import request, make_response, jsonify
 from pygeoapi.flask_app import APP as app
+
+metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
 # Blocking POST endpoints /collections/{id}/items, as they are not standard
 @app.before_request
