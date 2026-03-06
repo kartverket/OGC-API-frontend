@@ -84,7 +84,7 @@ jobs:
       security-events: write
     steps:
       - name: "Run Pharos"
-        uses: kartverket/pharos@v0.6.0
+        uses: kartverket/pharos@v0.6.2
         with:
           image_url: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}@${{ needs.build_pygeoapi.outputs.image_digest }}
 
