@@ -117,6 +117,17 @@ resources:
         format:
           name: pbf
           mimetype: application/vnd.mapbox-vector-tile
+      - type: map
+        name: postgis_mapscript.PostGISMapScriptProvider
+        data: "host=${POSTGRES_HOST} dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
+        options:
+          type: MS_LAYER_POLYGON
+          layer_data: "omrade FROM administrative_enheter_fylker.fylke USING UNIQUE objid USING SRID=25833"
+          projection: 25833
+          # style: /pygeoapi/styles/fylker.sld <-- Eksempel på hvor styles kan legges og hvordanet refereres til
+        format:
+          name: png
+          mimetype: image/png
   kommuner:
     type: collection
     title:
@@ -177,3 +188,13 @@ resources:
         format:
           name: pbf
           mimetype: application/vnd.mapbox-vector-tile
+      - type: map
+        name: postgis_mapscript.PostGISMapScriptProvider
+        data: "host=${POSTGRES_HOST} dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
+        options:
+          type: MS_LAYER_POLYGON
+          layer_data: "omrade FROM administrative_enheter_kommuner.kommune USING UNIQUE objid USING SRID=25833"
+          projection: 25833
+        format:
+          name: png
+          mimetype: image/png

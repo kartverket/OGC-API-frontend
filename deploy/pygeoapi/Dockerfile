@@ -3,6 +3,7 @@ FROM geopython/pygeoapi:latest
 # Add your custom process script
 COPY distinct_values.py /pygeoapi/distinct_values.py
 COPY modify_openapi.py /pygeoapi/modify_openapi.py
+COPY postgis_mapscript.py /pygeoapi/postgis_mapscript.py
 
 COPY entrypoint.py /pygeoapi/pygeoapi/entrypoint_dnd.py
 COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
