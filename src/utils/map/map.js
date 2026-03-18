@@ -5,6 +5,8 @@ import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, 
 import { createBaseMap } from './baseMap';
 import { getLayer } from './helpers';
 import basemap from '@/config/basemap';
+import store from '@/store';
+import { selectFeature } from '@/store/slices/mapSlice';
 import './setup';
 
 
@@ -24,6 +26,8 @@ export async function createItemsMap() {
         projection: basemap.projection,
         maxZoom: basemap.maxZoom
     }));
+
+    addPopoverEventHandlers(map);
 
     return map;
 }
@@ -66,7 +70,7 @@ export function zoomToExtent(map, defaultExtent = {}) {
     view.fit(extent, mapSize);
 }
 
-export function getExtent(map, defaultExtent) {   
+export function getExtent(map, defaultExtent) {
     const vectorLayer = getLayer(map, 'features');
     const vectorSource = vectorLayer.getSource();
 
@@ -84,4 +88,31 @@ export function getExtentFromBBox(bbox, crs) {
     const [minY, maxY] = proj4(crs, 'EPSG:3857', [bbox[2], bbox[3]]);
 
     return [minX, maxX, minY, maxY];
+}
+
+function addPopoverEventHandlers(map) {
+    const options = {
+        layerFilter: layer => layer.get('id') === 'features'
+    };
+
+    map.on('singleclick', event => {
+        const features = map.getFeaturesAtPixel(event.pixel, options);
+        const feature = features.length ? features[0] : null;
+        let properties = null;
+
+        if (feature !== null) {
+            const [x, y] = event.pixel;
+
+            properties = {
+                id: feature.getId(),                
+                pixel: [Math.round(x), Math.round(y)]
+            };
+        }
+
+        store.dispatch(selectFeature(properties));
+    });
+
+    map.on('movestart', _ => {
+        store.dispatch(selectFeature(null));
+    });
 }
