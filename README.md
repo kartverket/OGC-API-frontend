@@ -70,15 +70,6 @@ Backend er satt opp med OGC API - Maps for `fylker` og `kommuner` via en custom 
 - Providerkode: `deploy/pygeoapi/postgis_mapscript.py`
 - Konfig: `deploy/volumes/pygeoapi-config.yml` (`providers: - type: map`)
 
-Eksempel på map-request (PNG):
-
-```shell
-curl -sS "" -o fylker_oslo.png
-curl -sS "http://localhost:5001/collections/fylker/map?f=png&bbox=4.0,57.5,31.5,71.5&width=1024&height=768" -o fylker_norge.png
-```
-
-Merk: pygeoapi sender ofte CRS som `EPSG/4326` URI. Provideren normaliserer dette til `CRS84` for korrekt rendering av bbox i maps-endepunktet.
-
 ### Styling (optional SLD)
 
 Hvis du vil bruke egen stil per map-provider, sett `options.style` i `pygeoapi-config.yml`.
