@@ -32,7 +32,6 @@ export function getPygeoapiConfig() {
 
 export function getMetadata() {
     const config = readConfigFile();
-    console.log('[pygeoapi.js] Loaded metadata:', config?.metadata);
     return config?.metadata || null;
 }
 

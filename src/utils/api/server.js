@@ -13,9 +13,9 @@ function requireBaseUrl() {
     return baseUrl;
 }
 
-
 export async function fetchHome() {
     const API_BASE_URL = requireBaseUrl();
+
     const response = await fetch(`${API_BASE_URL}?f=json`, {
         cache: SKIP_SSG ? 'no-store' : 'force-cache'
     });
