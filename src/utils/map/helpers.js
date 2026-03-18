@@ -89,6 +89,10 @@ export function isBboxValid(bbox) {
     return true;
 }
 
+export function bboxToFeatureCollection() {
+    
+}
+
 function getCrsName(geoJson) {
     return geoJson?.crs?.properties?.name || null;
 }

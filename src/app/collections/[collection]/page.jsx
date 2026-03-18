@@ -1,12 +1,15 @@
 import Image from 'next/image';
 import NextLink from 'next/link';
+import bboxPolygon from '@turf/bbox-polygon';
+import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import { fetchCollectionPageData } from '@/services/pageData';
 import { createCollectionMetadata } from '@/services/pageMetadata';
 import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
-import { Breadcrumbs, DatasetInfoCard, ExampleUseCard } from '@/components';
+import { Breadcrumbs, DatasetInfoCard, ExampleUseCard, MapImage } from '@/components';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
 import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import styles from "./page.module.css";
+
 
 // Force runtime reading (needed for config file access)
 export const dynamic = 'force-dynamic';
@@ -24,6 +27,9 @@ export default async function Collection({ params }) {
         return <ErrorPage status={status} />;
     }
 
+    const bbox = data.extent.spatial.bbox[0];
+    const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
+
     return (
         <>
             <Breadcrumbs
@@ -34,39 +40,39 @@ export default async function Collection({ params }) {
                 }}
             />
 
-      <div className={styles.page}>
-        <div className={styles.top}>
-          <div className={styles.left}>
-            <div className={styles.topLeftTop}>
-              <Image
-                src={thumbnail}
-                alt="Thumbnail"
-                width={160}
-                className={styles.thumbnail}
-              />
-              <div>
-                <Heading level={1} data-size="sm" className={styles.heading}>
-                  {data.title}
-                </Heading>
-                <Paragraph>{data.description}</Paragraph>
-              </div>
-            </div>
+            <div className={styles.page}>
+                <div className={styles.top}>
+                    <div className={styles.left}>
+                        <div className={styles.topLeftTop}>
+                            <Image
+                                src={thumbnail}
+                                alt="Thumbnail"
+                                width={160}
+                                className={styles.thumbnail}
+                            />
+                            <div>
+                                <Heading level={1} data-size="sm" className={styles.heading}>
+                                    {data.title}
+                                </Heading>
+                                <Paragraph>{data.description}</Paragraph>
+                            </div>
+                        </div>
 
-            <div className={styles.topLeftBottom}>
-              <Card
-                asChild
-                data-variant="tinted"
-                data-color="accent"
-                className={styles.objectCard}
-              >
-                <NextLink href={`/collections/${data.id}/items`}>
-                  <PackageFillIcon title="a11y-title" fontSize="36px" />
+                        <div className={styles.topLeftBottom}>
+                            <Card
+                                asChild
+                                data-variant="tinted"
+                                data-color="accent"
+                                className={styles.objectCard}
+                            >
+                                <NextLink href={`/collections/${data.id}/items`}>
+                                    <PackageFillIcon title="a11y-title" fontSize="36px" />
 
-                  <span>Vis objekter i datasettet</span>
+                                    <span>Vis objekter i datasettet</span>
 
-                  <ChevronRightIcon title="a11y-title" fontSize="36px" />
-                </NextLink>
-              </Card>
+                                    <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                                </NextLink>
+                            </Card>
 
                             {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
@@ -74,9 +80,25 @@ export default async function Collection({ params }) {
                         </div>
                     </div>
                     <div className={styles.right}>
+                        <div className={styles.map}>
+                            <Heading data-size="2xs" level={4}>Geografisk utstrekning av datasettet</Heading>
+
+                            <div className={styles.wrapper}>
+                                <MapImage
+                                    featureCollection={featureCollection}
+                                    options={{
+                                        width: 195,
+                                        height: 260,
+                                        padding: [6, 6, 6, 6],
+                                        constrainResolution: false
+                                    }}
+                                />
+                            </div>
+                        </div>
+
                         <DatasetInfoCard collection={data} metadata={data.metadata} />
                     </div>
-                </div>  
+                </div>
             </div>
         </>
     );
