@@ -31,14 +31,47 @@ from pygeoapi.provider.mapscript_ import MapScriptProvider
 
 LOGGER = logging.getLogger(__name__)
 
+# CRS identifiers that are genuinely lon/lat (CRS84 axis order).
+# NOTE: 'epsg:4326' and its URI/URN forms are intentionally NOT included here.
+# Although they refer to the same datum as CRS84, EPSG:4326 defines axis
+# order as lat/lon.  maps.py reprojects the bbox into lat/lon order when the
+# collection CRS resolves to EPSG:4326, so we must swap it back before
+# passing to MapScript, which always expects lon/lat.  See _EPSG4326_FORMS.
 _CRS84_EQUIVALENTS = {
     'crs84',
     'ogc:crs84',
-    'epsg:4326',
     'http://www.opengis.net/def/crs/ogc/1.3/crs84',
+}
+
+# All string forms of EPSG:4326 (lat/lon axis order).
+# maps.py uses DEFAULT_CRS = 'http://www.opengis.net/def/crs/EPSG/0/4326' when
+# the collection config has no explicit crs, and reprojects the incoming bbox
+# into lat/lon order to match.  We must swap the bbox back to lon/lat and then
+# treat the CRS as CRS84 so MapScript receives consistent coordinates.
+_EPSG4326_FORMS = {
+    'epsg:4326',
     'http://www.opengis.net/def/crs/epsg/0/4326',
 }
+
 _PASSWORD_PATTERN = re.compile(r'(password=)([^\s]+)', re.IGNORECASE)
+
+# Matches OGC HTTP URIs for EPSG codes, e.g.:
+#   http://www.opengis.net/def/crs/EPSG/0/25833
+# maps.py passes the full URI form straight through to the provider without
+# normalising it, so we must extract the EPSG code here before handing it to
+# MapScriptProvider, which expects either 'CRS84' or a bare 'EPSG:<code>' string.
+_OGC_HTTP_EPSG_URI = re.compile(
+    r'https?://www\.opengis\.net/def/crs/epsg/[^/]+/(\d+)$',
+    re.IGNORECASE,
+)
+
+# Matches OGC URN forms for EPSG codes, e.g.:
+#   urn:ogc:def:crs:EPSG::25833
+#   urn:ogc:def:crs:EPSG:6.9:25833
+_OGC_URN_EPSG = re.compile(
+    r'urn:ogc:def:crs:epsg:[^:]*:(\d+)$',
+    re.IGNORECASE,
+)
 
 
 def _redact_connection(connection: str) -> str:
@@ -46,30 +79,112 @@ def _redact_connection(connection: str) -> str:
     return _PASSWORD_PATTERN.sub(r'\1***', connection)
 
 
-def _normalize_crs_identifier(crs):
-    """Normalize common CRS84/4326 aliases to CRS84 for MapScript query path."""
-    if crs is None:
-        return 'CRS84'
+def _swap_bbox_axes(bbox):
+    """Swap a bbox from lat/lon to lon/lat axis order.
 
+    maps.py reprojects the bbox into the collection's CRS before calling the
+    provider.  When the collection CRS resolves to EPSG:4326, that reprojected
+    bbox arrives in lat/lon order [minLat, minLon, maxLat, maxLon].  MapScript
+    always works in lon/lat, so we must flip it back.
+
+    Input/output: [minA, minB, maxA, maxB]  →  [minB, minA, maxB, maxA]
+    e.g. [57.518, 4.116, 71.205, 33.593]  →  [4.116, 57.518, 33.593, 71.205]
+    """
+    if not bbox or len(bbox) != 4:
+        return bbox
+    min_a, min_b, max_a, max_b = bbox
+    return [min_b, min_a, max_b, max_a]
+
+def _normalize_crs_identifier(crs, bbox=None):
+    """Normalize a CRS identifier into a form MapScript / MapScriptProvider understands.
+
+    Returns a (normalized_crs, bbox) tuple. The bbox may be axis-swapped when
+    the incoming CRS is an EPSG:4326 variant — see axis order note below.
+
+    MapScriptProvider.query() internally calls:
+        self._epsg2projstring(int(crs.split("/")[-1]))
+    for any CRS that is not the literal string 'CRS84'. This means it accepts:
+      - The string 'CRS84'
+      - A bare numeric string e.g. '25833'  (split("/")[-1] = '25833')
+      - A full OGC HTTP URI                 (split("/")[-1] yields the code)
+
+    It does NOT accept 'EPSG:25833' style strings — split("/")[-1] returns the
+    whole thing and int() raises ValueError.
+
+    maps.py does NOT normalise the CRS value it passes to the provider — it
+    forwards whatever is in the collection config or DEFAULT_CRS verbatim.
+    Incoming forms we must handle:
+
+      - Full OGC HTTP URI : http://www.opengis.net/def/crs/EPSG/0/25833  → '25833'
+      - OGC URN           : urn:ogc:def:crs:EPSG::25833                  → '25833'
+      - Short authority   : EPSG:25833 / epsg:25833                      → '25833'
+      - Bare integer      : 25833                                         → '25833'
+
+    Axis order — why EPSG:4326 requires a bbox swap
+    ------------------------------------------------
+    maps.py sets query_args['crs'] from the collection config, defaulting to
+    DEFAULT_CRS = 'http://www.opengis.net/def/crs/EPSG/0/4326'. When the
+    incoming bbox-crs differs from that, maps.py calls transform_bbox() and
+    delivers the bbox in EPSG:4326 lat/lon order [minLat, minLon, maxLat, maxLon].
+
+    MapScript always works in lon/lat, so we must:
+      1. Swap the bbox back to [minLon, minLat, maxLon, maxLat]
+      2. Return 'CRS84' so MapScript uses the matching lon/lat projection
+
+    This is not about what the client sent — it is about undoing the axis
+    convention that maps.py applies when reprojecting into EPSG:4326.
+    """
+    if bbox is None:
+        bbox = []
+
+    if crs is None:
+        return 'CRS84', bbox
+
+    # Bare integer: convert to string for MapScriptProvider's split/int parse.
     if isinstance(crs, int):
-        return 'CRS84' if crs == 4326 else crs
+        return str(crs), bbox
 
     if not isinstance(crs, str):
-        return crs
+        return crs, bbox
 
     crs_clean = crs.strip()
     crs_lc = crs_clean.lower()
 
+    # ------------------------------------------------------------------ CRS84 (lon/lat)
     if crs_lc in _CRS84_EQUIVALENTS:
-        return 'CRS84'
-
-    if crs_lc.startswith('urn:ogc:def:crs:epsg') and crs_lc.endswith(':4326'):
-        return 'CRS84'
+        return 'CRS84', bbox
 
     if crs_lc.startswith('urn:ogc:def:crs:ogc') and crs_lc.endswith(':crs84'):
-        return 'CRS84'
+        return 'CRS84', bbox
 
-    return crs_clean
+    # ------------------------------------------------------------------ EPSG:4326 (lat/lon → swap)
+    # maps.py reprojects the bbox into lat/lon order for these CRS forms.
+    # Swap back to lon/lat and use CRS84 so MapScript interprets correctly.
+    if crs_lc in _EPSG4326_FORMS:
+        return 'CRS84', _swap_bbox_axes(bbox)
+
+    if crs_lc.startswith('urn:ogc:def:crs:epsg') and crs_lc.endswith(':4326'):
+        return 'CRS84', _swap_bbox_axes(bbox)
+
+    # ------------------------------------------------------------------ OGC HTTP URI
+    # e.g. http://www.opengis.net/def/crs/EPSG/0/25833  →  '25833'
+    m = _OGC_HTTP_EPSG_URI.match(crs_lc)
+    if m:
+        return m.group(1), bbox
+
+    # ------------------------------------------------------------------ OGC URN
+    # e.g. urn:ogc:def:crs:EPSG::25833  →  '25833'
+    m = _OGC_URN_EPSG.match(crs_lc)
+    if m:
+        return m.group(1), bbox
+
+    # ------------------------------------------------------------------ short authority form
+    # e.g. 'EPSG:25833' or 'epsg:25833'  →  '25833'
+    if crs_lc.startswith('epsg:'):
+        return crs_clean.split(':', 1)[1], bbox
+
+    # Fall back: return the stripped original and let MapScriptProvider decide.
+    return crs_clean, bbox
 
 
 class PostGISMapScriptProvider(MapScriptProvider):
@@ -121,6 +236,16 @@ class PostGISMapScriptProvider(MapScriptProvider):
         try:
             LOGGER.debug('Creating mapObj and layerObj with native PostGIS driver')
             self._map = mapscript.mapObj()
+
+            # Register the fontset if configured, so FONT references in .inc
+            # style files resolve correctly. Without this, any FONT directive
+            # causes a MapServer error and the map fails to render.
+            fontset_path = self.options.get('fontset', '/apiconfig/fonts.txt')
+            if os.path.exists(fontset_path):
+                self._map.setFontSet(fontset_path)
+                LOGGER.debug(f'Loaded fontset from {fontset_path!r}')
+            else:
+                LOGGER.debug(f'No fontset found at {fontset_path!r} — FONT directives in styles will fail')
             self._layer = mapscript.layerObj(self._map)
             self._layer.status = mapscript.MS_ON
 
@@ -154,10 +279,23 @@ class PostGISMapScriptProvider(MapScriptProvider):
                     with open(style_path) as fh:
                         self._layer.applySLD(fh.read(), self.options.get('layer', ''))
                 elif style_path.endswith('inc'):
-                    LOGGER.debug('Applying MapServer class file style')
-                    cls = mapscript.classObj(self._layer)
+                    LOGGER.debug(f'Applying MapServer class file style from {style_path!r}')
                     with open(style_path) as fh:
-                        cls.updateFromString(fh.read())
+                        class_content = fh.read()
+                    # classObj.updateFromString() is unreliable with full CLASS...END
+                    # blocks. The robust approach is to wrap the content in a LAYER
+                    # block and call updateFromString() on the layer object, which
+                    # correctly parses and attaches all CLASS definitions including
+                    # EXPRESSION, LABEL, and STYLE blocks.
+                    layer_snippet = f'LAYER\n{class_content}\nEND'
+                    self._layer.updateFromString(layer_snippet)
+                    # updateFromString resets the layer name to None — restore it
+                    # using the collection name from the provider definition so
+                    # MapServer error messages reference a meaningful name.
+                    self._layer.name = self.name or 'postgis_layer'
+                    LOGGER.debug(
+                        f'Layer now has {self._layer.numclasses} class(es) after style load'
+                    )
             else:
                 LOGGER.debug('No style defined, applying explicit default polygon style')
                 # classObj(layer) attaches the class directly to this layer.
@@ -179,7 +317,7 @@ class PostGISMapScriptProvider(MapScriptProvider):
     def query(self, style=None, bbox=None, width=500, height=300, crs='CRS84',
               datetime_=None, format_='png', transparent=True, **kwargs):
         bbox_value = bbox if bbox is not None else []
-        normalized_crs = _normalize_crs_identifier(crs)
+        normalized_crs, bbox_value = _normalize_crs_identifier(crs, bbox_value)
 
         LOGGER.debug(
             'PostGISMapScriptProvider query | '
@@ -197,4 +335,3 @@ class PostGISMapScriptProvider(MapScriptProvider):
             transparent=transparent,
             **kwargs,
         )
-
