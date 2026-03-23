@@ -32,6 +32,9 @@ services:
     volumes:
       - ./volumes/apiconfig:/apiconfig
       - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
+      - ./pygeoapi/processes:/pygeoapi/processes
+      - ./pygeoapi/templates:/pygeoapi/custom_templates
+
     environment:
       - PUBLIC_URL=http://localhost:5001/
       - POSTGRES_HOST=postgis

@@ -17,6 +17,9 @@ server:
     url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
   admin: false
+  templates:
+    path: /pygeoapi/custom_templates
+    static: /pygeoapi/pygeoapi/static
 
 logging:
   level: INFO
@@ -57,6 +60,22 @@ resources:
     type: process
     processor:
       name: distinct_values.DistinctValuesProcessor
+  export-collection-gpkg:
+    type: process
+    processor:
+      name: processes.gpkg_collection.ExportCollectionGpkgProcessor
+  export-all-gpkg:
+    type: process
+    processor:
+      name: processes.gpkg_all_collections.ExportAllGpkgProcessor 
+  export-by-area-gpkg:
+    type: process
+    processor:
+      name: processes.gpkg_by_area.ExportByAreaGpkgProcessor
+  export-collection-csv:
+    type: process
+    processor:
+      name: processes.csv_collection.ExportCollectionCsvProcessor
   fylker:
     type: collection
     title:
