@@ -63,3 +63,19 @@ return <ServiceInfoCard metadata={data.metadata} />;
 - `getCollection(id)` - Henter en spesifikk collection
 - `getDatasetTitle()` - Henter datasettets tittel
 - `getDatasetDescription()` - Henter datasettets beskrivelse
+
+### OGC API - Maps (pygeoapi)
+
+Backend er satt opp med OGC API - Maps for `fylker` og `kommuner` via en custom provider:
+- Providerkode: `deploy/pygeoapi/postgis_mapscript.py`
+- Konfig: `deploy/volumes/pygeoapi-config.yml` (`providers: - type: map`)
+
+### Styling (optional SLD)
+
+Hvis du vil bruke egen stil per map-provider, sett `options.style` i `pygeoapi-config.yml`.
+Stifilen må finnes inne i pygeoapi-containeren (for eksempel `/pygeoapi/styles/fylker.sld`).
+
+Typisk oppsett:
+- Legg stilfiler i `deploy/pygeoapi/styles/`
+- Kopier mappen i `deploy/pygeoapi/Dockerfile` (til `/pygeoapi/styles/`)
+- Referer til absolutt containersti i `options.style`
