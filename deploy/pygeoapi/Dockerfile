@@ -7,18 +7,23 @@ COPY postgis_mapscript.py /pygeoapi/postgis_mapscript.py
 
 COPY entrypoint.py /pygeoapi/pygeoapi/entrypoint_dnd.py
 COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
-RUN /venv/bin/python3 -m pip install prometheus_client prometheus_flask_exporter
+
+RUN /venv/bin/python3 -m pip install \
+        prometheus_client \
+        prometheus_flask_exporter \
+        # ── new dependencies for export processes ──────────────────────────
+        geopandas \
+        fiona \
+        SQLAlchemy \
+        psycopg2-binary \
+        GeoAlchemy2
 
 EXPOSE 5000
 
 ENV PYTHONPATH="/pygeoapi"
-# Use our custom entrypoint for gunicorn which imports the pygeoapi flask app and adds prometheus metrics
-# Note: this is not the same as docker entrypoint
 ENV WSGI_APP=pygeoapi.entrypoint_dnd:app
-# Gunicorn config providing cleanup of prometheus metrics on worker exit
 ENV GUNICORN_CMD_ARGS="--config /pygeoapi/gunicorn_conf_dnd.py"
 ENV PROMETHEUS_MULTIPROC_DIR=/tmp
-
 
 USER 150:150
 

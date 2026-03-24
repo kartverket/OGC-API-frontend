@@ -32,6 +32,9 @@ services:
     volumes:
       - ./volumes/apiconfig:/apiconfig
       - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
+      - ./pygeoapi/processes:/pygeoapi/processes
+      - ./pygeoapi/templates:/pygeoapi/custom_templates
+
       - ./volumes/logs:/logs
       - ./pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py
       - ./pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
