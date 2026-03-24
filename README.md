@@ -70,6 +70,19 @@ Backend er satt opp med OGC API - Maps for `fylker` og `kommuner` via en custom 
 - Providerkode: `deploy/pygeoapi/postgis_mapscript.py`
 - Konfig: `deploy/volumes/pygeoapi-config.yml` (`providers: - type: map`)
 
+Prøv f.eks. http://localhost:5001/collections/fylker/map?f=png&width=1000&height=1000&bbox=4,57,35,72&bbox-crs=http://www.opengis.net/def/crs/OGC/1.3/CRS84&crs=http://www.opengis.net/def/crs/EPSG/0/25833
+
+OBS! Vi har modifisert pygeoapis `maps.py` for å håndtere CRS fra parameter i requesten,
+dette må vi ta hensyn til ved oppgradering av pygeoapi – eller få inn endringen i en PR til pygeoapi!
+
+```
+    query_args['crs'] = (
+        request.params.get('crs')
+        or collection_def.get('crs', DEFAULT_CRS)
+    )
+```
+
+
 ### Styling (optional SLD)
 
 Hvis du vil bruke egen stil per map-provider, sett `options.style` i `pygeoapi-config.yml`.
