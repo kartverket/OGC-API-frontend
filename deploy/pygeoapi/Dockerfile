@@ -1,4 +1,4 @@
-FROM geopython/pygeoapi:latest
+FROM geopython/pygeoapi:0.23.1@sha256:b3e68e4ba21cc3726d0488c174819e98dd4c9d895093678f692a191901f0f887
 
 # Add your custom process script
 COPY distinct_values.py /pygeoapi/distinct_values.py

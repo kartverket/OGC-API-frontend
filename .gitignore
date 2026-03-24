@@ -42,6 +42,8 @@ yarn-error.log*
 next-env.d.ts
 
 deploy/volumes/postgis
+deploy/volumes/logs
+deploy/volumes/apiconfig/
 
 # proxy-certs
 nginx.crt
@@ -50,8 +52,4 @@ nginx.key
 # yarn
 .yarn/
 
-# docker
-deploy/volumes/apiconfig/
-
-# logs
-deploy/volumes/logs
+__pycache__
