@@ -22,7 +22,7 @@ services:
     image: busybox
     volumes:
       - ./volumes/apiconfig:/apiconfig
-    command: sh -c "chown -R 150:150 /apiconfig && chmod -R 775 /apiconfig"
+    command: sh -c "touch /apiconfig/openapi.yml && chown -R 150:150 /apiconfig && chmod -R 775 /apiconfig"
 
   pygeoapi:
     build:
@@ -30,8 +30,10 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      - ./volumes/apiconfig:/apiconfig
-      - ./volumes/pygeoapi-config.yml:/pygeoapi/local.config.yml
+      - ./volumes/apiconfig/openapi.yml:/apiconfig/openapi.yml
+      - ./pygeoapi/apiconfig/fonts.txt:/apiconfig/fonts.txt
+      - ./pygeoapi/apiconfig/styles:/apiconfig/styles
+      - ./pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
       - ./pygeoapi/processes:/pygeoapi/processes
       - ./pygeoapi/templates:/pygeoapi/custom_templates
 

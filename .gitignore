@@ -41,9 +41,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-deploy/volumes/postgis
-deploy/volumes/logs
-deploy/volumes/apiconfig/
+deploy/volumes/
 
 # proxy-certs
 nginx.crt
