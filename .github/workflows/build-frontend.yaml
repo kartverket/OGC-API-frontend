@@ -63,7 +63,7 @@ jobs:
 
       - name: Build docker image and push
         id: build_frontend
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           tags: ${{ steps.meta.outputs.tags }}
