@@ -9,8 +9,9 @@ on:
       - "deploy/pygeoapi/**"
 
 env:
-  DOCKER_REGISTRY: ghcr.io
-  NAME: kartverket/datadeling-ogcapi-pygeoapi
+  docker_registry: ghcr.io
+  image_name: kartverket/datadeling-ogcapi-pygeoapi
+  argo_version_file: ogcapi-backend-version
 
 jobs:
   build_pygeoapi:
@@ -23,10 +24,9 @@ jobs:
       id-token: write
 
     outputs:
-      version: ${{ steps.set_output.outputs.version }}
       tags: ${{ steps.meta.outputs.tags }}
       commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
-      image_digest: ${{ steps.build_pygeoapi.outputs.digest }}
+      image_url: ${{ steps.setOutput.outputs.image_url }}
 
     steps:
       - name: Checkout repository
@@ -36,7 +36,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}
+          images: ${{ env.docker_registry }}/${{ env.image_name}}
           tags: |
             type=sha,format=long
 
@@ -52,7 +52,7 @@ jobs:
       - name: Login to Github Container Registry
         uses: docker/login-action@v4
         with:
-          registry: ${{ env.DOCKER_REGISTRY }}
+          registry: ${{ env.docker_registry }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
@@ -68,8 +68,8 @@ jobs:
       - name: Summarize Image Digest and Set Output
         id: set_output
         run: |
-          echo "Full Image URL: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME }}:${{ steps.meta.outputs.version }}@${{steps.build_pygeoapi.outputs.digest}}" >> $GITHUB_STEP_SUMMARY
-          echo "version=${{ github.ref_name }}@${{steps.build_pygeoapi.outputs.digest}}" >> $GITHUB_OUTPUT
+          echo "Full Image URL: ${{ env.docker_registry }}/${{ env.image_name }}:${{ steps.meta.outputs.version }}@${{steps.build_pygeoapi.outputs.digest}}" >> $GITHUB_STEP_SUMMARY
+          echo "image_url=${{ env.docker_registry }}/${{ env.image_name }}:${{ steps.meta.outputs.version }}@${{steps.build_pygeoapi.outputs.digest}}" >> $GITHUB_OUTPUT
 
   run-pharos:
     name: Run Pharos
@@ -86,25 +86,29 @@ jobs:
       - name: "Run Pharos"
         uses: kartverket/pharos@v0.6.3
         with:
-          image_url: ${{ env.DOCKER_REGISTRY }}/${{ env.NAME}}@${{ needs.build_pygeoapi.outputs.image_digest }}
+          image_url: ${{ needs.build_pygeoapi.outputs.image_url }}
 
-  # deploy:
-  #     needs: [build_pygeoapi]
-  #     name: Deploy
-  #     permissions:
-  #       id-token: write
-  #     uses: kartverket/datadeling-apps/.github/workflows/release-geosaga.yml@main
-  #     # secrets:
-  #     #   token: ${{  needs.deploy.outputs.token }}
-  #     with:
-  #       # Apps repo namespace
-  #       namespace: datadeling-ogcapi
-  #       # Apps repo app name
-  #       application: ogcapi-frontend
-  #       # Ghrc.io image tag
-  #       tag: ${{ needs.build_frontend.outputs.tags }}
-  #       # identity for the octo-sts action
-  #       identity: mapserver-skip
-  #       deploy_dev: true
-  #       deploy_prod: false
-  #       commit_message: ${{ needs.build_frontend.outputs.commit_message }}
+  argo:
+    name: Update version in apps-repo
+    needs: build_pygeoapi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch token
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
+        id: octo-sts
+        with:
+          scope: kartverket/datadeling-apps
+          identity: OGC-API-frontend
+      - name: Checkout apps-repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: kartverket/datadeling-apps
+          ref: main
+          token: ${{ steps.octo-sts.outputs.token }}
+      - name: Update version
+        run: |
+          echo "\"${{ needs.build_pygeoapi.outputs.image_url }}\"" > "env/atgcp1-dev/datadeling-ogcapi/${{ env.argo_version_file }}"
+          git config --global user.email "noreply@kartverket.no"
+          git config --global user.name "Dataprodukter CI"
+          git commit -am "Update OGC API ${{ env.argo_version_file }}"
+          git push
