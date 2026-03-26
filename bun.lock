@@ -7,7 +7,7 @@
       "dependencies": {
         "@digdir/designsystemet-css": "^1.9.0",
         "@digdir/designsystemet-react": "^1.9.0",
-        "@digdir/designsystemet-theme": "^1.9.0",
+        "@digdir/designsystemet-theme": "^1.11.0",
         "@navikt/aksel-icons": "^7.37.0",
         "@turf/bbox": "^7.3.1",
         "@turf/bbox-polygon": "^7.3.1",
@@ -267,7 +267,7 @@
 
     "@digdir/designsystemet-react": ["@digdir/designsystemet-react@1.9.0", "", { "dependencies": { "@digdir/designsystemet-types": "^1.9.0", "@floating-ui/dom": "^1.7.4", "@floating-ui/react": "0.26.23", "@navikt/aksel-icons": "^7.35.1", "@radix-ui/react-slot": "^1.2.4", "@tanstack/react-virtual": "^3.13.12", "@u-elements/u-combobox": "^1.0.5", "@u-elements/u-datalist": "^1.0.14", "@u-elements/u-details": "^0.1.5", "clsx": "^2.1.1" }, "peerDependencies": { "react": ">=18.3.1 || ^19.0.0", "react-dom": ">=18.3.1 || ^19.0.0" } }, "sha512-/RapjnOUUy4pzLXnDi5qMp3xiAaFCwb8v8/STFNDhA8SFDGSjsanRzNb8YNFZSqE9bXh/ZhAdVMZM2RJu9b7AQ=="],
 
-    "@digdir/designsystemet-theme": ["@digdir/designsystemet-theme@1.9.0", "", { "dependencies": { "@digdir/designsystemet-types": "^1.9.0" } }, "sha512-j9Jy992T2EWFZWxmEoTGyq8Sd+T4hDLxBnVq9+UcttyjNYUFMBEtYP5W9ZeKgd1kJ4kE3pbddVfpNZ5yTTWOLQ=="],
+    "@digdir/designsystemet-theme": ["@digdir/designsystemet-theme@1.11.0", "", { "dependencies": { "@digdir/designsystemet-types": "^1.11.0" } }, "sha512-C4Mf+LmecQ8sdjykD25NWiEclQDEOK+Y6Dlo8oz2BjhLBkDmo1+udFyCplvAGvv1MTzhsAhGafW/S4ox8iXlOA=="],
 
     "@digdir/designsystemet-types": ["@digdir/designsystemet-types@1.9.0", "", {}, "sha512-JgdtlQNKAM49vIWFmXyZwM5CzQxHOsf/oL90xswG7ZtI5XFZVX1jc3ItAWa+hkIZFpdPGdzPuUcotxK+tQt2SQ=="],
 
@@ -958,6 +958,8 @@
     "zod-validation-error": ["zod-validation-error@4.0.2", "", { "peerDependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ=="],
 
     "zstddec": ["zstddec@0.1.0", "", {}, "sha512-w2NTI8+3l3eeltKAdK8QpiLo/flRAr2p8AGeakfMZOXBxOg9HIu4LVDxBi81sYgVhFhdJjv1OrB5ssI8uFPoLg=="],
+
+    "@digdir/designsystemet-theme/@digdir/designsystemet-types": ["@digdir/designsystemet-types@1.13.1", "", {}, "sha512-oIaxQrUMhhfni3NpvG1lpOxOjCHs9Dm062VlTgbTJ8MbOizLx/W23ayGtOE79CiG77Dt5kga3TC9DMalONfDAg=="],
 
     "@tokens-studio/sd-transforms/colorjs.io": ["colorjs.io@0.5.2", "", {}, "sha512-twmVoizEW7ylZSN32OgKdXRmo1qg+wT5/6C3xu5b9QsWzSFAhHLn2xd8ro0diCsKfCj1RdaTP/nrcW+vAoQPIw=="],
 
