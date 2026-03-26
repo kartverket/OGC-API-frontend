@@ -26,7 +26,7 @@ jobs:
     outputs:
       tags: ${{ steps.meta.outputs.tags }}
       commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
-      image_url: ${{ steps.setOutput.outputs.image_url }}
+      image_url: ${{ steps.set_output.outputs.image_url }}
 
     steps:
       - name: Checkout repository
