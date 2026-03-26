@@ -1,4 +1,4 @@
-FROM oven/bun:1.3.9-alpine AS base
+FROM oven/bun:1.3.11-alpine AS base
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
@@ -19,7 +19,7 @@ COPY . .
 RUN bun run build
 
 # For production, remove -dev from image (non-root and no shell)
-FROM oven/bun:1.3.9-alpine AS runner
+FROM oven/bun:1.3.11-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
