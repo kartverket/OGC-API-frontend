@@ -1,0 +1,77 @@
+name: kartverket-ogc-api
+
+services:
+  frontend:
+    profiles: [with-frontend]
+    build:
+      context: ..
+    ports:
+      - "3000:3000"
+    environment:
+      - API_BASE_URL=http://pygeoapi:5000
+      - DATASET_URL=http://localhost:3000
+    depends_on:
+      pygeoapi:
+        condition: service_healthy
+    networks:
+      - pygeoapi-network
+
+  pygeoapi:
+    build:
+      context: ../pygeoapi
+    ports:
+      - "5001:5000"
+    volumes:
+      # Mount source files for live editing during development
+      - ../pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
+      - ../pygeoapi/processes:/pygeoapi/processes
+      - ../pygeoapi/templates:/pygeoapi/custom_templates
+      - ../pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py
+      - ../pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
+      - ../pygeoapi/apiconfig/fonts.txt:/apiconfig/fonts.txt
+      - ../pygeoapi/apiconfig/styles:/apiconfig/styles
+      - ./volumes/logs:/logs
+    environment:
+      - PUBLIC_URL=http://localhost:5001/
+      - POSTGRES_HOST=postgis
+      - POSTGRES_DB=pygeoapi_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwer1234
+      - CONTAINER_PORT=5000
+      - WSGI_WORKERS=1
+      - WSGI_WORKER_CLASS=gevent
+    restart: always
+    depends_on:
+      postgis:
+        condition: service_healthy
+    networks:
+      - pygeoapi-network
+
+  postgis:
+    build:
+      context: ./postgis
+    platform: linux/amd64
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - DB_NAME=pygeoapi_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwer1234
+    restart: always
+    networks:
+      - pygeoapi-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  pygeoapi-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

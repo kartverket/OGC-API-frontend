@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'deploy/**'
+      - 'pygeoapi/**'
 
 env:
   docker_registry: ghcr.io

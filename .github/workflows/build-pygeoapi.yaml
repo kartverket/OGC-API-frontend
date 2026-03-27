@@ -1,12 +1,12 @@
 name: Pygeoapi
 # This workflow builds the backend image and pushes it to the GitHub Container Registry.
-# It is triggered on pushes to the main branch, specifically when changes are made to the "deploy/pygeoapi" directory.
+# It is triggered on pushes to the main branch, specifically when changes are made to the "pygeoapi" directory.
 on:
   push:
     branches:
       - main
     paths:
-      - "deploy/pygeoapi/**"
+      - "pygeoapi/**"
 
 env:
   docker_registry: ghcr.io
@@ -60,7 +60,7 @@ jobs:
         id: build_pygeoapi
         uses: docker/build-push-action@v7
         with:
-          context: deploy/pygeoapi
+          context: pygeoapi
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
