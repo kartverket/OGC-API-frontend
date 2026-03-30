@@ -1,0 +1,4 @@
+verdana   /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+arial     /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+verdana-bold  /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
+arial-bold    /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf

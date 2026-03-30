@@ -21,9 +21,9 @@ COPY processes/ /pygeoapi/processes/
 # Custom templates
 COPY templates/ /pygeoapi/custom_templates/
 
-# API config (fonts, styles)
-COPY apiconfig/fonts.txt /apiconfig/fonts.txt
-COPY apiconfig/styles/ /apiconfig/styles/
+# MapServer config (fonts, styles)
+COPY mapserver/fonts.txt /pygeoapi/fonts.txt
+COPY mapserver/styles/ /pygeoapi/styles/
 
 RUN /venv/bin/python3 -m pip install \
         prometheus_client \
@@ -35,7 +35,7 @@ RUN /venv/bin/python3 -m pip install \
         GeoAlchemy2
 
 # Ensure the openapi config directory is writable
-RUN touch /apiconfig/openapi.yml && chown -R 150:150 /apiconfig && chmod -R 775 /apiconfig
+RUN mkdir -p /apiconfig && touch /apiconfig/openapi.yml && chown -R 150:150 /apiconfig && chmod -R 775 /apiconfig
 
 EXPOSE 5000
 

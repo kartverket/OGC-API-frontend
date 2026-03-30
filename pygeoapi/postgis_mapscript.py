@@ -240,7 +240,7 @@ class PostGISMapScriptProvider(MapScriptProvider):
             # Register the fontset if configured, so FONT references in .inc
             # style files resolve correctly. Without this, any FONT directive
             # causes a MapServer error and the map fails to render.
-            fontset_path = self.options.get('fontset', '/apiconfig/fonts.txt')
+            fontset_path = self.options.get('fontset', '/pygeoapi/fonts.txt')
             if os.path.exists(fontset_path):
                 self._map.setFontSet(fontset_path)
                 LOGGER.debug(f'Loaded fontset from {fontset_path!r}')
