@@ -87,7 +87,7 @@ export function collectionHasMapProvider(collectionId) {
     if (!resources) return false;
 
     const resource = resources[collectionId];
-    if (!resource) return false;
+    if (!resource || resource.type !== 'collection') return false;
 
     return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
 }
