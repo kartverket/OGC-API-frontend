@@ -86,16 +86,16 @@ export default async function Collection({ params }) {
                 )}
               </div>
 
-                            {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
+              {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
-                            <ExampleUseCard collection={collection} hasMap={hasMap} />
-                        </div>
-                    </div>
-                    <div className={styles.right}>
-                        <DatasetInfoCard collection={data} metadata={data.metadata} hasMap={hasMap} />
-                    </div>
-                </div>
+              <ExampleUseCard collection={collection} hasMap={hasMap} />
             </div>
+          </div>
+          <div className={styles.right}>
+            <DatasetInfoCard collection={data} metadata={data.metadata} hasMap={hasMap} />
+          </div>
+        </div>
+      </div>
         </>
     );
 }
