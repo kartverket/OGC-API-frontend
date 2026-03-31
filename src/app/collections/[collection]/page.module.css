@@ -76,6 +76,12 @@
     width: 33%;
 }
 
+.actionCards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-size-4);
+}
+
 .objectCard {
     display: flex;
     align-items: center;

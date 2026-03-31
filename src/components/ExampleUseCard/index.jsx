@@ -7,7 +7,7 @@ import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
-export default function ExampleUseCard({ collection }) {
+export default function ExampleUseCard({ collection, hasMap }) {
     async function copyUrl(url) {
         await navigator.clipboard.writeText(url);
     }
@@ -22,10 +22,13 @@ export default function ExampleUseCard({ collection }) {
 
             return {
                 'QGIS': `${apiBaseUrl}/collections/${collection}/items?f=json`,
-                'ArcGIS Online': `${apiBaseUrl}/collections/${collection}/items`
+                'ArcGIS Online': `${apiBaseUrl}/collections/${collection}/items`,
+                ...(hasMap && {
+                    'OGC API Maps': `${apiBaseUrl}/collections/${collection}/map?f=png`,
+                }),
             };
         },
-        [apiBaseUrl, collection]
+        [apiBaseUrl, collection, hasMap]
     );
 
     return (

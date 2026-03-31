@@ -82,4 +82,12 @@ export function getDatasetDescription() {
     return metadata?.identification?.description?.en || metadata?.identification?.description || '';
 }
 
-// 
+export function collectionHasMapProvider(collectionId) {
+    const resources = getResources();
+    if (!resources) return false;
+
+    const resource = resources[collectionId];
+    if (!resource) return false;
+
+    return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
+}
