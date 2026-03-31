@@ -37,7 +37,7 @@ jobs:
         id: read_pygeoapi_config
         run: |
           PYGEOAPI_CONFIG=$(cat pygeoapi/pygeoapi-config.yml)
-          echo "pygeoapi_config=$PYGEOAP_CONFIG" >> $GITHUB_OUTPUT
+          echo "pygeoapi_config=$PYGEOAPI_CONFIG" >> $GITHUB_OUTPUT
 
       - name: Extract Docker metadata
         id: meta
