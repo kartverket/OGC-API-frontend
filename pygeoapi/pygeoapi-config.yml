@@ -119,6 +119,7 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/4326
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+
       - type: tile
         name: MVT-postgresql
         data:
@@ -138,6 +139,7 @@ resources:
         format:
           name: pbf
           mimetype: application/vnd.mapbox-vector-tile
+
       - type: map
         name: postgis_mapscript.PostGISMapScriptProvider
         data: "host=${db_host} dbname=${db_name} user=${db_user} password=${password}"
