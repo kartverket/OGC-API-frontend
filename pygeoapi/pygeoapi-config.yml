@@ -157,7 +157,6 @@ resources:
     description:
       en: >
         Datasettet viser fylkesinndelingen i landet med kystkontur
-        OBS! - Test data
     keywords:
       en:
         - Fylke
@@ -269,7 +268,6 @@ resources:
     description:
       en: >
         Datasettet viser kommuneinndelingen i landet med kystkontur
-        OBS! - Test data
     keywords:
       en:
         - Kommune
@@ -308,7 +306,6 @@ resources:
     description:
       en: >
         Datasettet viser tellekretser i Norge
-        OBS! - Test data
     keywords:
       en:
         - Tellekrets
@@ -346,7 +343,6 @@ resources:
     description:
       en: >
         Datasettet viser tellekretser i Norge med kystkontur
-        OBS! - Test data
     keywords:
       en:
         - Tellekrets
