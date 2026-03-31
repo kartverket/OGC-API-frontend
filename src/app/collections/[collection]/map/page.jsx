@@ -32,6 +32,7 @@ export default async function CollectionMap({ params }) {
     if (!Array.isArray(crsOptions) || crsOptions.length === 0) notFound();
 
     const apiBaseUrl = getApiBaseUrlPublic();
+    if (!apiBaseUrl) notFound();
 
     return (
         <>
