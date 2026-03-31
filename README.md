@@ -4,14 +4,14 @@
 Hele applikasjonen kan kjøres med:
 
 ```shell
-cd deploy
+cd dev
 docker compose --profile with-frontend up -d
 ```
 
 Under utvikling er det digg å kjøre frontenden utenfor docker:
 fra prosjektroot:
 ```shell
-docker compose -f deploy/docker-compose.yml up -d
+docker compose -f dev/docker-compose.yml up -d
 npm run dev
 ```
 
@@ -23,7 +23,7 @@ Frontenden leser per nå metadata fra pygeoapi sin YAML-konfigurasjonsfil for å
 - **I Docker:** `/volumes/pygeoapi-config.yml` (default)
 - **Lokal utvikling:** Sett miljøvariabelen `PYGEOAPI_CONFIG_PATH_FRONTEND` i `.env.local`:
   ```
-  PYGEOAPI_CONFIG_PATH_FRONTEND=./deploy/volumes/pygeoapi-config.yml
+  PYGEOAPI_CONFIG_PATH_FRONTEND=./pygeoapi/pygeoapi-config.yml
   API_BASE_URL=http://localhost:5001
   API_BASE_URL_PUBLIC=http://localhost:5001
   ```
