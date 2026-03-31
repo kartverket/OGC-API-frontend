@@ -13,7 +13,7 @@
     "@digdir/designsystemet-css": "^1.9.0",
     "@digdir/designsystemet-react": "^1.9.0",
     "@digdir/designsystemet-theme": "^1.11.0",
-    "@navikt/aksel-icons": "^7.37.0",
+    "@navikt/aksel-icons": "^8.9.0",
     "@turf/bbox": "^7.3.1",
     "@turf/bbox-polygon": "^7.3.1",
     "@turf/boolean-within": "^7.3.1",
