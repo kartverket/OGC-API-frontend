@@ -1,42 +1,50 @@
-import Image from 'next/image';
-import NextLink from 'next/link';
-import { fetchCollectionPageData } from '@/services/pageData';
-import { createCollectionMetadata } from '@/services/pageMetadata';
-import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
-import { Breadcrumbs, DatasetInfoCard, ExampleUseCard } from '@/components';
-import { ChevronRightIcon, PackageFillIcon, LayersFillIcon } from '@navikt/aksel-icons';
-import { collectionHasMapProvider } from '@/config/readPygeoapiConfig';
-import thumbnail from '@/assets/gfx/collection-thumbnail.png';
+import { Card, Heading, Paragraph } from "@digdir/designsystemet-react";
+import {
+  ChevronRightIcon,
+  LayersFillIcon,
+  PackageFillIcon,
+} from "@navikt/aksel-icons";
+import Image from "next/image";
+import NextLink from "next/link";
+import thumbnail from "@/assets/gfx/collection-thumbnail.png";
+import {
+  Breadcrumbs,
+  DatasetInfoCard,
+  ErrorPage,
+  ExampleUseCard,
+} from "@/components";
+import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
+import { fetchCollectionPageData } from "@/services/pageData";
+import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
 
 // Force runtime reading (needed for config file access)
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
-    const { collection } = await params;
-    return createCollectionMetadata(collection);
+  const { collection } = await params;
+  return createCollectionMetadata(collection);
 }
 
 export default async function Collection({ params }) {
-    const { collection } = await params;
-    const { data, status } = await fetchCollectionPageData(collection);
+  const { collection } = await params;
+  const { data, status } = await fetchCollectionPageData(collection);
 
-    if (status !== 200) {
-        return <ErrorPage status={status} />;
-    }
+  if (status !== 200) {
+    return <ErrorPage status={status} />;
+  }
 
-    const hasMap = collectionHasMapProvider(collection);
+  const hasMap = collectionHasMapProvider(collection);
 
-    return (
-        <>
-            <Breadcrumbs
-                breadcrumbs={{
-                    '/': data.dataset.title,
-                    '/collections': 'Collections',
-                    [`/collections/${data.id}`]: data.title
-                }}
-            />
-
+  return (
+    <>
+      <Breadcrumbs
+        breadcrumbs={{
+          "/": data.dataset.title,
+          "/collections": "Collections",
+          [`/collections/${data.id}`]: data.title,
+        }}
+      />
       <div className={styles.page}>
         <div className={styles.top}>
           <div className={styles.left}>
@@ -92,10 +100,14 @@ export default async function Collection({ params }) {
             </div>
           </div>
           <div className={styles.right}>
-            <DatasetInfoCard collection={data} metadata={data.metadata} hasMap={hasMap} />
+            <DatasetInfoCard
+              collection={data}
+              metadata={data.metadata}
+              hasMap={hasMap}
+            />
           </div>
         </div>
       </div>
-        </>
-    );
+    </>
+  );
 }
