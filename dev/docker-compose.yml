@@ -28,15 +28,15 @@ services:
       - ../pygeoapi/templates:/pygeoapi/custom_templates
       - ../pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py
       - ../pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
-      - ../pygeoapi/apiconfig/fonts.txt:/apiconfig/fonts.txt
-      - ../pygeoapi/apiconfig/styles:/apiconfig/styles
+      - ../pygeoapi/mapserver/fonts.txt:/pygeoapi/fonts.txt
+      - ../pygeoapi/mapserver/styles:/pygeoapi/styles
       - ./volumes/logs:/logs
     environment:
-      - PUBLIC_URL=http://localhost:5001/
-      - POSTGRES_HOST=postgis
-      - POSTGRES_DB=pygeoapi_test
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=qwer1234
+      - PYGEOAPI_URL=http://localhost:5001/
+      - db_host=postgis
+      - db_name=pygeoapi_test
+      - db_user=postgres
+      - password=qwer1234
       - CONTAINER_PORT=5000
       - WSGI_WORKERS=1
       - WSGI_WORKER_CLASS=gevent

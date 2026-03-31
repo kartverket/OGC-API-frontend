@@ -6,8 +6,7 @@ COPY initdb.sh /docker-entrypoint-initdb.d/initdb.sh
 WORKDIR /tmp/dumps
 
 RUN apk --update add --no-cache unzip \
-    && unzip -p fylker.zip > fylker.sql \
-    && unzip -p kommuner.zip > kommuner.sql \
+    && unzip '*.zip' \
     && rm *.zip \
     && chown -R postgres:postgres /tmp/dumps \
     && chmod +x /docker-entrypoint-initdb.d/initdb.sh
