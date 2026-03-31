@@ -27,20 +27,10 @@ jobs:
       tags: ${{ steps.meta.outputs.tags }}
       commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
       image_url: ${{ steps.set_output.outputs.image_url }}
-      pygeoapi_config: ${{ steps.read_pygeoapi_config.outputs.pygeoapi_config }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
-      - name: Read pygeoapi-config
-        id: read_pygeoapi_config
-        run: |
-          {
-            echo 'pygeoapi_config<<EOF'
-            cat pygeoapi/pygeoapi-config.yml
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
 
       - name: Extract Docker metadata
         id: meta
@@ -112,18 +102,22 @@ jobs:
         with:
           scope: kartverket/datadeling-apps
           identity: OGC-API-frontend
+      - name: Checkout source repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          path: source
       - name: Checkout apps-repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: kartverket/datadeling-apps
           ref: main
           token: ${{ steps.octo-sts.outputs.token }}
+          path: apps
       - name: Update version
-        env:
-          PYGEOAPI_CONFIG: ${{ needs.build_pygeoapi.outputs.pygeoapi_config }}
         run: |
-          echo "\"${{ needs.build_pygeoapi.outputs.image_url }}\"" > "env/atgcp1-dev/datadeling-ogcapi/${{ env.argo_version_file }}"
-          printf '%s\n' "$PYGEOAPI_CONFIG" > "env/atgcp1-dev/datadeling-ogcapi/pygeoconfig.yml"
+          echo "\"${{ needs.build_pygeoapi.outputs.image_url }}\"" > "apps/env/atgcp1-dev/datadeling-ogcapi/${{ env.argo_version_file }}"
+          cp source/pygeoapi/pygeoapi-config.yml "apps/env/atgcp1-dev/datadeling-ogcapi/pygeoconfig.yml"
+          cd apps
           git config --global user.email "noreply@kartverket.no"
           git config --global user.name "Dataprodukter CI"
           git commit -am "Update OGC API ${{ env.argo_version_file }}"
