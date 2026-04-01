@@ -6,7 +6,7 @@ import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
 import styles from "./CollectionCard.module.css";
 import { fetchCollection } from "@/utils/api/server";
 
-export default async function CollectionCard({ collection }) {
+export default async function CollectionCard({ collection, hasMap }) {
   // Fetch one item to check geometry type
   let geometryType = null;
   try {
@@ -93,6 +93,10 @@ export default async function CollectionCard({ collection }) {
               <span className={`${styles.itemType} ${styles.tag}`}>
                 {collection.itemType}
               </span>
+
+              {hasMap && (
+                <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>
+              )}
 
               <div className={styles.keywords}>
                 {((Array.isArray(collection.keywords) ? collection.keywords : [])).map((keyword) => (

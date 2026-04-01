@@ -1,0 +1,133 @@
+.container {
+    display: flex;
+    gap: var(--ds-size-6);
+    align-items: flex-start;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+    }
+}
+
+.controls {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-4);
+
+    @media (max-width: 600px) {
+        width: 100%;
+    }
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-size-2);
+    margin-bottom: var(--ds-size-1);
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-4);
+}
+
+.groupLabel {
+    display: block;
+    margin-bottom: var(--ds-size-2);
+    color: var(--ds-color-neutral-text-subtle);
+    font-size: var(--ds-font-size-2);
+}
+
+.bboxInputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ds-size-2);
+}
+
+.sizeInputs {
+    display: flex;
+    gap: var(--ds-size-3);
+
+    & > * {
+        flex: 1;
+    }
+}
+
+.updateButton {
+    margin-top: 2em;
+    width: 100%;
+}
+
+.mapContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-3);
+}
+
+.mapBox {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--ds-color-accent-border-subtle);
+    padding: var(--ds-size-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: var(--ds-font-size-3);
+    color: var(--ds-color-neutral-text-subtle);
+    border-radius: 8px;
+}
+
+.urlRow {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-size-2);
+}
+
+.url {
+    flex: 1;
+    border-radius: var(--ds-border-radius-md);
+    background: var(--ds-color-surface-tinted);
+    padding: 10px 8px;
+    font-family: RobotoMono, monospace;
+    font-size: var(--ds-font-size-2);
+    color: var(--ds-color-neutral-text-default);
+    word-break: break-all;
+}
+
+.iconButton {
+    border: 0 none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    color: var(--ds-color-accent-base-default);
+    border-radius: var(--ds-border-radius-sm);
+
+    &:focus-visible {
+        outline: 2px solid var(--ds-color-focus-outline);
+        outline-offset: 2px;
+    }
+
+    &:hover {
+        color: var(--ds-color-accent-text-default);
+    }
+}

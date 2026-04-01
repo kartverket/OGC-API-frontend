@@ -4,7 +4,7 @@ import { Details, DetailsContent, DetailsSummary } from '..';
 import { InformationSquareIcon } from '@navikt/aksel-icons';
 import styles from './DatasetInfoCard.module.css';
 
-export default function DatasetInfoCard({ collection, metadata }) {
+export default function DatasetInfoCard({ collection, metadata, hasMap }) {
     return (
         <Card className={styles.datasetInfoCard}>
             <div className={styles.heading}>
@@ -15,7 +15,9 @@ export default function DatasetInfoCard({ collection, metadata }) {
             <div className={styles.info}>
                 <div>
                     <div className={styles.label}>Tjenestetype</div>
-                    <div className={styles.value} style={{ textTransform: 'capitalize' }}>{collection.itemType}</div>
+                    <div className={styles.value} style={{ textTransform: 'capitalize' }}>
+                        {[collection.itemType, hasMap ? 'Maps' : null].filter(Boolean).join(', ')}
+                    </div>
                 </div>
                 <div>
                     <div className={styles.label}>Antall objekter (items)</div>
@@ -25,6 +27,16 @@ export default function DatasetInfoCard({ collection, metadata }) {
                     <div className={styles.label}>Tilbyder</div>
                     <div className={styles.value}>{metadata?.provider?.name || 'Kartverket'}</div>
                 </div>
+                {collection.extent?.temporal?.interval?.[0]?.some(Boolean) && (
+                    <div>
+                        <div className={styles.label}>Tidsperiode</div>
+                        <div className={styles.value}>
+                            {collection.extent.temporal.interval[0][0]?.split('T')[0] ?? '…'}
+                            {' – '}
+                            {collection.extent.temporal.interval[0][1]?.split('T')[0] ?? 'nå'}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div>

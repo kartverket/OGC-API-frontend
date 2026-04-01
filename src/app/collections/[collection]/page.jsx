@@ -1,39 +1,50 @@
-import Image from 'next/image';
-import NextLink from 'next/link';
-import { fetchCollectionPageData } from '@/services/pageData';
-import { createCollectionMetadata } from '@/services/pageMetadata';
-import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
-import { Breadcrumbs, DatasetInfoCard, ExampleUseCard } from '@/components';
-import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
-import thumbnail from '@/assets/gfx/collection-thumbnail.png';
+import { Card, Heading, Paragraph } from "@digdir/designsystemet-react";
+import {
+  ChevronRightIcon,
+  LayersFillIcon,
+  PackageFillIcon,
+} from "@navikt/aksel-icons";
+import Image from "next/image";
+import NextLink from "next/link";
+import thumbnail from "@/assets/gfx/collection-thumbnail.png";
+import {
+  Breadcrumbs,
+  DatasetInfoCard,
+  ErrorPage,
+  ExampleUseCard,
+} from "@/components";
+import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
+import { fetchCollectionPageData } from "@/services/pageData";
+import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
 
 // Force runtime reading (needed for config file access)
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
-    const { collection } = await params;
-    return createCollectionMetadata(collection);
+  const { collection } = await params;
+  return createCollectionMetadata(collection);
 }
 
 export default async function Collection({ params }) {
-    const { collection } = await params;
-    const { data, status } = await fetchCollectionPageData(collection);
+  const { collection } = await params;
+  const { data, status } = await fetchCollectionPageData(collection);
 
-    if (status !== 200) {
-        return <ErrorPage status={status} />;
-    }
+  if (status !== 200) {
+    return <ErrorPage status={status} />;
+  }
 
-    return (
-        <>
-            <Breadcrumbs
-                breadcrumbs={{
-                    '/': 'Administrative enheter',
-                    '/collections': 'Collections',
-                    [`/collections/${data.id}`]: data.title
-                }}
-            />
+  const hasMap = collectionHasMapProvider(collection);
 
+  return (
+    <>
+      <Breadcrumbs
+        breadcrumbs={{
+          "/": data.dataset.title,
+          "/collections": "Collections",
+          [`/collections/${data.id}`]: data.title,
+        }}
+      />
       <div className={styles.page}>
         <div className={styles.top}>
           <div className={styles.left}>
@@ -53,31 +64,50 @@ export default async function Collection({ params }) {
             </div>
 
             <div className={styles.topLeftBottom}>
-              <Card
-                asChild
-                data-variant="tinted"
-                data-color="accent"
-                className={styles.objectCard}
-              >
-                <NextLink href={`/collections/${data.id}/items`}>
-                  <PackageFillIcon title="a11y-title" fontSize="36px" />
+              <div className={styles.actionCards}>
+                <Card
+                  asChild
+                  data-variant="tinted"
+                  data-color="accent"
+                  className={styles.objectCard}
+                >
+                  <NextLink href={`/collections/${data.id}/items`}>
+                    <PackageFillIcon title="a11y-title" fontSize="36px" />
+                    <span>Vis objekter i datasettet</span>
+                    <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                  </NextLink>
+                </Card>
 
-                  <span>Vis objekter i datasettet</span>
+                {hasMap && (
+                  <Card
+                    asChild
+                    data-variant="tinted"
+                    data-color="accent"
+                    className={styles.objectCard}
+                  >
+                    <NextLink href={`/collections/${data.id}/map`}>
+                      <LayersFillIcon title="a11y-title" fontSize="36px" />
+                      <span>Vis kart</span>
+                      <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                    </NextLink>
+                  </Card>
+                )}
+              </div>
 
-                  <ChevronRightIcon title="a11y-title" fontSize="36px" />
-                </NextLink>
-              </Card>
+              {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
-                            {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
-
-                            <ExampleUseCard collection={collection} />
-                        </div>
-                    </div>
-                    <div className={styles.right}>
-                        <DatasetInfoCard collection={data} metadata={data.metadata} />
-                    </div>
-                </div>  
+              <ExampleUseCard collection={collection} hasMap={hasMap} />
             </div>
-        </>
-    );
+          </div>
+          <div className={styles.right}>
+            <DatasetInfoCard
+              collection={data}
+              metadata={data.metadata}
+              hasMap={hasMap}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
