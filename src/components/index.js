@@ -5,6 +5,7 @@ export { default as Details } from './Details';
 export { default as DetailsContent } from './Details/DetailsContent';
 export { default as DetailsSummary } from './Details/DetailsSummary';
 export { default as DeveloperCard } from './DeveloperCard';
+export { default as DownloadPanel } from './DownloadPanel';
 export { default as ErrorPage } from './ErrorPage';
 export { default as ExampleUseCard } from './ExampleUseCard';
 export { default as FilterCard } from './FilterCard';

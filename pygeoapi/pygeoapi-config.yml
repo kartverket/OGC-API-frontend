@@ -160,6 +160,16 @@ resources:
     description:
       en: >
         Datasettet viser fylkesinndelingen i landet med kystkontur
+    download:
+      area_filters:
+        - type: fylke
+          collection: fylker
+          name_field: fylkesnavn
+          label: Fylke
+        - type: kommune
+          collection: kommuner
+          name_field: navn
+          label: Kommune
     keywords:
       en:
         - Fylke
@@ -198,6 +208,12 @@ resources:
     description:
       en: >
         Datasettet viser kommuneinndelingen i landet med de mest nøyaktige grensene som er registrert digitalt og som er samlet i ett datasett.
+    download:
+      area_filters:
+        - type: fylke
+          collection: fylker
+          name_field: fylkesnavn
+          label: Fylke
     keywords:
       en:
         - Kommune
@@ -271,6 +287,16 @@ resources:
     description:
       en: >
         Datasettet viser kommuneinndelingen i landet med kystkontur
+    download:
+      area_filters:
+        - type: fylke
+          collection: fylker
+          name_field: fylkesnavn
+          label: Fylke
+        - type: kommune
+          collection: kommuner
+          name_field: navn
+          label: Kommune
     keywords:
       en:
         - Kommune
@@ -309,6 +335,16 @@ resources:
     description:
       en: >
         Datasettet viser tellekretser i Norge
+    download:
+      area_filters:
+        - type: fylke
+          collection: fylker
+          name_field: fylkesnavn
+          label: Fylke
+        - type: kommune
+          collection: kommuner
+          name_field: navn
+          label: Kommune
     keywords:
       en:
         - Tellekrets
@@ -346,6 +382,16 @@ resources:
     description:
       en: >
         Datasettet viser tellekretser i Norge med kystkontur
+    download:
+      area_filters:
+        - type: fylke
+          collection: fylker
+          name_field: fylkesnavn
+          label: Fylke
+        - type: kommune
+          collection: kommuner
+          name_field: navn
+          label: Kommune
     keywords:
       en:
         - Tellekrets

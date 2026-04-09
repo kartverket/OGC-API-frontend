@@ -1,7 +1,7 @@
 'use client'
 
-import { Button, Card, Divider, Heading } from '@digdir/designsystemet-react';
-import { DownloadIcon, TerminalIcon } from '@navikt/aksel-icons';
+import { Card, Heading } from '@digdir/designsystemet-react';
+import { TerminalIcon } from '@navikt/aksel-icons';
 import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
@@ -31,18 +31,6 @@ export default function ExampleUseCard({ collection, hasMap }) {
         [apiBaseUrl, collection, hasMap]
     );
 
-    const downloads = useMemo(
-        () => {
-            if (!apiBaseUrl) return [];
-            return [
-                { label: 'GeoJSON', href: `${apiBaseUrl}/collections/${collection}/items?f=json` },
-                { label: 'CSV', href: `${apiBaseUrl}/collections/${collection}/items?f=csv` },
-                { label: 'GeoPackage', href: `${apiBaseUrl}/collections/${collection}/items?f=gpkg` },
-            ];
-        },
-        [apiBaseUrl, collection]
-    );
-
     return (
         <Card className={styles.developerCard}>
             <div className={styles.heading}>
@@ -68,21 +56,6 @@ export default function ExampleUseCard({ collection, hasMap }) {
                     ))
                 }
             </div>
-            <Divider />
-
-            <div className={styles.downloads}>
-                <div className={styles.downloadsLabel}>Last ned datasett</div>
-                <div className={styles.downloadButtons}>
-                    {downloads.map(({ label, href }) => (
-                        <Button key={label} asChild variant="secondary" data-size="sm" disabled={!apiBaseUrl}>
-                            <a href={href} target="_blank" rel="noopener noreferrer">
-                                <DownloadIcon aria-hidden fontSize="1.5rem" />
-                                {label}
-                            </a>
-                        </Button>
-                    ))}
-                </div>
-            </div>
-        </Card >
+        </Card>
     );
 }
