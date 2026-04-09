@@ -56,3 +56,20 @@
         }
     }
 }
+
+.downloads {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-2);
+}
+
+.downloadsLabel {
+    font-size: var(--ds-font-size-2);
+    font-weight: var(--ds-font-weight-medium);
+}
+
+.downloadButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-size-2);
+}

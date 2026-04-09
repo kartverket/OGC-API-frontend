@@ -1,11 +1,11 @@
 'use client'
 
-import { Card, Heading } from '@digdir/designsystemet-react';
-import { TerminalIcon } from '@navikt/aksel-icons';
+import { Button, Card, Divider, Heading } from '@digdir/designsystemet-react';
+import { DownloadIcon, TerminalIcon } from '@navikt/aksel-icons';
 import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useMemo } from 'react';
 
 export default function ExampleUseCard({ collection, hasMap }) {
     async function copyUrl(url) {
@@ -29,6 +29,18 @@ export default function ExampleUseCard({ collection, hasMap }) {
             };
         },
         [apiBaseUrl, collection, hasMap]
+    );
+
+    const downloads = useMemo(
+        () => {
+            if (!apiBaseUrl) return [];
+            return [
+                { label: 'GeoJSON', href: `${apiBaseUrl}/collections/${collection}/items?f=json` },
+                { label: 'CSV', href: `${apiBaseUrl}/collections/${collection}/items?f=csv` },
+                { label: 'GeoPackage', href: `${apiBaseUrl}/collections/${collection}/items?f=gpkg` },
+            ];
+        },
+        [apiBaseUrl, collection]
     );
 
     return (
@@ -55,6 +67,21 @@ export default function ExampleUseCard({ collection, hasMap }) {
                         </Fragment>
                     ))
                 }
+            </div>
+            <Divider />
+
+            <div className={styles.downloads}>
+                <div className={styles.downloadsLabel}>Last ned datasett</div>
+                <div className={styles.downloadButtons}>
+                    {downloads.map(({ label, href }) => (
+                        <Button key={label} asChild variant="secondary" data-size="sm" disabled={!apiBaseUrl}>
+                            <a href={href} target="_blank" rel="noopener noreferrer">
+                                <DownloadIcon aria-hidden fontSize="1.5rem" />
+                                {label}
+                            </a>
+                        </Button>
+                    ))}
+                </div>
             </div>
         </Card >
     );
