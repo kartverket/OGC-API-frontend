@@ -61,7 +61,7 @@ CONFORMANCE_CLASSES = [
     'http://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/core'
 ]
 
-                                               # CRS84 is the correct OGC API default per the specification.                         
+                                               # CRS84 is the correct OGC API default per the specification.
 DEFAULT_CRS = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
 
 
@@ -153,13 +153,6 @@ def get_collection_map(api: API, request: APIRequest,
         return headers, HTTPStatus.BAD_REQUEST, to_json(
             exception, api.pretty_print)
 
-    # Do NOT reproject the bbox here.  The provider receives the bbox in
-    # bbox_crs (CRS84 by default) and is responsible for reprojecting to
-    # the layer's internal CRS before rendering.  The previous code
-    # transformed the bbox into the *output* CRS, which caused a double-
-    # reprojection when MapScriptProvider subsequently projected from the
-    # layer CRS to the output CRS — producing blank images for any output
-    # CRS that differs from both CRS84 and the layer CRS.
     query_args['bbox'] = bbox
 
     LOGGER.debug('Processing datetime parameter')
