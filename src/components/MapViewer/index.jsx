@@ -12,6 +12,7 @@ import { DownloadIcon, FilesIcon, LayersFillIcon } from '@navikt/aksel-icons';
 import { View } from 'ol';
 import { createMapViewerMap } from '@/utils/map/map';
 import { OgcMapsImageSource, buildOgcMapsUrl, toOlProjection } from '@/utils/map/ogcImageSource';
+import Zoom from '@/components/Map/Zoom';
 import { getCrsCode, getLayer, transformExtent } from '@/utils/map/helpers';
 import { createBaseMapSource, isBasemapProjection } from '@/utils/map/baseMap';
 import basemapConfig from '@/config/basemap';
@@ -44,7 +45,9 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
     const containerRef = useRef(null);
     const olMapRef = useRef(null);
     const unwireRef = useRef(null);
+    const crsRef = useRef(crsOptions[0]);
     const [crs, setCrs] = useState(crsOptions[0]);
+    const [olMap, setOlMap] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState('');
 
@@ -59,15 +62,16 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
                 return;
             }
             olMapRef.current = map;
+            setOlMap(map);
             map.setTarget(containerRef.current);
             map.getView().fit(initialExtent);
 
             const source = createSource(collectionId, apiBaseUrl, olMapRef);
             getLayer(map, 'ogc-image').setSource(source);
             unwireRef.current = wireLoadingEvents(source);
-            updateMapUrl(map);
+            updateMapUrl(map, crsOptions[0]);
 
-            map.on('moveend', () => updateMapUrl(olMapRef.current));
+            map.on('moveend', () => updateMapUrl(olMapRef.current, crsRef.current));
         }
 
         init();
@@ -95,7 +99,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
         };
     }
 
-    function updateMapUrl(map) {
+    function updateMapUrl(map, activeCrs) {
         if (!map) return;
         const size = map.getSize();
         if (!size) return;
@@ -103,18 +107,16 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
         const extent = view.calculateExtent(size);
         const [w, h] = size;
         const viewProj = view.getProjection().getCode();
-        // Download URL: bbox and crs always in CRS84 because pygeoapi only
-        // reliably renders for CRS84, EPSG:4326, and its native EPSG:25833.
-        // Other crs values (25832, 25835, 3857) return blank images.
-        const bbox = viewProj === 'EPSG:4326'
+        const targetProj = toOlProjection(activeCrs);
+        const bbox = viewProj === targetProj
             ? extent
-            : transformExtent(extent, viewProj, 'EPSG:4326');
-        const crs = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
-        setMapUrl(buildOgcMapsUrl(apiBaseUrl, collectionId, { bbox, crs, width: w, height: h }));
+            : transformExtent(extent, viewProj, targetProj);
+        setMapUrl(buildOgcMapsUrl(apiBaseUrl, collectionId, { bbox, crs: activeCrs, width: w, height: h }));
     }
 
     async function handleCrsChange(newCrs) {
         setCrs(newCrs);
+        crsRef.current = newCrs;
         const map = olMapRef.current;
         if (!map) return;
 
@@ -159,7 +161,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
         // Just refresh the image to match the new view extent.
         getLayer(map, 'ogc-image').getSource()?.changed();
 
-        updateMapUrl(map);
+        updateMapUrl(map, newCrs);
     }
 
     async function handleDownload() {
@@ -209,12 +211,13 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
                 <div className={styles.mapBox}>
                     {isLoading && <div className={styles.loading}>Laster kart…</div>}
                     <div ref={containerRef} className={styles.olMap} />
+                    {olMap && <Zoom map={olMap} className={styles.zoomButtons} />}
                 </div>
                 <div className={styles.urlRow}>
-                    <span className={styles.url}>{mapUrl}</span>
+                    <span className={styles.url}>{decodeURIComponent(mapUrl)}</span>
                     <button
                         type="button"
-                        onClick={() => navigator.clipboard.writeText(mapUrl).catch(() => {})}
+                        onClick={() => navigator.clipboard.writeText(decodeURIComponent(mapUrl)).catch(() => {})}
                         aria-label="Kopier URL"
                         className={styles.iconButton}
                     >

@@ -47,6 +47,16 @@
     height: 600px;
 }
 
+.zoomButtons {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    border: 1px solid var(--ds-color-accent-border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
 .loading {
     position: absolute;
     inset: 0;
