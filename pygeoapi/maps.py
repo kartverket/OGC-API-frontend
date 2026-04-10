@@ -153,10 +153,13 @@ def get_collection_map(api: API, request: APIRequest,
         return headers, HTTPStatus.BAD_REQUEST, to_json(
             exception, api.pretty_print)
 
-    if query_args['bbox_crs'] != query_args['crs']:
-        LOGGER.debug(f'Reprojecting bbox CRS: {query_args["crs"]}')
-        bbox = transform_bbox(bbox, query_args['bbox_crs'], query_args['crs'])
-
+    # Do NOT reproject the bbox here.  The provider receives the bbox in
+    # bbox_crs (CRS84 by default) and is responsible for reprojecting to
+    # the layer's internal CRS before rendering.  The previous code
+    # transformed the bbox into the *output* CRS, which caused a double-
+    # reprojection when MapScriptProvider subsequently projected from the
+    # layer CRS to the output CRS — producing blank images for any output
+    # CRS that differs from both CRS84 and the layer CRS.
     query_args['bbox'] = bbox
 
     LOGGER.debug('Processing datetime parameter')
