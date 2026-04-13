@@ -61,7 +61,7 @@ CONFORMANCE_CLASSES = [
     'http://www.opengis.net/spec/ogcapi-maps-1/1.0/conf/core'
 ]
 
-                                               #DEFAULT_CRS = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
+                                               # CRS84 is the correct OGC API default per the specification.
 DEFAULT_CRS = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
 
 def get_collection_map(api: API, request: APIRequest,
