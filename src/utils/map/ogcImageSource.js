@@ -37,10 +37,10 @@ export class OgcMapsImageSource extends ImageSource {
     constructor({ collectionId, apiBaseUrl, getMapSize }) {
         const loader = (extent, _resolution, _pixelRatio) => {
             const mapSize = getMapSize();
-            if (!mapSize) {
+            const [width, height] = mapSize ?? [];
+            if (!width || !height) {
                 return Promise.reject(new Error('Map size not yet available'));
             }
-            const [width, height] = mapSize;
             const url = buildOgcMapsUrl(apiBaseUrl, collectionId, {
                 bbox: extent,
                 crs: CRS84,

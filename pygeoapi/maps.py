@@ -153,6 +153,10 @@ def get_collection_map(api: API, request: APIRequest,
         return headers, HTTPStatus.BAD_REQUEST, to_json(
             exception, api.pretty_print)
 
+    if query_args['bbox_crs'] != query_args['crs']:
+        LOGGER.debug(f'Reprojecting bbox CRS: {query_args["crs"]}')
+        bbox = transform_bbox(bbox, query_args['bbox_crs'], query_args['crs'])
+
     query_args['bbox'] = bbox
 
     LOGGER.debug('Processing datetime parameter')

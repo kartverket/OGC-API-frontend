@@ -31,6 +31,7 @@ export default async function CollectionMap({ params }) {
     const EXCLUDED_CRS = new Set([
         'http://www.opengis.net/def/crs/EPSG/0/4326',
         'http://www.opengis.net/def/crs/EPSG/0/4258',
+        'http://www.opengis.net/def/crs/EPSG/0/3857',
     ]);
     const crsOptions = data.crs?.filter(c => !EXCLUDED_CRS.has(c));
 

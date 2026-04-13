@@ -9,7 +9,7 @@ import basemap from '@/config/basemap';
 import './setup';
 
 
-const MAP_PADDING = [50, 50, 50, 50];
+export const MAP_PADDING = [50, 50, 50, 50];
 
 export async function createItemsMap() {
     const map = new Map({
@@ -98,7 +98,7 @@ export async function createMapViewerMap(defaultBbox) {
         layers: [
             await createBaseMap(),
             imageLayer,
-        ]
+        ].filter(Boolean)
     });
 
     map.setView(new View({

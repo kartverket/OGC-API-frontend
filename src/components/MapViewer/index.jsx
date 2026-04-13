@@ -8,9 +8,9 @@ import {
     Label,
     Select,
 } from '@digdir/designsystemet-react';
-import { DownloadIcon, FilesIcon, LayersFillIcon } from '@navikt/aksel-icons';
+import { CheckmarkIcon, DownloadIcon, FilesIcon, LayersFillIcon } from '@navikt/aksel-icons';
 import { View } from 'ol';
-import { createMapViewerMap } from '@/utils/map/map';
+import { MAP_PADDING, createMapViewerMap } from '@/utils/map/map';
 import { OgcMapsImageSource, buildOgcMapsUrl, toOlProjection } from '@/utils/map/ogcImageSource';
 import Zoom from '@/components/Map/Zoom';
 import { getCrsCode, getLayer, transformExtent } from '@/utils/map/helpers';
@@ -50,6 +50,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
     const [olMap, setOlMap] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState('');
+    const [copied, setCopied] = useState(false);
 
     // Mount OL map
     useEffect(() => {
@@ -135,7 +136,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
                 projection: viewProj,
                 center: newCenter,
                 zoom: oldView.getZoom(),
-                padding: [50, 50, 50, 50],
+                padding: MAP_PADDING,
             });
             map.setView(newView);
 
@@ -217,11 +218,18 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
                     <span className={styles.url}>{decodeURIComponent(mapUrl)}</span>
                     <button
                         type="button"
-                        onClick={() => navigator.clipboard.writeText(decodeURIComponent(mapUrl)).catch(() => {})}
+                        onClick={() => {
+                            navigator.clipboard.writeText(decodeURIComponent(mapUrl)).catch(() => {});
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }}
                         aria-label="Kopier URL"
-                        className={styles.iconButton}
+                        className={`${styles.iconButton} ${copied ? styles.iconButtonCopied : ''}`}
                     >
-                        <FilesIcon aria-hidden fontSize="28px" />
+                        {copied
+                            ? <CheckmarkIcon aria-hidden fontSize="28px" />
+                            : <FilesIcon aria-hidden fontSize="28px" />
+                        }
                     </button>
                     <button
                         type="button"

@@ -104,3 +104,11 @@
         color: var(--ds-color-accent-text-default);
     }
 }
+
+.iconButtonCopied {
+    color: var(--ds-color-success-base-default);
+
+    &:hover {
+        color: var(--ds-color-success-text-default);
+    }
+}
