@@ -26,7 +26,14 @@ export default async function CollectionMap({ params }) {
     if (!hasMap) notFound();
 
     const bbox = data.extent?.spatial?.bbox?.[0];
-    const crsOptions = data.crs;
+    // Exclude geographic CRS and EPSG:3857 — they all render identically in the
+    // Web Mercator view and provide no visual distinction to the user.
+    const EXCLUDED_CRS = new Set([
+        'http://www.opengis.net/def/crs/EPSG/0/4326',
+        'http://www.opengis.net/def/crs/EPSG/0/4258',
+        'http://www.opengis.net/def/crs/EPSG/0/3857',
+    ]);
+    const crsOptions = data.crs?.filter(c => !EXCLUDED_CRS.has(c));
 
     if (!Array.isArray(bbox) || bbox.length !== 4) notFound();
     if (!Array.isArray(crsOptions) || crsOptions.length === 0) notFound();
