@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Pagination, Select, SelectOption, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, usePagination } from '@digdir/designsystemet-react';
 import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
 import styles from './ItemsTable.module.css';
+import { useSelector } from 'react-redux';
 
 const LIMITS = {
     '20': '20 (standard)',
@@ -16,6 +17,7 @@ export default function ItemsTable({ data }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const selectedFeature = useSelector(state => state.map.selectedFeature);
     const features = data.features;
     const columnNames = Object.keys(features[0].properties);
 
@@ -55,6 +57,8 @@ export default function ItemsTable({ data }) {
     function formatValue(value) {
         return value !== null ? value.toString() : '-';
     }
+
+    console.log(selectedFeature)
 
     return (
         <div className={styles.container}>
@@ -129,7 +133,11 @@ export default function ItemsTable({ data }) {
                         <TableBody>
                             {
                                 features.map(feature => (
-                                    <TableRow key={feature.id} onClick={() => goToItem(feature.id)}>
+                                    <TableRow 
+                                        key={feature.id} 
+                                        onClick={() => goToItem(feature.id)} 
+                                        className={selectedFeature?.id === feature.id ? styles.selected : ''}
+                                    >
                                         <TableCell>{feature.id}</TableCell>
                                         {
                                             Object.entries(feature.properties).map(entry => (
