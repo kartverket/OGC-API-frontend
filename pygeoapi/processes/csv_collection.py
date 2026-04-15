@@ -30,7 +30,7 @@ from .export_utils import (
 LOGGER = logging.getLogger(__name__)
 
 AREA_CONFIG = {
-    'fylke':   {'collection': 'fylker',   'default_field': 'fylkesnavn'},
+    'fylke':   {'collection': 'fylker',   'default_field': 'navn'},
     'kommune': {'collection': 'kommuner', 'default_field': 'navn'},
 }
 

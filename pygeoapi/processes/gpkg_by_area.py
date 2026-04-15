@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(__name__)
 
 # ── Adapt these to your collection IDs and column names ──────────────────────
 AREA_CONFIG = {
-    'fylke':   {'collection': 'fylker',   'default_field': 'fylkesnavn'},
+    'fylke':   {'collection': 'fylker',   'default_field': 'navn'},
     'kommune': {'collection': 'kommuner', 'default_field': 'navn'},
 }
 # ─────────────────────────────────────────────────────────────────────────────

@@ -164,7 +164,7 @@ resources:
       area_filters:
         - type: fylke
           collection: fylker
-          name_field: fylkesnavn
+          name_field: navn
           label: Fylke
         - type: kommune
           collection: kommuner
@@ -212,7 +212,7 @@ resources:
       area_filters:
         - type: fylke
           collection: fylker
-          name_field: fylkesnavn
+          name_field: navn
           label: Fylke
     keywords:
       en:
@@ -291,7 +291,7 @@ resources:
       area_filters:
         - type: fylke
           collection: fylker
-          name_field: fylkesnavn
+          name_field: navn
           label: Fylke
         - type: kommune
           collection: kommuner
@@ -339,7 +339,7 @@ resources:
       area_filters:
         - type: fylke
           collection: fylker
-          name_field: fylkesnavn
+          name_field: navn
           label: Fylke
         - type: kommune
           collection: kommuner
@@ -386,7 +386,7 @@ resources:
       area_filters:
         - type: fylke
           collection: fylker
-          name_field: fylkesnavn
+          name_field: navn
           label: Fylke
         - type: kommune
           collection: kommuner
