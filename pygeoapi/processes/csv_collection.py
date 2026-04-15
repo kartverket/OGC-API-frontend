@@ -31,7 +31,7 @@ LOGGER = logging.getLogger(__name__)
 
 AREA_CONFIG = {
     'fylke':   {'collection': 'fylker',   'default_field': 'fylkesnavn'},
-    'kommune': {'collection': 'kommuner', 'default_field': 'fylkesnavn'},
+    'kommune': {'collection': 'kommuner', 'default_field': 'navn'},
 }
 
 PROCESS_METADATA = {
@@ -121,6 +121,7 @@ class ExportCollectionCsvProcessor(BaseProcessor):
         # ── Optional spatial filter ────────────────────────────────────────
         if area_type:
             area_cfg = AREA_CONFIG[area_type]
+            name_field = data.get('area_name_field', '').strip() or area_cfg['default_field']
             if area_cfg['collection'] not in collections:
                 raise ProcessorExecuteError(
                     f"Area collection '{area_cfg['collection']}' not in config."
@@ -128,7 +129,7 @@ class ExportCollectionCsvProcessor(BaseProcessor):
             wkt = get_area_geometry(
                 config,
                 area_collection=area_cfg['collection'],
-                field_name=area_cfg['default_field'],
+                field_name=name_field,
                 field_value=area_name,
             )
             if wkt is None:

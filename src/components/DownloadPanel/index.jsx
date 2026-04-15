@@ -84,7 +84,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
                 : 'export-collection-csv';
 
             const inputs = activeFilter
-                ? { collection_id: collectionId, area_type: formatScope, area_name: areaName }
+                ? { collection_id: collectionId, area_type: formatScope, area_name: areaName, area_name_field: activeFilter.name_field }
                 : { collection_id: collectionId };
 
             setStatus({ type: 'info', message: 'Sender eksportjobb…' });
