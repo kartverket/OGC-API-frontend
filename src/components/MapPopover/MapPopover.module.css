@@ -1,8 +1,7 @@
 .popoverContent {
     display: flex;
-    flex-direction: column;
-    gap: var(--ds-size-1);
-    width: 150px;
+    gap: var(--ds-size-4);
+    width: fit-content;
 
     a {
         display: flex;
@@ -11,49 +10,5 @@
 
     svg {
         margin-left: 2px;
-    }
-}
-
-.top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex: 1;
-
-    .link {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        text-decoration: none;
-        --dsc-link-text-decoration-thickness--hover: .125em;
-
-        &:hover {
-            color: var(--ds-color-text-default);
-            text-decoration: underline;
-            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
-            text-underline-offset: .27em;
-        }
-    }
-}
-
-.properties {
-    font-size: 13px;
-    width: 100%;
-
-    .row {
-        display: flex;
-        gap: 3px;
-
-        .name {
-            font-weight: 500;
-        }
-
-        .value {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-width: 0;
-            flex: 1;
-        }
     }
 }

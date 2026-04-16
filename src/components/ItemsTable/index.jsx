@@ -58,8 +58,6 @@ export default function ItemsTable({ data }) {
         return value !== null ? value.toString() : '-';
     }
 
-    console.log(selectedFeature)
-
     return (
         <div className={styles.container}>
             <div className={styles.controls}>

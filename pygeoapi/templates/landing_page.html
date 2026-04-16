@@ -1,0 +1,292 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} {% trans %}Home{% endtrans %} {% endblock %}
+{% block body %}
+
+<br/>
+<section id="collections">
+<div class="row">
+  <div class="col-md-8 col-sm-12">
+
+  <section id="identification">
+    <h1>{{ config['metadata']['identification']['title'] }}</h1>
+    <p>{{ config['metadata']['identification']['description'] }}</p>
+
+    <p>
+        {% for kw in config['metadata']['identification']['keywords'] %}
+          <span class="badge bg-primary text-bg-primary">{{ kw }}</span>
+        {% endfor %}
+    </p>
+
+    <div class="card bg-light mb-3">
+      <div class="card-body">
+        {% if config['metadata']['identification']['terms_of_service'] %}
+          <div class="row">
+              <div class="col-sm-4">
+                {% trans %}Terms of service{% endtrans %}
+              </div>
+              <div class="col-sm-8">
+                {{ config['metadata']['identification']['terms_of_service'] | urlize() }}
+              </div>
+          </div>
+        {% endif %}
+        {% if config['metadata']['license']['url'] %}
+          <div class="row">
+              <div class="col-sm-4">
+                {% trans %}License{% endtrans %}
+              </div>
+              <div class="col-sm-8">
+                  <a href="{{ config['metadata']['license']['url'] }}">
+                    {{ config['metadata']['license']['name'] or config['metadata']['license']['url'] }}</a>
+              </div>
+          </div>
+        {% endif %}
+          <div class="row">
+              <div class="col-sm-4">
+                {% trans %}URL{% endtrans %}
+              </div>
+              <div class="col-sm-8">
+                  <a href="{{ config['metadata']['identification']['url'] }}">
+                    {{ config['metadata']['identification']['url'] | truncate( 70 ) }}</a>
+              </div>
+          </div>
+      </div>
+    </div>
+  </section>
+  {% if data['collection'] %}
+  <section id="collections">
+    <h2>{% trans %}Collections{% endtrans %}</h2>
+    <p>
+      <a href="{{ config['server']['url'] }}/collections?f=html">{% trans %}View the collections in this service{% endtrans %}</a>
+    </p>
+  </section>
+ {% endif %}
+ 
+ {# ── Bulk download card ────────────────────────────────────────────── #}
+  <div style="
+    background: linear-gradient(135deg, #1a3a5c 0%, #2c7be5 100%);
+    border-radius: .75rem;
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 16px rgba(44,123,229,0.25);
+  ">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" viewBox="0 0 16 16">
+        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+      </svg>
+      <div>
+        <h3 style="color:white; margin:0; font-size:1.3rem; font-weight:700;">Bulk Downloads</h3>
+        <p style="color:rgba(255,255,255,0.75); margin:0; font-size:.9rem;">
+          Download the full dataset as a single GeoPackage file
+        </p>
+      </div>
+    </div>
+    <button id="dl-all-gpkg" style="
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: white;
+      color: #1a3a5c;
+      border: none;
+      border-radius: .5rem;
+      padding: .6rem 1.4rem;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform .1s ease, box-shadow .1s ease;
+    "
+    onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'"
+    onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+      </svg>
+      Download all collections as GeoPackage
+    </button>
+    <div id="dl-all-status" style="
+      margin-top:.85rem; font-size:.85rem;
+      color:rgba(255,255,255,0.9); min-height:1.2em; display:none;
+    "></div>
+    <div id="dl-all-progress-wrap" style="display:none; margin-top:.5rem;">
+      <div style="background:rgba(255,255,255,0.25); border-radius:.25rem; height:5px; overflow:hidden;">
+        <div id="dl-all-progress-bar" style="height:100%; background:white; width:0%; transition:width .3s ease;"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function () {
+    const btn          = document.getElementById('dl-all-gpkg');
+    const statusEl     = document.getElementById('dl-all-status');
+    const progressWrap = document.getElementById('dl-all-progress-wrap');
+    const progressBar  = document.getElementById('dl-all-progress-bar');
+    const ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+      <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+    </svg>`;
+
+    function reset() {
+      btn.innerHTML = ICON + ' Download all collections as GeoPackage';
+      btn.disabled = false;
+      statusEl.style.display = 'none';
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+    }
+
+    btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      btn.innerHTML = '⏳&nbsp; Preparing download…';
+      statusEl.textContent = 'Connecting to server…';
+      statusEl.style.display = 'block';
+      progressWrap.style.display = 'block';
+      progressBar.style.width = '30%';
+
+      try {
+        const resp = await fetch(
+          '{{ config["server"]["url"] }}/processes/export-all-gpkg/execution',
+          { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ inputs: {} }) }
+        );
+        progressBar.style.width = '80%';
+        if (!resp.ok) throw new Error(await resp.text());
+        statusEl.textContent = 'Preparing file…';
+        const blob = await resp.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = 'all_collections.gpkg';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        progressBar.style.width = '100%';
+        statusEl.textContent = '✓ Download complete';
+        btn.innerHTML = '✓&nbsp; Downloaded';
+        setTimeout(reset, 3000);
+      } catch (err) {
+        statusEl.textContent = '⚠ Download failed: ' + err.message;
+        setTimeout(reset, 4000);
+      }
+    });
+  })();
+  </script>
+  
+ {% if data['stac-collection'] %}
+  <section id="collections">
+    <h2>{% trans %}SpatioTemporal Assets{% endtrans %}</h2>
+    <p>
+      <a href="{{ config['server']['url'] }}/stac?f=html">{% trans %}View the SpatioTemporal Assets in this service{% endtrans %}</a>
+    </p>
+  </section>
+ {% endif %}
+ {% if data['process'] %}
+  <section id="processes">
+      <h2>{% trans %}Processes{% endtrans %}</h2>
+      <p>
+        <a href="{{ config['server']['url'] }}/processes?f=html">{% trans %}View the processes in this service{% endtrans %}</a>
+      </p>
+  </section>
+  {% if data['jobs'] %}
+  <section id="jobs">
+      <h2>{% trans %}Jobs{% endtrans %}</h2>
+      <p>
+        <a title="Browse jobs" href="{{config.server.url}}/jobs">{% trans %}Browse jobs{% endtrans %}</a>
+      </p>
+  </section>
+  {% endif %}
+  {% endif %}
+  {% if data['tile'] %}
+  <section id="tilematrixsets">
+      <h2>{% trans %}Tile Matrix Sets{% endtrans %}</h2>
+      <p>
+        <a href="{{ config['server']['url'] }}/TileMatrixSets?f=html">{% trans %}View the Tile Matrix Sets available on this service{% endtrans %}</a>
+      </p>
+  {% endif %}
+  {% if data['pubsub'] %}
+  <section id="pubsub">
+      <h2>{% trans %}Pub/Sub Notifications{% endtrans %} ({{ data['pubsub']['name'] }})</h2>
+      <p>
+        <a href="{{ data['pubsub']['url'] }}">{% trans %}Subscribe to notifications from this service{% endtrans %}</a>{% if data['pubsub']['channel'] %} (Topic/channel: <code>{{ data['pubsub']['channel'] }}</code>) {% endif %}
+      </p>
+  </section>
+  {% endif %}
+  <section id="openapi">
+      <h2>{% trans %}API Definition{% endtrans %}</h2>
+      <p>
+        {% trans %}Documentation{% endtrans %}: <a href="{{ config['server']['url'] }}/openapi?f=html">{% trans %}Swagger UI{% endtrans %}</a> <a href="{{ config['server']['url'] }}/openapi?f=html&ui=redoc">{% trans %}ReDoc{% endtrans %}</a>
+      </p>
+      <p>
+        <a href="{{ config['server']['url'] }}/openapi?f=json">{% trans %}OpenAPI Document{% endtrans %}</a>
+      </p>
+  </section>
+  {% if data['pubsub'] and data['pubsub']['asyncapi'] %}
+  <section id="asyncapi">
+      <h2>{% trans %}AsyncAPI Definition{% endtrans %}</h2>
+      <p>
+        {% trans %}Documentation{% endtrans %}: <a href="{{ config['server']['url'] }}/asyncapi?f=html">{% trans %}UI{% endtrans %}</a>
+      </p>
+      <p>
+        <a href="{{ config['server']['url'] }}/asyncapi?f=json">{% trans %}AsyncAPI Document{% endtrans %}</a>
+      </p>
+  </section>
+  {% endif %}
+  <section id="conformance">
+      <h2>{% trans %}Conformance{% endtrans %}</h2>
+      <p>
+        <a href="{{ config['server']['url'] }}/conformance?f=html">{% trans %}View the conformance classes of this service{% endtrans %}</a>
+      </p>
+  </section>
+  </div>
+  <div class="col-md-4 col-sm-12">
+    <div class="card mb-3">
+      <div class="card-header">
+       <b>{% trans %}Provider{% endtrans %}</b>
+      </div>
+      <div class="card-body">
+        <b>{{ config['metadata']['provider']['name'] }}</b><br/>
+        <a href="{{ config['metadata']['provider']['url'] }}">{{ config['metadata']['provider']['url'] }}</a><br/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+          <b>{% trans %}Contact point{% endtrans %}</b>
+      </div>
+      <div class="card-body">
+        <b>{% trans %}Address{% endtrans %}</b><br/>
+        <div class="section">
+          <span>{{ config['metadata']['contact']['name'] }}</span><br/>
+          {% for key in ['address', 'city', 'stateorprovince', 'postalcode', 'country'] %}
+             {% if key in config['metadata']['contact'] %}
+             <span>{{ config['metadata']['contact'][key] }}</span><br/>
+             {% endif %}
+          {% endfor %}
+        </div>
+        <div>
+          <b>{% trans %}Email{% endtrans %}</b><br/>
+          <span><a href="mailto:{{ config['metadata']['contact']['email'] }}">{{ config['metadata']['contact']['email'] }}</a></span><br/>
+          {% if config['metadata']['contact']['phone'] %}
+            <b>{% trans %}Telephone{% endtrans %}</b><br/>
+            <span><a href="tel:{{ config['metadata']['contact']['phone'] }}">{{ config['metadata']['contact']['phone'] }}</a></span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['fax'] %}
+            <b>{% trans %}Fax{% endtrans %}</b><br/>
+            <span><a href="tel:{{ config['metadata']['contact']['fax'] }}">{{ config['metadata']['contact']['fax'] }}</a></span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['url'] %}
+            <b>{% trans %}Contact URL{% endtrans %}</b><br/>
+            <span><a href="{{ config['metadata']['contact']['url'] }}">{{ config['metadata']['contact']['url'] }}</a></span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['hours'] %}
+            <b>{% trans %}Hours{% endtrans %}</b><br/>
+            <span>{{ config['metadata']['contact']['hours'] }}</span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['instructions'] %}
+            <b>{% trans %}Contact instructions{% endtrans %}</b><br/>
+            <span>{{ config['metadata']['contact']['instructions'] }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+{% endblock %}

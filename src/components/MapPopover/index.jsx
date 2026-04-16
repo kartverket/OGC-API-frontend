@@ -49,25 +49,23 @@ export default function MapPopover() {
                 },
                 content: (
                     <div className={styles.popoverContent}>
-                        <div className={styles.top}>
-                            <Link asChild className={styles.link}>
-                                <NextLink href={getItemUrl(feature.id)} onClick={unselectFeature}>
-                                    Item {feature.id}
-                                    <ArrowRightIcon fontSize="1.5rem" />
-                                </NextLink>
-                            </Link>
+                        <Link asChild className={styles.link}>
+                            <NextLink href={getItemUrl(feature.id)} onClick={unselectFeature}>
+                                Item {feature.id}
+                                <ArrowRightIcon fontSize="1.5rem" />
+                            </NextLink>
+                        </Link>
 
-                            <Button
-                                onClick={() => zoomToItem(feature.id)}
-                                icon
-                                variant="tertiary"
-                                title={`Zoom til item ${feature.id}`}
-                                aria-label="Zoom til item"
-                                data-size="sm"
-                            >
-                                <ZoomPlusIcon aria-hidden fontSize="1.5rem" />
-                            </Button>
-                        </div>
+                        <Button
+                            onClick={() => zoomToItem(feature.id)}
+                            icon
+                            variant="tertiary"
+                            title={`Zoom til item ${feature.id}`}
+                            aria-label="Zoom til item"
+                            data-size="sm"
+                        >
+                            <ZoomPlusIcon aria-hidden fontSize="1.5rem" />
+                        </Button>
                     </div>
                 )
             };
