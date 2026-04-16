@@ -12,29 +12,29 @@
   "dependencies": {
     "@digdir/designsystemet-css": "^1.9.0",
     "@digdir/designsystemet-react": "^1.9.0",
-    "@digdir/designsystemet-theme": "^1.9.0",
-    "@navikt/aksel-icons": "^7.37.0",
+    "@digdir/designsystemet-theme": "^1.11.0",
+    "@navikt/aksel-icons": "^8.9.1",
     "@turf/bbox": "^7.3.1",
     "@turf/bbox-polygon": "^7.3.1",
     "@turf/boolean-within": "^7.3.1",
     "@turf/helpers": "^7.3.1",
     "fast-sort": "^3.4.1",
     "http-status-codes": "^2.3.0",
-    "next": "^16.1.5",
+    "next": "^16.2.3",
     "ol": "^10.7.0",
-    "proj4": "^2.20.2",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "proj4": "^2.20.8",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "react-rnd": "^10.5.2",
     "swr": "^2.3.8",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.11",
+    "@biomejs/biome": "^2.4.11",
     "@digdir/designsystemet": "^1.9.0",
     "@svgr/webpack": "^8.1.0"
   },
-  "resolutions": {
+  "overrides": {
     "glob": "^11.1.0"
   }
 }

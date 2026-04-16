@@ -1,14 +1,15 @@
 import { Map, View } from 'ol';
+import ImageLayer from 'ol/layer/Image';
 import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import proj4 from 'proj4';
 import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
 import { createBaseMap } from './baseMap';
-import { getLayer } from './helpers';
+import { getLayer, transformExtent } from './helpers';
 import basemap from '@/config/basemap';
 import './setup';
 
 
-const MAP_PADDING = [50, 50, 50, 50];
+export const MAP_PADDING = [50, 50, 50, 50];
 
 export async function createItemsMap() {
     const map = new Map({
@@ -84,4 +85,27 @@ export function getExtentFromBBox(bbox, crs) {
     const [minY, maxY] = proj4(crs, 'EPSG:3857', [bbox[2], bbox[3]]);
 
     return [minX, maxX, minY, maxY];
+}
+
+export async function createMapViewerMap(defaultBbox) {
+    // defaultBbox is in OGC:CRS84 (lon/lat) — transform to EPSG:3857 for OL
+    const initialExtent = transformExtent(defaultBbox, 'EPSG:4326', 'EPSG:3857');
+
+    const imageLayer = new ImageLayer();
+    imageLayer.set('id', 'ogc-image');
+
+    const map = new Map({
+        layers: [
+            await createBaseMap(),
+            imageLayer,
+        ].filter(Boolean)
+    });
+
+    map.setView(new View({
+        padding: MAP_PADDING,
+        projection: basemap.projection,
+        maxZoom: basemap.maxZoom,
+    }));
+
+    return { map, initialExtent };
 }

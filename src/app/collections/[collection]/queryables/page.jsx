@@ -40,7 +40,7 @@ export default async function Queryables({ params }) {
         <>
             <Breadcrumbs
                 breadcrumbs={{
-                    '/': 'Administrative enheter',
+                    '/': data.dataset.title,
                     '/collections': 'Collections',
                     [`/collections/${collection}`]: data.collection.title,
                     [`/collections/${collection}/queryables`]: 'Queryables'
