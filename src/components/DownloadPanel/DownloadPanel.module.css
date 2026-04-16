@@ -1,0 +1,62 @@
+.cardBlock {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-2);
+
+    & > * {
+        margin: 0;
+    }
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: var(--ds-size-3);
+
+    & h2 {
+        font-size: var(--ds-font-size-3);
+    }
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-size-3);
+}
+
+.progressBar {
+    margin-top: var(--ds-size-3);
+    background: var(--ds-color-surface-tinted);
+    border-radius: var(--ds-border-radius-sm);
+    height: 6px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--ds-color-accent-base-default);
+    transition: width 0.3s ease;
+}
+
+.status {
+    margin-top: var(--ds-size-2);
+    font-size: var(--ds-font-size-2);
+    padding: var(--ds-size-1) var(--ds-size-2);
+    border-radius: var(--ds-border-radius-sm);
+}
+
+.status--info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status--success {
+    background: #d1e7dd;
+    color: #0a3622;
+}
+
+.status--error {
+    background: #f8d7da;
+    color: #842029;
+}
