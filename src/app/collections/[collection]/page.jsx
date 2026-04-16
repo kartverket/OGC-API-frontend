@@ -11,11 +11,11 @@ import bboxPolygon from "@turf/bbox-polygon";
 import thumbnail from "@/assets/gfx/collection-thumbnail.png";
 import {
   Breadcrumbs,
+  CollectionMapImage,
   DatasetInfoCard,
   DownloadPanel,
   ErrorPage,
   ExampleUseCard,
-  MapImage,
 } from "@/components";
 import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
@@ -108,18 +108,10 @@ export default async function Collection({ params }) {
           </div>
           <div className={styles.right}>
             <div className={styles.map}>
-              <Heading data-size="2xs" level={4}>Geografisk utstrekning av datasettet</Heading>
-
+              <Heading data-size="2xs">Geografisk utstrekning av datasettet</Heading>
+          
               <div className={styles.wrapper}>
-                <MapImage
-                  featureCollection={featureCollection}
-                  options={{
-                    width: 195,
-                    height: 260,
-                    padding: [6, 6, 6, 6],
-                    constrainResolution: false
-                  }}
-                />
+                <CollectionMapImage featureCollection={featureCollection} />
               </div>
             </div>
 
