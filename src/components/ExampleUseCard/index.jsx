@@ -5,7 +5,7 @@ import { TerminalIcon } from '@navikt/aksel-icons';
 import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
 import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import styles from './ExampleUseCard.module.css';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useMemo } from 'react';
 
 export default function ExampleUseCard({ collection, hasMap }) {
     async function copyUrl(url) {
@@ -56,6 +56,6 @@ export default function ExampleUseCard({ collection, hasMap }) {
                     ))
                 }
             </div>
-        </Card >
+        </Card>
     );
 }

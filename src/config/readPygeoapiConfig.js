@@ -32,7 +32,6 @@ export function getPygeoapiConfig() {
 
 export function getMetadata() {
     const config = readConfigFile();
-    console.log('[pygeoapi.js] Loaded metadata:', config?.metadata);
     return config?.metadata || null;
 }
 
@@ -80,6 +79,14 @@ export function getDatasetTitle() {
 export function getDatasetDescription() {
     const metadata = getMetadata();
     return metadata?.identification?.description?.en || metadata?.identification?.description || '';
+}
+
+export function getCollectionDownloadConfig(collectionId) {
+    const resources = getResources();
+    if (!resources) return null;
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return null;
+    return resource.download ?? null;
 }
 
 export function collectionHasMapProvider(collectionId) {
