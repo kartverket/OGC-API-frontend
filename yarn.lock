@@ -1231,7 +1231,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:^2.4.11":
+"@biomejs/biome@npm:^2.4.12":
   version: 2.4.12
   resolution: "@biomejs/biome@npm:2.4.12"
   dependencies:
@@ -1416,7 +1416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digdir/designsystemet-types@npm:^1.11.0":
+"@digdir/designsystemet-types@npm:1.13.2, @digdir/designsystemet-types@npm:^1.11.0":
   version: 1.13.2
   resolution: "@digdir/designsystemet-types@npm:1.13.2"
   checksum: 9277d3d84bb146aa79ffa6eeab8388b389c9cdb5a896702033ad42eb3065a1370fa2c7f884186fdb513b26a62060250c4e8f13bc3daf3fd89cc71910599ba997
@@ -1445,28 +1445,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digdir/designsystemet@npm:^1.9.0":
-  version: 1.13.0
-  resolution: "@digdir/designsystemet@npm:1.13.0"
+"@digdir/designsystemet@npm:^1.13.2":
+  version: 1.13.2
+  resolution: "@digdir/designsystemet@npm:1.13.2"
   dependencies:
-    "@commander-js/extra-typings": "npm:^14.0.0"
-    "@digdir/designsystemet-types": "npm:^1.13.0"
-    "@tokens-studio/sd-transforms": "npm:2.0.3"
-    chroma-js: "npm:^3.2.0"
-    colorjs.io: "npm:^0.6.1"
-    commander: "npm:^14.0.3"
-    fast-glob: "npm:^3.3.3"
-    hsluv: "npm:^1.0.1"
-    object-hash: "npm:^3.0.0"
-    picocolors: "npm:^1.1.1"
-    postcss: "npm:^8.5.8"
-    ramda: "npm:^0.32.0"
-    style-dictionary: "npm:^5.3.3"
-    zod: "npm:^4.3.6"
-    zod-validation-error: "npm:^5.0.0"
+    "@commander-js/extra-typings": ^14.0.0
+    "@digdir/designsystemet-types": 1.13.2
+    "@tokens-studio/sd-transforms": 2.0.3
+    chroma-js: ^3.2.0
+    colorjs.io: ^0.6.1
+    commander: ^14.0.3
+    fast-glob: ^3.3.3
+    hsluv: ^1.0.1
+    object-hash: ^3.0.0
+    picocolors: ^1.1.1
+    postcss: ^8.5.8
+    ramda: ^0.32.0
+    style-dictionary: ^5.4.0
+    zod: ^4.3.6
+    zod-validation-error: ^5.0.0
   bin:
     designsystemet: dist/bin/designsystemet.js
-  checksum: 10c0/63883517677f6de20fa248cb39c73e5bd3559e68877cae830f62d2c45625545edc70641b372600c70f34fdcbcc539affc5a0b1c47cd3d1e0ae0cf010619185c1
+  checksum: 9ebafd13b39dfe6e49b21639842590cf39ff67bd7f403283a232d2f24dd62d213bec85ed83db6c3742c7857b81d32470bd0984e39da03790e3059f71132c036d
   languageName: node
   linkType: hard
 
@@ -3922,8 +3922,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ogc-api-frontend@workspace:."
   dependencies:
-    "@biomejs/biome": ^2.4.11
-    "@digdir/designsystemet": ^1.9.0
+    "@biomejs/biome": ^2.4.12
+    "@digdir/designsystemet": ^1.13.2
     "@digdir/designsystemet-css": ^1.9.0
     "@digdir/designsystemet-react": ^1.9.0
     "@digdir/designsystemet-theme": ^1.11.0
@@ -4641,26 +4641,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-dictionary@npm:^5.3.3":
-  version: 5.3.3
-  resolution: "style-dictionary@npm:5.3.3"
+"style-dictionary@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "style-dictionary@npm:5.4.0"
   dependencies:
-    "@bundled-es-modules/deepmerge": "npm:^4.3.1"
-    "@bundled-es-modules/glob": "npm:^13.0.6"
-    "@bundled-es-modules/memfs": "npm:^4.17.0"
-    "@zip.js/zip.js": "npm:^2.7.44"
-    chalk: "npm:^5.3.0"
-    change-case: "npm:^5.3.0"
-    colorjs.io: "npm:^0.5.2"
-    commander: "npm:^12.1.0"
-    is-plain-obj: "npm:^4.1.0"
-    json5: "npm:^2.2.2"
-    path-unified: "npm:^0.2.0"
-    prettier: "npm:^3.3.3"
-    tinycolor2: "npm:^1.6.0"
+    "@bundled-es-modules/deepmerge": ^4.3.1
+    "@bundled-es-modules/glob": ^13.0.6
+    "@bundled-es-modules/memfs": ^4.17.0
+    "@zip.js/zip.js": ^2.7.44
+    chalk: ^5.3.0
+    change-case: ^5.3.0
+    colorjs.io: ^0.5.2
+    commander: ^12.1.0
+    is-plain-obj: ^4.1.0
+    json5: ^2.2.2
+    path-unified: ^0.2.0
+    prettier: ^3.3.3
+    tinycolor2: ^1.6.0
   bin:
     style-dictionary: bin/style-dictionary.js
-  checksum: 10c0/6ec64b25d801bc2819472cbfd0a6f1e64e33de16eac058e61788e2467b199aca2189f0c54c62ed684ce2b0485094bec7d9191bf54ac847e2a9127fcd68fd6130
+  checksum: a7e49059711ab275ade0cab63d5337c70ea6140fdc5fc3f455be6c17249c4015654bdd3e6899ca1c78481de607e34849ddd4576b04475fb684d7b1dc9211d908
   languageName: node
   linkType: hard
 
