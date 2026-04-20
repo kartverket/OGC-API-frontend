@@ -10,9 +10,8 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@digdir/designsystemet-css": "^1.9.0",
-    "@digdir/designsystemet-react": "^1.9.0",
-    "@digdir/designsystemet-theme": "^1.11.0",
+    "@digdir/designsystemet-css": "^1.13.2",
+    "@digdir/designsystemet-react": "^1.13.2",
     "@navikt/aksel-icons": "^8.9.1",
     "@turf/bbox": "^7.3.1",
     "@turf/bbox-polygon": "^7.3.1",
