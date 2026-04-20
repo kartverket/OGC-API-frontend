@@ -2629,13 +2629,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zarrita/storage@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "@zarrita/storage@npm:0.1.4"
+"@zarrita/storage@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@zarrita/storage@npm:0.2.0"
   dependencies:
-    reference-spec-reader: "npm:^0.2.0"
-    unzipit: "npm:1.4.3"
-  checksum: 10c0/8157662271fe9b4fb527bf4aec60b4b788e149e1b3b2bca0e26c11c5a55f9c3b6b085241c9bb4e14eed2f8e30a3226d074a119a780e6f7dd219ed8894ca499a2
+    reference-spec-reader: ^0.2.0
+    unzipit: 2.0.0
+  checksum: 1bd26476efe4a1083e3fa7ae935b697d1d2d15812646e74fec00f4d95a0008d5b43323c285826e18d0a982b56ea98741c761c3ae343c5fa596274344b00f4d78
   languageName: node
   linkType: hard
 
@@ -3280,19 +3280,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"geotiff@npm:^3.0.2":
-  version: 3.0.5
-  resolution: "geotiff@npm:3.0.5"
+"geotiff@npm:^3.0.5 || ^3.1.0-beta.0":
+  version: 3.1.0-beta.0
+  resolution: "geotiff@npm:3.1.0-beta.0"
   dependencies:
-    "@petamoriken/float16": "npm:^3.9.3"
-    lerc: "npm:^3.0.0"
-    pako: "npm:^2.0.4"
-    parse-headers: "npm:^2.0.2"
-    quick-lru: "npm:^6.1.1"
-    web-worker: "npm:^1.5.0"
-    xml-utils: "npm:^1.10.2"
-    zstddec: "npm:^0.2.0"
-  checksum: 10c0/f3bcfdacc80d032b1edc7f5f35e6b00baf87b715f441edf96c2aac02f682e9a4f2af7f7fe60471687eaa8505ecf6f74465186e96ff9fae703f839c73aa7f25d0
+    "@petamoriken/float16": ^3.9.3
+    lerc: ^3.0.0
+    pako: ^2.0.4
+    parse-headers: ^2.0.2
+    quick-lru: ^6.1.1
+    web-worker: ^1.5.0
+    xml-utils: ^1.10.2
+    zstddec: ^0.2.0
+  checksum: 62d1ec7f3978598e738e5c69adf30c575debfe7d74a86a174609751f012f2c67e840505001ca34c26e31b8bd80ceed46befdef37709316d85c3ef62e2727c781
   languageName: node
   linkType: hard
 
@@ -3936,7 +3936,7 @@ __metadata:
     fast-sort: ^3.4.1
     http-status-codes: ^2.3.0
     next: ^16.2.4
-    ol: ^10.7.0
+    ol: ^10.9.0
     proj4: ^2.20.8
     react: ^19.2.5
     react-dom: ^19.2.5
@@ -3946,17 +3946,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ol@npm:^10.7.0":
-  version: 10.8.0
-  resolution: "ol@npm:10.8.0"
+"ol@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "ol@npm:10.9.0"
   dependencies:
-    "@types/rbush": "npm:4.0.0"
-    earcut: "npm:^3.0.0"
-    geotiff: "npm:^3.0.2"
-    pbf: "npm:4.0.1"
-    rbush: "npm:^4.0.0"
-    zarrita: "npm:^0.6.0"
-  checksum: 10c0/ede7ab1ab967ca9ec681c2efa72ea3e44013ec61df1d9fca2c7219eed2f29084f999f7c74202e433b03f83e546c75eb5a0e13c7481f2fb2e184308e5b37b7b64
+    "@types/rbush": 4.0.0
+    earcut: ^3.0.0
+    geotiff: ^3.0.5 || ^3.1.0-beta.0
+    pbf: 4.0.1
+    rbush: ^4.0.0
+    zarrita: ^0.7.1
+  checksum: 66b628fd2f1ee9b7929ceeecf05ec6e8a3577f6f77098b034e0d2f355bd95a5261f8f69b819b3f4fbdc0d2fe19fa0a0dc9075d69ee0a112f282391207fcf5889
   languageName: node
   linkType: hard
 
@@ -4825,12 +4825,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unzipit@npm:1.4.3":
-  version: 1.4.3
-  resolution: "unzipit@npm:1.4.3"
-  dependencies:
-    uzip-module: "npm:^1.0.2"
-  checksum: 10c0/6f710615aaafb6283d5f489950e54d158deaa1c8757ba486d98ddc76f3ae3b7eab24cd24017185dd5f4edcd2df43b04431bca009538d4116c60229b60db8dd3b
+"unzipit@npm:2.0.0":
+  version: 2.0.0
+  resolution: "unzipit@npm:2.0.0"
+  checksum: f1ee48b5d94b283a0f3f8f9271362c0bd920ea9313559c53ced50cbeb1e5f94fc3a1d17023bcfa3d254e859f67ed9df7b28b7676f766b08005091c97abb0f822
   languageName: node
   linkType: hard
 
@@ -4889,13 +4887,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uzip-module@npm:^1.0.2":
-  version: 1.0.3
-  resolution: "uzip-module@npm:1.0.3"
-  checksum: 10c0/206e09cf620aa178e5d8ab20425d1a4f4484de9a86673e8a5913087b7b0febb12d49a22b15574a3c5b0c9d911a0d600c9f51651de2a78ffbc6e0345b8ef3af8d
-  languageName: node
-  linkType: hard
-
 "web-worker@npm:^1.5.0":
   version: 1.5.0
   resolution: "web-worker@npm:1.5.0"
@@ -4948,13 +4939,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zarrita@npm:^0.6.0":
-  version: 0.6.1
-  resolution: "zarrita@npm:0.6.1"
+"zarrita@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "zarrita@npm:0.7.1"
   dependencies:
-    "@zarrita/storage": "npm:^0.1.4"
-    numcodecs: "npm:^0.3.2"
-  checksum: 10c0/afc183e0e91fb3bc40b28f65dd0f7548aa4a1ba559940aa21ac5d13e5486a91dca0b8e3fb84ed9f916e5c1018280aa7050ed0d56bc8e52d8a0699e49bd1fac42
+    "@zarrita/storage": ^0.2.0
+    numcodecs: ^0.3.2
+  checksum: 87bb6ed183dadb4e5e73aaaa343300a06329a168ef3f9eac66a934393fca0f23411aa1df761263f7888dc60b1ad6aef9b5ff51b4cb058948079e147b651b5222
   languageName: node
   linkType: hard
 
