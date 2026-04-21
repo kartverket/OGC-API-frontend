@@ -8,7 +8,7 @@
     & .heading {
         display: flex;
         align-items: center;
-        gap: 3px;
+        gap: 6px;
         margin-bottom: var(--ds-size-3);
 
         & h2 {

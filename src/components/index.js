@@ -1,5 +1,6 @@
 export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as CollectionCard } from './CollectionCard';
+export { default as CollectionMapImage } from './CollectionMapImage';
 export { default as DatasetInfoCard } from './DatasetInfoCard';
 export { default as Details } from './Details';
 export { default as DetailsContent } from './Details/DetailsContent';
@@ -16,7 +17,6 @@ export { default as ItemsMap } from './ItemsMap';
 export { default as ItemsPage } from './ItemsPage';
 export { default as ItemsTable } from './ItemsTable';
 export { default as MapComponent } from './Map';
-export { default as MapImage } from './MapImage';
 export { default as MapPopover } from './MapPopover';
 export { default as Popover } from './Popover';
 export { default as Provider } from './Provider';

@@ -6,9 +6,12 @@ import {
 } from "@navikt/aksel-icons";
 import Image from "next/image";
 import NextLink from "next/link";
+import { featureCollection as createFeatureCollection } from "@turf/helpers";
+import bboxPolygon from "@turf/bbox-polygon";
 import thumbnail from "@/assets/gfx/collection-thumbnail.png";
 import {
   Breadcrumbs,
+  CollectionMapImage,
   DatasetInfoCard,
   DownloadPanel,
   ErrorPage,
@@ -36,6 +39,8 @@ export default async function Collection({ params }) {
   }
 
   const hasMap = collectionHasMapProvider(collection);
+  const bbox = data.extent.spatial.bbox[0];
+  const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
 
   return (
     <>
@@ -102,11 +107,15 @@ export default async function Collection({ params }) {
             </div>
           </div>
           <div className={styles.right}>
-            <DatasetInfoCard
-              collection={data}
-              metadata={data.metadata}
-              hasMap={hasMap}
-            />
+            <div className={styles.map}>
+              <Heading data-size="2xs">Geografisk utstrekning av datasettet</Heading>
+          
+              <div className={styles.wrapper}>
+                <CollectionMapImage featureCollection={featureCollection} />
+              </div>
+            </div>
+
+            <DatasetInfoCard collection={data} metadata={data.metadata} />
           </div>
         </div>
       </div>
