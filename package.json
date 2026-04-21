@@ -16,7 +16,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "@turf/bbox": "^7.3.1",
     "@turf/bbox-polygon": "^7.3.1",
-    "@turf/boolean-within": "^7.3.1",
+    "@turf/boolean-within": "^7.3.5",
     "@turf/helpers": "^7.3.1",
     "fast-sort": "^3.4.1",
     "http-status-codes": "^2.3.0",
