@@ -1,0 +1,49 @@
+.popover {
+    --dsc-popover-background: var(--ds-color-surface-default);
+    --dsc-popover-border-width: var(--ds-border-width-default);
+    --dsc-popover-border-style: solid;
+    --dsc-popover-border-color: var(--ds-color-border-default);
+    --dsc-popover-color: var(--ds-color-text-default);
+    --dsc-popover-arrow-size: var(--ds-size-3);
+    --dsc-popover-border-radius: var(--ds-border-radius-md);
+    --dsc-popover-max-width: 300px;
+    --dsc-popover-padding: var(--ds-size-3) var(--ds-size-4);
+    --dsc-popover-box-shadow: var(--ds-shadow-md);
+
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    background: var(--dsc-popover-background);
+    border-color: var(--dsc-popover-border-color);
+    border-radius: var(--dsc-popover-border-radius);
+    border-style: var(--dsc-popover-border-style);
+    border-width: var(--dsc-popover-border-width);
+    box-shadow: var(--dsc-popover-box-shadow);
+    color: var(--dsc-popover-color);
+    inset: 0 auto auto 0;
+    max-width: var(--dsc-popover-max-width);
+    overflow: visible;
+    padding: var(--dsc-popover-padding);
+    animation: fade-in .15s ease-in-out forwards
+}
+
+.popoverArrow {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(225deg);
+    width: 10px;
+    height: 10px;
+    background: inherit;
+    border-left: 1px solid var(--dsc-popover-border-color);
+    border-top: 1px solid var(--dsc-popover-border-color);
+    box-sizing: border-box;
+    z-index: -1;
+}
+
+
+@keyframes fade-in {
+    0% {
+        opacity: 0
+    }
+}

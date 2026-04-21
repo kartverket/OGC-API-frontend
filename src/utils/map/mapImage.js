@@ -14,7 +14,7 @@ export async function createMapImage(featureCollection, options = {}) {
         padding = MAP_PADDING, 
         constrainResolution = true
     } = options;
-
+    
     const [map, mapElement] = await createTempMap(featureCollection, width, height, padding, constrainResolution);
 
     return new Promise((resolve) => {

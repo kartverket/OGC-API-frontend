@@ -6,6 +6,8 @@ import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, 
 import { createBaseMap } from './baseMap';
 import { getLayer, transformExtent } from './helpers';
 import basemap from '@/config/basemap';
+import store from '@/store';
+import { selectFeature } from '@/store/slices/mapSlice';
 import './setup';
 
 
@@ -25,6 +27,8 @@ export async function createItemsMap() {
         projection: basemap.projection,
         maxZoom: basemap.maxZoom
     }));
+
+    addPopoverEventHandlers(map);
 
     return map;
 }
@@ -108,4 +112,31 @@ export async function createMapViewerMap(defaultBbox) {
     }));
 
     return { map, initialExtent };
+}
+
+function addPopoverEventHandlers(map) {
+    const options = {
+        layerFilter: layer => layer.get('id') === 'features'
+    };
+
+    map.on('singleclick', event => {
+        const features = map.getFeaturesAtPixel(event.pixel, options);
+        const feature = features.length ? features[0] : null;
+        let properties = null;
+
+        if (feature !== null) {
+            const [x, y] = event.pixel;
+
+            properties = {
+                id: feature.getId(),                
+                pixel: [Math.round(x), Math.round(y)]
+            };
+        }
+
+        store.dispatch(selectFeature(properties));
+    });
+
+    map.on('movestart', _ => {
+        store.dispatch(selectFeature(null));
+    });
 }

@@ -8,7 +8,7 @@ import { useItems } from '@/context/ItemsProvider';
 import { debounce } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
 import { getBboxFromSizeAndPosition, getMouseWheelZoomInteraction, getSizeAndPositionFromBbox } from './helpers';
-import { MapComponent } from '@/components';
+import { MapComponent, MapPopover } from '@/components';
 import styles from './ItemsMap.module.css';
 
 
@@ -144,6 +144,8 @@ export default function ItemsMap({ width, height }) {
                     </Rnd>
                 )
             }
+
+            <MapPopover />
         </div>
     );
 }

@@ -14,6 +14,25 @@ export function getLayer(map, id) {
         .find(layer => layer.get('id') === id) || null;
 }
 
+export function getFeature(map, id) {
+    const vectorLayer = getLayer(map, 'features');
+    const vectorSource = vectorLayer.getSource();
+
+    return vectorSource.getFeatures()
+        .find(feature => feature.getId() === id) || null;
+}
+
+export function zoomToFeature(map, id) {
+    const feature = getFeature(map, id);
+
+    if (feature !== null) {
+        const geometry = feature.getGeometry();
+        const view = map.getView();
+
+        view.fit(geometry, { padding: [50, 50, 50, 50], duration: 500 });
+    }
+}
+
 export function getCrsCode(crsName) {
     if (!crsName) {
         return 'OGC:CRS84';
