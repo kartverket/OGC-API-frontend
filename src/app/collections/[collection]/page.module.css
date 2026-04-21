@@ -61,7 +61,7 @@
 .topLeftTop {
     display: flex;
     gap: var(--ds-size-4);
-    min-height: 422px;
+    min-height: 312px;
 }
 
 .topLeftBottom {
