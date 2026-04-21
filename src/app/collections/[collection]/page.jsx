@@ -12,7 +12,6 @@ import {
   DatasetInfoCard,
   DownloadPanel,
   ErrorPage,
-  ExampleUseCard,
 } from "@/components";
 import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
@@ -97,7 +96,6 @@ export default async function Collection({ params }) {
 
               {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
-              <ExampleUseCard collection={collection} hasMap={hasMap} />
               <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />
             </div>
           </div>
