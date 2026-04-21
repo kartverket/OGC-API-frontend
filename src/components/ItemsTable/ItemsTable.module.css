@@ -17,6 +17,14 @@
     border-spacing: 0;
     width: max-content;
 
+    & tr.selected td {
+        background: var(--dsc-table-border-color) !important;
+
+        &:first-child {
+            border-right-color: var(--dsc-table-border-color);
+        }
+    }
+
     & th {
         text-transform: uppercase;
     }
@@ -47,7 +55,6 @@
         z-index: 4;
         border-right: 2px solid var(--ds-color-border-subtle, #e5e7eb);
         background: var(--ds-color-surface-default, #ffffff);
-        box-shadow: 1px 0 0 rgba(0, 0, 0, 0.08);
     }
 
 
@@ -55,7 +62,6 @@
         position: sticky;
         left: 0;
         z-index: 2;
-        box-shadow: 1px 0 0 rgba(0, 0, 0, 0.08);
         border-right: 2px solid var(--ds-color-border-subtle, #e5e7eb);
     }
 

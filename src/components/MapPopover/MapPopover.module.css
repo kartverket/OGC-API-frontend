@@ -1,0 +1,14 @@
+.popoverContent {
+    display: flex;
+    gap: var(--ds-size-4);
+    width: fit-content;
+
+    a {
+        display: flex;
+        align-items: center;
+    }
+
+    svg {
+        margin-left: 2px;
+    }
+}
