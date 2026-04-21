@@ -25,87 +25,77 @@ import re
 import mapscript
 from pygeoapi.provider.base import BaseProvider, ProviderConnectionError
 from pygeoapi.provider.mapscript_ import MapScriptProvider
+from pygeoapi.crs import get_crs, get_srid
 
 LOGGER = logging.getLogger(__name__)
 
-# CRS identifiers that are genuinely lon/lat (CRS84 axis order).
-# NOTE: 'epsg:4326' and its URI/URN forms are intentionally NOT included here.
-# Although they refer to the same datum as CRS84, EPSG:4326 defines axis
-# order as lat/lon.  maps.py reprojects the bbox into lat/lon order when the
-# collection CRS resolves to EPSG:4326, so we must swap it back before
-# passing to MapScript, which always expects lon/lat.  See _EPSG4326_FORMS.
-_CRS84_FORMS = {
-    'crs84', 'ogc:crs84', 
-    'http://www.opengis.net/def/crs/ogc/1.3/crs84'
-}
-
-# Geographic coordinate systems that OGC/pygeoapi deliver as Lat/Lon.
-# We must swap these to Lon/Lat for Mapscript.
-_GEOGRAPHIC_FORMS = {
-    'epsg:4326', 
-    'http://www.opengis.net/def/crs/epsg/0/4326',
-    'epsg:4258',
-    'http://www.opengis.net/def/crs/epsg/0/4258'
-}
-
 _PASSWORD_PATTERN = re.compile(r'(password=)([^\s]+)', re.IGNORECASE)
-
-# Matches OGC HTTP URIs for EPSG codes, e.g.:
-#   http://www.opengis.net/def/crs/EPSG/0/25833
-# maps.py passes the full URI form straight through to the provider without
-# normalising it, so we must extract the EPSG code here before handing it to
-# MapScriptProvider, which expects either 'CRS84' or a bare 'EPSG:<code>' string.
-_OGC_HTTP_EPSG_URI = re.compile(
-    r'https?://www\.opengis\.net/def/crs/epsg/[^/]+/(\d+)$',
-    re.IGNORECASE,
-)
-
-# Matches OGC URN forms for EPSG codes, e.g.:
-#   urn:ogc:def:crs:EPSG::25833
-#   urn:ogc:def:crs:EPSG:6.9:25833
-_OGC_URN_EPSG = re.compile(
-    r'urn:ogc:def:crs:epsg:[^:]*:(\d+)$',
-    re.IGNORECASE,
-)
 
 
 def _redact_connection(connection: str) -> str:
     """Mask credentials before writing connection details to logs/repr."""
     return _PASSWORD_PATTERN.sub(r'\1***', connection)
 
-def _swap_axes(bbox):
-    """Swap a bbox from lat/lon to lon/lat axis order.
 
-    maps.py reprojects the bbox into the collection's CRS before calling the
-    provider.  When the collection CRS resolves to EPSG:4326, that reprojected
-    bbox arrives in lat/lon order [minLat, minLon, maxLat, maxLon].  MapScript
-    always works in lon/lat, so we must flip it back.
-
-    Input/output: [minA, minB, maxA, maxB]  →  [minB, minA, maxB, maxA]
-    e.g. [57.518, 4.116, 71.205, 33.593]  →  [4.116, 57.518, 33.593, 71.205]
-    """
+def _swap_bbox_axes(bbox):
+    """Convert [min1, min2, max1, max2] from axis1/axis2 to x/y order."""
     if not bbox or len(bbox) != 4:
         return bbox
     return [bbox[1], bbox[0], bbox[3], bbox[2]]
 
-def _normalize_crs(crs, bbox=None):
-    if bbox is None: bbox = []
-    if not crs: return 'CRS84', bbox
 
-    c = str(crs).strip().lower()
+def _crs_uses_lat_lon_axis_order(crs_obj) -> bool:
+    """Return True when a CRS defines its first axis as latitude/northing."""
+    try:
+        axis_info = getattr(crs_obj, 'axis_info', None) or []
+        if len(axis_info) < 2:
+            return False
 
-    # 1. Handle Lon/Lat native forms
-    if c in _CRS84_FORMS or (c.startswith('urn:ogc:def:crs:ogc') and c.endswith(':crs84')):
-        return 'CRS84', bbox
+        first_direction = (axis_info[0].direction or '').lower()
+        second_direction = (axis_info[1].direction or '').lower()
+        return first_direction in ('north', 'south') and second_direction in ('east', 'west')
+    except Exception:
+        return False
 
-    # 2. Handle Geographic Lat/Lon forms (Swap required)
-    if c in _GEOGRAPHIC_FORMS or \
-       (c.startswith('urn:ogc:def:crs:epsg') and (c.endswith(':4326') or c.endswith(':4258'))):
-        return 'CRS84', _swap_axes(bbox)
 
-    # 3. Handle Projected Coordinate Systems (No swap)
-    match = re.search(r'(\d+)$', c)
-    return match.group(1) if match else '4326', bbox
+def _normalize_crs_and_bbox(crs, bbox):
+    """Normalize CRS identifier and bbox to MapServer's expected x,y extent order.
+
+    :param crs: CRS identifier (URI, URN, or string)
+    :param bbox: Bounding box coordinates in the request CRS axis order
+    :returns: tuple of (map_projection, bbox_in_xy_order, is_geographic)
+    """
+    if not crs or not bbox:
+        return 'EPSG:4326', bbox, True
+    
+    LOGGER.info(f'_normalize_crs_and_bbox input - CRS: {crs}, bbox: {bbox}')
+    
+    try:
+        crs_obj = get_crs(crs)
+        epsg_code = get_srid(crs_obj)
+        LOGGER.info(f'Parsed CRS to EPSG:{epsg_code}')
+
+        crs_lower = str(crs).lower()
+        if 'crs84' in crs_lower:
+            LOGGER.info('CRS84 request - bbox already in lon/lat order')
+            return 'EPSG:4326', bbox, True
+
+        if _crs_uses_lat_lon_axis_order(crs_obj):
+            bbox_xy = _swap_bbox_axes(bbox)
+            LOGGER.info(f'Lat-first geographic CRS detected - swapped bbox to x/y order: {bbox_xy}')
+        else:
+            bbox_xy = bbox
+            LOGGER.info('CRS already uses x/y axis order - bbox kept as-is')
+
+        is_geographic = getattr(crs_obj, 'is_geographic', False)
+        if epsg_code:
+            return f'EPSG:{epsg_code}', bbox_xy, is_geographic
+
+        LOGGER.warning('Could not extract SRID - falling back to EPSG:4326')
+        return 'EPSG:4326', bbox_xy, True
+    except Exception as e:
+        LOGGER.warning(f'CRS parsing failed for {crs!r}: {e}. Using EPSG:4326 as fallback.')
+        return 'EPSG:4326', bbox, True
 
 class PostGISMapScriptProvider(MapScriptProvider):
     """
@@ -179,27 +169,35 @@ class PostGISMapScriptProvider(MapScriptProvider):
             raise ProviderConnectionError(f'MapScript Init Error: {e}')
 
     def query(self, bbox=None, width=500, height=300, crs='CRS84', format_='png', transparent=True, **kwargs):
-        norm_crs, norm_bbox = _normalize_crs(crs, bbox)
+        LOGGER.info(f'PostGISMapScriptProvider.query() called: bbox={bbox}, width={width}, height={height}, crs={crs}, format={format_}, transparent={transparent}')
+        map_crs, norm_bbox, is_geographic = _normalize_crs_and_bbox(crs, bbox)
+        LOGGER.info(f'After normalization: map_crs={map_crs}, norm_bbox={norm_bbox}, is_geographic={is_geographic}')
 
         # Set Map Projection
-        if norm_crs == 'CRS84':
-            self._map.setProjection("EPSG:4326")
+        self._map.setProjection(map_crs)
+        if is_geographic:
             self._map.units = mapscript.MS_DD
+            LOGGER.info(f'Map projection set to {map_crs} (geographic)')
         else:
-            self._map.setProjection(f"EPSG:{norm_crs}")
             self._map.units = mapscript.MS_METERS
+            LOGGER.info(f'Map projection set to {map_crs} (projected)')
 
         self._map.setExtent(*norm_bbox)
+        LOGGER.info(f'Map extent set to: {norm_bbox}')
         self._map.setSize(width, height)
         self._map.setConfigOption('MS_NONSQUARE', 'yes')
         
         self._map.selectOutputFormat(format_)
         out = self._map.outputformat
         out.transparent = mapscript.MS_ON if transparent else mapscript.MS_OFF
+        LOGGER.info(f'Output format: {format_}, transparent={transparent}')
 
         try:
             img = self._map.draw()
-            return img.getBytes()
+            img_bytes = img.getBytes()
+            LOGGER.info(f'Map rendered successfully, image size: {len(img_bytes)} bytes')
+            return img_bytes
         except Exception as e:
+            LOGGER.error(f'Map rendering error: {e}', exc_info=True)
             from pygeoapi.provider.base import ProviderQueryError
             raise ProviderQueryError(f'Render Error: {e}')

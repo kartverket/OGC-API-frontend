@@ -22,8 +22,9 @@ updates:
     cooldown:
       default-days: 2
     groups:
-      devDependencies:
-        dependency-type: "development"
+      designsystemet:
+        patterns:
+          - "@digdir/designsystemet*"
       react:
         patterns:
           - "react"
