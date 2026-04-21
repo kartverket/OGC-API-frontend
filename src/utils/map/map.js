@@ -67,7 +67,7 @@ export function zoomToExtent(map, defaultExtent = {}) {
     view.fit(extent, mapSize);
 }
 
-export function getExtent(map, defaultExtent) {   
+export function getExtent(map, defaultExtent) {
     const vectorLayer = getLayer(map, 'features');
     const vectorSource = vectorLayer.getSource();
 
@@ -89,7 +89,7 @@ export function getExtentFromBBox(bbox, crs) {
 
 export async function createMapViewerMap(defaultBbox) {
     // defaultBbox is in OGC:CRS84 (lon/lat) — transform to EPSG:3857 for OL
-    const initialExtent = transformExtent(defaultBbox, 'EPSG:4326', 'EPSG:3857');
+    const initialExtent = transformExtent(defaultBbox, 'OGC:CRS84', 'EPSG:3857');
 
     const imageLayer = new ImageLayer();
     imageLayer.set('id', 'ogc-image');
