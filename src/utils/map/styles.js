@@ -46,6 +46,7 @@ export const bboxStyle = new Style({
 export function featureStyle(feature) {
     const geom = feature.getGeometry();
     const type = geom.getType();
+
     if (type === 'Point' || type === 'MultiPoint') {
         return pointStyle;
     }

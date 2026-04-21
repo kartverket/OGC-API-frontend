@@ -17,4 +17,7 @@ export { default as ItemsPage } from './ItemsPage';
 export { default as ItemsTable } from './ItemsTable';
 export { default as MapComponent } from './Map';
 export { default as MapImage } from './MapImage';
+export { default as MapPopover } from './MapPopover';
+export { default as Popover } from './Popover';
+export { default as Provider } from './Provider';
 export { default as ServiceInfoCard } from './ServiceInfoCard';
