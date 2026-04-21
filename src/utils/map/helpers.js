@@ -22,7 +22,7 @@ export function getCrsCode(crsName) {
     const match = crsName.match(URI_REGEX) || crsName.match(URN_REGEX);
 
     return match !== null ?
-        `${match.groups['auth']}:${match.groups['code']}` :
+        `${match.groups['auth'].toUpperCase()}:${match.groups['code'].toUpperCase()}` :
         'OGC:CRS84'
 }
 
