@@ -93,7 +93,7 @@ export function getExtentFromBBox(bbox, crs) {
 
 export async function createMapViewerMap(defaultBbox) {
     // defaultBbox is in OGC:CRS84 (lon/lat) — transform to EPSG:3857 for OL
-    const initialExtent = transformExtent(defaultBbox, 'EPSG:4326', 'EPSG:3857');
+    const initialExtent = transformExtent(defaultBbox, 'OGC:CRS84', 'EPSG:3857');
 
     const imageLayer = new ImageLayer();
     imageLayer.set('id', 'ogc-image');

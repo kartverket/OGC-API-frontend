@@ -1,40 +1,50 @@
 import ImageSource from 'ol/source/Image';
-import { getCrsCode } from './helpers';
+import {
+    clampExtentToProjectionExtent,
+    getCrsCode,
+    reorderBboxForCrsAxisOrder,
+} from './helpers';
 import './setup';
 
-// The OGC:CRS84 URI — axis order is lon,lat (matches EPSG:4326 extent from OL).
 const CRS84 = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
 
-export function buildOgcMapsUrl(apiBaseUrl, collectionId, { bbox, crs, width, height }) {
+export function buildOgcMapsUrl(apiBaseUrl, collectionId, { bbox, bboxCrs, crs, width, height }) {
+    const effectiveBboxCrs = bboxCrs ?? CRS84;
+    const normalizedBbox = reorderBboxForCrsAxisOrder(
+        clampExtentToProjectionExtent(bbox, toOlProjection(effectiveBboxCrs)),
+        effectiveBboxCrs,
+    );
     const params = new URLSearchParams({
         f: 'png',
         width: String(Math.round(width)),
         height: String(Math.round(height)),
-        bbox: bbox.join(','),
+        bbox: normalizedBbox.join(','),
         crs,
     });
+    if (effectiveBboxCrs !== CRS84) {
+        params.set('bbox-crs', effectiveBboxCrs);
+    }
     return `${apiBaseUrl}/collections/${collectionId}/map?${params}`;
 }
 
 /**
  * Resolve a CRS URI to the OL projection identifier.
- * CRS84 is treated as EPSG:4326 (same axis order in OL).
  */
 export function toOlProjection(crsUri) {
-    const code = getCrsCode(crsUri);
-    return code === 'OGC:CRS84' ? 'EPSG:4326' : code;
+    return getCrsCode(crsUri);
 }
 
 /**
- * Image source that fetches from the OGC Maps API.
+ * Image source that fetches from the OGC Maps API in the given CRS.
  *
- * Always fetches in CRS84 (bbox and rendering) so the source projection
- * is EPSG:4326. OL reprojects the image to the view projection as needed.
- * pygeoapi does not reliably interpret bbox-crs for all projections,
- * so we avoid it entirely.
+ * The source is created with the selected CRS as its native projection.
+ * `buildOgcMapsUrl()` takes care of serializing bbox coordinates in the
+ * axis order required by `bbox-crs` (e.g. lat/lon for EPSG:4326, lon/lat
+ * for CRS84), so the backend receives a standards-compliant request.
  */
 export class OgcMapsImageSource extends ImageSource {
-    constructor({ collectionId, apiBaseUrl, getMapSize }) {
+    constructor({ collectionId, apiBaseUrl, crsUri, getMapSize }) {
+        const olProjection = toOlProjection(crsUri);
         const loader = (extent, _resolution, _pixelRatio) => {
             const mapSize = getMapSize();
             const [width, height] = mapSize ?? [];
@@ -43,7 +53,8 @@ export class OgcMapsImageSource extends ImageSource {
             }
             const url = buildOgcMapsUrl(apiBaseUrl, collectionId, {
                 bbox: extent,
-                crs: CRS84,
+                bboxCrs: crsUri,
+                crs: crsUri,
                 width,
                 height,
             });
@@ -55,6 +66,6 @@ export class OgcMapsImageSource extends ImageSource {
                 img.src = url;
             });
         };
-        super({ loader, projection: 'EPSG:4326' });
+        super({ loader, projection: olProjection });
     }
 }
