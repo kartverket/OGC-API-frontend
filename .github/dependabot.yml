@@ -31,3 +31,6 @@ updates:
           - "react-dom"
           - "@types/react"
           - "@types/react-dom"
+      turf:
+        patterns:
+          - "@turf/*"
