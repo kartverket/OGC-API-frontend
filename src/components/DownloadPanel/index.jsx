@@ -11,8 +11,8 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
     const areaFilters = downloadConfig?.area_filters ?? [];
 
     const formatOptions = [
-        { value: 'gpkg-full', label: 'GeoPackage – hele samlingen' },
-        { value: 'csv-full', label: 'CSV – hele samlingen' },
+        { value: 'gpkg-full', label: 'GeoPackage – full collection' },
+        { value: 'csv-full', label: 'CSV – full collection' },
         ...areaFilters.flatMap(f => [
             { value: `gpkg-${f.type}`, label: `GeoPackage – filtrert etter ${f.label.toLowerCase()}` },
             { value: `csv-${f.type}`, label: `CSV – filtrert etter ${f.label.toLowerCase()}` },
