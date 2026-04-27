@@ -1,3 +1,4 @@
+import NextLink from 'next/link';
 import { getCrsCode } from '@/utils/map/helpers';
 import { Card, Heading, Link, ListUnordered, ListItem } from '@digdir/designsystemet-react';
 import { Details, DetailsContent, DetailsSummary } from '..';
@@ -77,6 +78,23 @@ export default function DatasetInfoCard({ collection, metadata }) {
                         <DetailsSummary>Storage CRS</DetailsSummary>
                         <DetailsContent className={styles.detailsContent}>{getCrsCode(collection.storageCrs)}</DetailsContent>
                     </Details>
+                    <Details>
+                        <DetailsSummary>Skjema info</DetailsSummary>
+                        <DetailsContent className={styles.detailsContent}>
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection.id}/schema`}>
+                                    Vis skjema for {collection.title}
+                                </NextLink>
+                            </Link>
+                            <br />
+                            <Link asChild>
+                                <NextLink href={`/collections/${collection.id}/queryables`}>
+                                    Vis queryables for {collection.title}
+                                </NextLink>
+                            </Link>
+                        </DetailsContent>
+                    </Details>
+                    
                 </Card>
             </div>
         </Card>

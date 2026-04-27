@@ -99,7 +99,8 @@ resources:
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker/6093c8a8-fa80-11e6-bc64-92361f002671
     providers:
       - type: feature
-        name: PostgreSQL
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/fylker.json
         data:
           host: ${POSTGRES_HOST}
           dbname: ${POSTGRES_DB}
@@ -172,7 +173,8 @@ resources:
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b
     providers:
       - type: feature
-        name: PostgreSQL
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/kommuner.json
         data:
           host: ${POSTGRES_HOST}
           dbname: ${POSTGRES_DB}
@@ -222,3 +224,61 @@ resources:
         format:
           name: png
           mimetype: image/png
+  tellekrets:
+    type: collection
+    title:
+      en: Tellekretser
+    description:
+      en: >
+        Datasettet inneholder valgkretser (tellekretser) med kystkontur for Norge,
+        inkludert informasjon om valgdistrikt, fylke og kommune.
+    keywords:
+      en:
+        - Tellekrets
+        - Valgkrets
+        - Valgdistrikt
+    extents:
+      spatial:
+        bbox: [4.087524, 57.759005, 31.761592, 71.384878]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/tellekrets.json
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter_tellekretser]
+        id_field: objid
+        table: tellekretser_kystkontur
+        geom_field: omrade
+        crs:
+          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
+          - http://www.opengis.net/def/crs/EPSG/0/25832
+          - http://www.opengis.net/def/crs/EPSG/0/25833
+          - http://www.opengis.net/def/crs/EPSG/0/25835
+          - http://www.opengis.net/def/crs/EPSG/0/4258
+          - http://www.opengis.net/def/crs/EPSG/0/4326
+          - http://www.opengis.net/def/crs/EPSG/0/3857
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+      - type: tile
+        name: MVT-postgresql
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter_tellekretser]
+        id_field: objid
+        table: tellekretser_kystkontur
+        geom_field: omrade
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+        options:
+          zoom:
+            min: 12
+            max: 18
+        format:
+          name: pbf
+          mimetype: application/vnd.mapbox-vector-tile

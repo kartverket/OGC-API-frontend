@@ -99,6 +99,17 @@ export async function fetchQueryables(collection) {
     return await getResponse(response);
 }
 
+export async function fetchSchema(collection) {
+    const API_BASE_URL = requireBaseUrl();
+    const url = `${API_BASE_URL}/collections/${collection}/schema?f=json`;
+
+    const response = await fetch(url, {
+        cache: SKIP_SSG ? 'no-store' : 'force-cache'
+    });
+
+    return await getResponse(response);
+}
+
 async function _fetchCollection(name) {
     const API_BASE_URL = requireBaseUrl();
     const response = await fetch(`${API_BASE_URL}/collections/${name}?f=json`, {

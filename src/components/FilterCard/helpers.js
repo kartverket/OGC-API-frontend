@@ -6,9 +6,14 @@ export function getFields(selectedFilters, queryables) {
         .filter(key => key !== 'geometry' && !selectedFilters.some(filter => filter.field === key))
 }
 
-export function getControlTypeFromField(selectedField, queryables) {
+export function getControlTypeFromField(selectedField, queryables, schema) {
     if (selectedField === '') {
         return 'text';
+    }
+
+    // Check schema first for enum
+    if (schema?.properties?.[selectedField]?.enum?.length > 0) {
+        return 'select';
     }
 
     const [, property] = Object.entries(queryables.properties)
@@ -32,6 +37,41 @@ export function getControlTypeFromField(selectedField, queryables) {
         default:
             return 'text';
     }
+}
+
+export function getSchemaProperty(selectedField, schema) {
+    if (!selectedField || !schema?.properties) {
+        return null;
+    }
+    return schema.properties[selectedField] ?? null;
+}
+
+export function getValidationError(value, controlType) {
+    if (value === '') return null;
+
+    switch (controlType) {
+        case 'number': {
+            if (!/^-?\d+$/.test(value.trim())) {
+                return 'Verdien må være et heltall (f.eks. 42)';
+            }
+            break;
+        }
+        case 'date': {
+            const d = new Date(value);
+            if (isNaN(d.getTime()) || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                return 'Ugyldig dato. Bruk formatet ÅÅÅÅ-MM-DD';
+            }
+            break;
+        }
+        case 'datetime-local': {
+            const d = new Date(value);
+            if (isNaN(d.getTime())) {
+                return 'Ugyldig dato/tid';
+            }
+            break;
+        }
+    }
+    return null;
 }
 
 export function getFeaturesExtent(map) {

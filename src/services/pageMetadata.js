@@ -104,3 +104,17 @@ export async function createQueryablesMetadata(collection) {
     return null;
   }
 }
+
+export async function createSchemaMetadata(collection) {
+  try {
+    const [collectionData, homeData] = await Promise.all([
+      fetchCollection(collection),
+      fetchHome()
+    ]);
+    return {
+      title: `Skjema | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`
+    };
+  } catch {
+    return null;
+  }
+}

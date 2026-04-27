@@ -12,7 +12,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 import booleanWithin from '@turf/boolean-within';
 import { setBboxFeature, toggleBboxFeature } from '@/utils/map/featuresLayer';
 import { isBboxValid, parseBbox } from '@/utils/map/helpers';
-import { getControlTypeFromField, getFields, getMapViewBounds, isWithinBounds, getFeaturesExtent, getBboxExtent } from './helpers';
+import { getControlTypeFromField, getFields, getSchemaProperty, getValidationError, getMapViewBounds, isWithinBounds, getFeaturesExtent, getBboxExtent } from './helpers';
 import { Card, Heading, Label, Select, Field, Button, Input, Chip } from '@digdir/designsystemet-react';
 import { EqualsIcon, FilterIcon, PencilIcon, XMarkIcon } from '@navikt/aksel-icons';
 import styles from './FilterCard.module.css';
@@ -26,6 +26,7 @@ export default function FilterCard({ data }) {
     const { bbox, setBbox, setSizeAndPosition, sizeAndPositionRef, bboxEdit, setBboxEdit } = useItems();
     const [selectedField, setSelectedField] = useState('');
     const [filterValue, setFilterValue] = useState('');
+    const [filterError, setFilterError] = useState(null);
     const [bboxFilter, setBboxFilter] = useState(bbox.map(coordinate => coordinate.toString()));
     const viewBoundsRef = useRef(null);
     const bboxRef = useRef(null);
@@ -70,7 +71,8 @@ export default function FilterCard({ data }) {
             }));
     }, [searchParams, data.queryables]);
 
-    const controlType = useMemo(() => getControlTypeFromField(selectedField, data.queryables), [selectedField, data.queryables]);
+    const controlType = useMemo(() => getControlTypeFromField(selectedField, data.queryables, data.schema), [selectedField, data.queryables, data.schema]);
+    const schemaProperty = useMemo(() => getSchemaProperty(selectedField, data.schema), [selectedField, data.schema]);
     const fields = useMemo(() => getFields(selectedFilters, data.queryables), [selectedFilters, data.queryables]);
     const hasBboxFilter = useMemo(() => selectedFilters.some(filter => filter.field === 'bbox'), [selectedFilters]);
 
@@ -121,7 +123,13 @@ export default function FilterCard({ data }) {
 
     function handleFieldSelectChange(event) {
         setFilterValue('');
+        setFilterError(null);
         setSelectedField(event.target.value);
+    }
+
+    function handleFilterValueChange(value) {
+        setFilterValue(value);
+        setFilterError(getValidationError(value, controlType));
     }
 
     function startEditBbox() {
@@ -205,15 +213,42 @@ export default function FilterCard({ data }) {
             );
         }
 
+        if (controlType === 'select') {
+            const enumValues = schemaProperty?.enum ?? [];
+            return (
+                <Select
+                    id="filter-value"
+                    value={filterValue}
+                    onChange={event => setFilterValue(event.target.value)}
+                    data-size="sm"
+                    style={{ height: '3rem', overflowY: 'auto' }}
+                >
+                    <Select.Option value="" disabled>Velg...</Select.Option>
+                    {enumValues.map(val => (
+                        <Select.Option key={val} value={val}>{val}</Select.Option>
+                    ))}
+                </Select>
+            );
+        }
+
+        const example = schemaProperty?.['x-ogc-example'];
         return (
-            <Input
-                id="filter-value"
-                type={controlType}
-                value={filterValue}
-                onChange={event => setFilterValue(event.target.value)}
-                disabled={selectedField === ''}
-                data-size="sm"
-            />
+            <>
+                <Input
+                    id="filter-value"
+                    type={controlType}
+                    value={filterValue}
+                    onChange={event => handleFilterValueChange(event.target.value)}
+                    disabled={selectedField === ''}
+                    placeholder={example != null ? String(example) : undefined}
+                    className={example != null ? styles.exampleInput : undefined}
+                    aria-invalid={filterError ? 'true' : undefined}
+                    data-size="sm"
+                />
+                {filterError && (
+                    <span className={styles.validationError}>{filterError}</span>
+                )}
+            </>
         );
     }
 
@@ -270,7 +305,7 @@ export default function FilterCard({ data }) {
 
                     <EqualsIcon fontSize="24px" />
 
-                    <Field className={styles.fieldFilter}>
+                    <Field className={controlType === 'select' ? styles.fieldFilterWide : styles.fieldFilter}>
                         <Label htmlFor="filter-value">Filter pattern</Label>
                         {renderControl()}
                     </Field>
@@ -278,7 +313,7 @@ export default function FilterCard({ data }) {
                     <Button
                         onClick={addFilter}
                         data-size="sm"
-                        disabled={selectedField === '' || filterValue === ''}
+                        disabled={selectedField === '' || filterValue === '' || filterError !== null}
                     >
                         Legg til filter
                     </Button>

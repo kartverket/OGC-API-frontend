@@ -3,7 +3,8 @@ import {
   fetchCollections,
   fetchCollection,
   fetchItem,
-  fetchQueryables
+  fetchQueryables,
+  fetchSchema
 } from '@/utils/api/server';
 import { createErrorResponse } from '@/utils/api/utils';
 import { getMetadata } from '@/config/readPygeoapiConfig';
@@ -87,8 +88,9 @@ export async function fetchCollectionPageData(collection) {
  */
 export async function fetchItemsPageData(collection) {
   try {
-    const [queryables, collectionData, homeData] = await Promise.all([
+    const [queryables, schema, collectionData, homeData] = await Promise.all([
       fetchQueryables(collection),
+      fetchSchema(collection),
       fetchCollection(collection),
       fetchHome()
     ]);
@@ -96,6 +98,7 @@ export async function fetchItemsPageData(collection) {
     return {
       data: {
         queryables,
+        schema,
         collection: {
           title: collectionData.title,
           extent: {
@@ -164,3 +167,25 @@ export async function fetchQueryablesPageData(collection) {
     return createErrorResponse(error);
   }
 }
+
+export async function fetchSchemaPageData(collection) {
+  try {
+    const [schemaData, collectionData, homeData] = await Promise.all([
+      fetchSchema(collection),
+      fetchCollection(collection),
+      fetchHome()
+    ]);
+
+    return {
+      data: {
+        schema: schemaData,
+        collection: { id: collection, title: collectionData.title },
+        dataset: { title: homeData.title }
+      },
+      status: 200
+    };
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+

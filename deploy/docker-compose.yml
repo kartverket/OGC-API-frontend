@@ -33,12 +33,15 @@ services:
       - ./volumes/apiconfig/openapi.yml:/apiconfig/openapi.yml
       - ./pygeoapi/apiconfig/fonts.txt:/apiconfig/fonts.txt
       - ./pygeoapi/apiconfig/styles:/apiconfig/styles
+      - ./pygeoapi/apiconfig/schemas:/apiconfig/schemas
       - ./pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
       - ./pygeoapi/processes:/pygeoapi/processes
       - ./pygeoapi/templates:/pygeoapi/custom_templates
 
       - ./volumes/logs:/logs
       - ./pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py
+      - ./pygeoapi/schema_provider.py:/pygeoapi/schema_provider.py
+      - ./pygeoapi/mvt_postgresql.py:/pygeoapi/pygeoapi/provider/mvt_postgresql.py
       - ./pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
     environment:
       - PUBLIC_URL=http://localhost:5001/

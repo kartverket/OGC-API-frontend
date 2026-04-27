@@ -9,6 +9,18 @@
     }
 }
 
+.exampleInput input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.validationError {
+    display: block;
+    margin-top: var(--ds-size-1);
+    color: var(--ds-color-danger-text-default, #c01);
+    font-size: var(--ds-font-size-2);
+}
+
 .selectedFilters {
     display: flex;
     gap: var(--ds-size-2);
@@ -41,6 +53,10 @@
     }
 
     & .fieldFilter {
+        width: 252px;
+    }
+
+    & .fieldFilterWide {
         width: 252px;
     }
 

@@ -1,0 +1,182 @@
+"""
+schema_provider.py
+
+A PostgreSQL feature provider that derives /schema, /queryables, and /sortables
+from a pre-generated JSON Schema file instead of live database introspection.
+
+Configuration (in pygeoapi-config.yml):
+
+    providers:
+      - type: feature
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/<collection>.json
+        data:
+          ...   (same as regular PostgreSQL provider)
+        id_field: objid
+        table: ...
+        geom_field: ...
+
+Schema file format (standard JSON Schema with optional OGC extensions):
+
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "title": "My Collection",
+      "properties": {
+        "my_field": {
+          "type": "string",
+          "title": "My Field",
+          "description": "A human-readable description.",
+          "x-ogc-sortable": true,
+          "x-ogc-filterable": true
+        }
+      }
+    }
+
+Supported JSON Schema keywords per property:
+  type          – string | integer | number | boolean  (required)
+  format        – e.g. "date", "date-time", "uri"      (optional)
+  title         – human-readable label                  (optional)
+  description   – longer description                    (optional)
+  enum          – list of allowed values                (optional)
+
+Custom OGC extension keywords (all optional, default to True):
+  x-ogc-sortable   – whether the field appears in /sortables
+  x-ogc-filterable – whether the field appears in /queryables
+"""
+
+import json
+import logging
+
+from pygeoapi.provider.base import BaseProvider
+from pygeoapi.provider.sql import PostgreSQLProvider
+
+LOGGER = logging.getLogger(__name__)
+
+# Map JSON Schema primitive types to the type strings pygeoapi expects
+_JSONSCHEMA_TO_PYGEOAPI_TYPE = {
+    "string": "string",
+    "integer": "integer",
+    "number": "number",
+    "boolean": "boolean",
+    "object": "object",
+    "array": "array",
+}
+
+
+def _parse_fields(schema: dict) -> dict:
+    """
+    Convert a JSON Schema ``properties`` map into the dict format that
+    pygeoapi expects from ``BaseProvider.get_fields()``.
+
+    Args:
+        schema: Parsed JSON Schema document (a dict with a ``properties`` key).
+
+    Returns:
+        Dict mapping field names to their pygeoapi field descriptors.
+    """
+    fields = {}
+    for name, prop in schema.get("properties", {}).items():
+        raw_type = prop.get("type", "string")
+
+        # Handle nullable union types: {"type": ["string", "null"]}
+        if isinstance(raw_type, list):
+            non_null = [t for t in raw_type if t != "null"]
+            raw_type = non_null[0] if non_null else "string"
+
+        field = {
+            "type": _JSONSCHEMA_TO_PYGEOAPI_TYPE.get(raw_type, "string"),
+        }
+
+        for optional_key in ("title", "description", "format", "enum", "x-ogc-example"):
+            if optional_key in prop:
+                field[optional_key] = prop[optional_key]
+
+        field["sortable"] = prop.get("x-ogc-sortable", True)
+        field["filterable"] = prop.get("x-ogc-filterable", True)
+
+        fields[name] = field
+
+    return fields
+
+
+class SchemaPostgreSQLProvider(BaseProvider):
+    """
+    PostgreSQL feature provider that reads field definitions from a
+    pre-generated JSON Schema file.
+
+    Inherits from BaseProvider only. The real PostgreSQLProvider (which
+    connects to the database) is created lazily on the first data call so
+    that OpenAPI / schema generation never triggers a database connection.
+
+    get_fields() always returns the static schema from the JSON file.
+    All data operations (query, get, create, update, delete) are forwarded
+    to the lazily-created PostgreSQLProvider delegate.
+    """
+
+    def __init__(self, provider_def: dict):
+        # BaseProvider.__init__ sets the standard attributes (name, type,
+        # data, id_field, storage_crs, etc.) without touching the database.
+        super().__init__(provider_def)
+
+        schema_file = provider_def.get("schema_file")
+        if not schema_file:
+            raise RuntimeError(
+                "SchemaPostgreSQLProvider requires 'schema_file' in the "
+                "provider configuration."
+            )
+
+        LOGGER.debug("Loading JSON Schema from %s", schema_file)
+        with open(schema_file, encoding="utf-8") as fh:
+            raw_schema = json.load(fh)
+
+        # Store in _fields so the BaseProvider.fields property also works.
+        self._fields = _parse_fields(raw_schema)
+
+        # Keep provider_def for lazy delegate creation.
+        self._provider_def = provider_def
+        self._delegate: PostgreSQLProvider | None = None
+
+        LOGGER.info(
+            "Loaded %d field(s) from %s",
+            len(self._fields),
+            schema_file,
+        )
+
+    # ------------------------------------------------------------------
+    # Lazy delegate – only connects to the database when data is needed
+    # ------------------------------------------------------------------
+
+    def _get_delegate(self) -> PostgreSQLProvider:
+        """Return (and lazily create) the real PostgreSQLProvider."""
+        if self._delegate is None:
+            LOGGER.debug("Initializing PostgreSQLProvider delegate")
+            self._delegate = PostgreSQLProvider(self._provider_def)
+        return self._delegate
+
+    # ------------------------------------------------------------------
+    # Schema endpoints – served from the static JSON file
+    # ------------------------------------------------------------------
+
+    def get_fields(self) -> dict:
+        """Return fields from the pre-generated JSON Schema file."""
+        return self._fields
+
+    # ------------------------------------------------------------------
+    # Data endpoints – delegated to the real PostgreSQLProvider
+    # ------------------------------------------------------------------
+
+    def query(self, **kwargs):
+        return self._get_delegate().query(**kwargs)
+
+    def get(self, identifier, **kwargs):
+        return self._get_delegate().get(identifier, **kwargs)
+
+    def create(self, item):
+        return self._get_delegate().create(item)
+
+    def update(self, identifier, item):
+        return self._get_delegate().update(identifier, item)
+
+    def delete(self, identifier):
+        return self._get_delegate().delete(identifier)
