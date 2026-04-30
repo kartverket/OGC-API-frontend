@@ -9,7 +9,7 @@ Configuration (in pygeoapi-config.yml):
     providers:
       - type: feature
         name: schema_provider.SchemaPostgreSQLProvider
-        schema_file: /apiconfig/schemas/<collection>.json
+        schema_file: /apiconfig/schemas/<collection>.json  # optional
         data:
           ...   (same as regular PostgreSQL provider)
         id_field: objid
@@ -103,13 +103,15 @@ def _parse_fields(schema: dict) -> dict:
 class SchemaPostgreSQLProvider(BaseProvider):
     """
     PostgreSQL feature provider that reads field definitions from a
-    pre-generated JSON Schema file.
+    pre-generated JSON Schema file when configured.
 
     Inherits from BaseProvider only. The real PostgreSQLProvider (which
     connects to the database) is created lazily on the first data call so
     that OpenAPI / schema generation never triggers a database connection.
 
-    get_fields() always returns the static schema from the JSON file.
+    If ``schema_file`` is omitted, field definitions fall back to the
+    underlying PostgreSQLProvider's database introspection behavior.
+
     All data operations (query, get, create, update, delete) are forwarded
     to the lazily-created PostgreSQLProvider delegate.
     """
@@ -120,28 +122,30 @@ class SchemaPostgreSQLProvider(BaseProvider):
         super().__init__(provider_def)
 
         schema_file = provider_def.get("schema_file")
-        if not schema_file:
-            raise RuntimeError(
-                "SchemaPostgreSQLProvider requires 'schema_file' in the "
-                "provider configuration."
+        self._fields = None
+
+        if schema_file:
+            LOGGER.debug("Loading JSON Schema from %s", schema_file)
+            with open(schema_file, encoding="utf-8") as fh:
+                raw_schema = json.load(fh)
+
+            # Store in _fields so the BaseProvider.fields property also works.
+            self._fields = _parse_fields(raw_schema)
+
+            LOGGER.info(
+                "Loaded %d field(s) from %s",
+                len(self._fields),
+                schema_file,
             )
-
-        LOGGER.debug("Loading JSON Schema from %s", schema_file)
-        with open(schema_file, encoding="utf-8") as fh:
-            raw_schema = json.load(fh)
-
-        # Store in _fields so the BaseProvider.fields property also works.
-        self._fields = _parse_fields(raw_schema)
+        else:
+            LOGGER.info(
+                "No schema_file configured for %s; falling back to PostgreSQL introspection",
+                provider_def.get("table", self.name),
+            )
 
         # Keep provider_def for lazy delegate creation.
         self._provider_def = provider_def
         self._delegate: PostgreSQLProvider | None = None
-
-        LOGGER.info(
-            "Loaded %d field(s) from %s",
-            len(self._fields),
-            schema_file,
-        )
 
     # ------------------------------------------------------------------
     # Lazy delegate – only connects to the database when data is needed
@@ -159,8 +163,11 @@ class SchemaPostgreSQLProvider(BaseProvider):
     # ------------------------------------------------------------------
 
     def get_fields(self) -> dict:
-        """Return fields from the pre-generated JSON Schema file."""
-        return self._fields
+        """Return fields from schema_file or fall back to PostgreSQL introspection."""
+        if self._fields is not None:
+            return self._fields
+
+        return self._get_delegate().get_fields()
 
     # ------------------------------------------------------------------
     # Data endpoints – delegated to the real PostgreSQLProvider
