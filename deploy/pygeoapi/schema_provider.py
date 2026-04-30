@@ -158,6 +158,11 @@ class SchemaPostgreSQLProvider(BaseProvider):
             self._delegate = PostgreSQLProvider(self._provider_def)
         return self._delegate
 
+    @property
+    def fields(self) -> dict:
+        """Ensure callers of ``provider.fields`` get fallback behavior too."""
+        return self.get_fields()
+
     # ------------------------------------------------------------------
     # Schema endpoints – served from the static JSON file
     # ------------------------------------------------------------------
