@@ -28,7 +28,7 @@
     "react-redux": "^9.2.0",
     "react-rnd": "^10.5.2",
     "swr": "^2.3.8",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.13",
