@@ -48,6 +48,10 @@ Custom OGC extension keywords (all optional, default to True):
 import json
 import logging
 
+from geoalchemy2.elements import WKBElement
+from shapely import wkb as shapely_wkb
+from shapely.geometry import mapping
+
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.provider.sql import PostgreSQLProvider
 
@@ -174,15 +178,37 @@ class SchemaPostgreSQLProvider(BaseProvider):
 
         return self._get_delegate().get_fields()
 
+    def _sanitize_value(self, value):
+        """Convert non-JSON-safe geometry objects into serializable values."""
+        if isinstance(value, WKBElement):
+            try:
+                # Convert WKB to GeoJSON geometry dict.
+                return mapping(shapely_wkb.loads(bytes(value.data)))
+            except Exception:  # pragma: no cover - defensive fallback
+                LOGGER.debug("Failed to decode WKBElement", exc_info=True)
+                return None
+
+        if isinstance(value, dict):
+            return {k: self._sanitize_value(v) for k, v in value.items()}
+
+        if isinstance(value, list):
+            return [self._sanitize_value(v) for v in value]
+
+        return value
+
+    def _sanitize_response(self, response):
+        """Recursively sanitize delegated responses for JSON serialization."""
+        return self._sanitize_value(response)
+
     # ------------------------------------------------------------------
     # Data endpoints – delegated to the real PostgreSQLProvider
     # ------------------------------------------------------------------
 
     def query(self, **kwargs):
-        return self._get_delegate().query(**kwargs)
+        return self._sanitize_response(self._get_delegate().query(**kwargs))
 
     def get(self, identifier, **kwargs):
-        return self._get_delegate().get(identifier, **kwargs)
+        return self._sanitize_response(self._get_delegate().get(identifier, **kwargs))
 
     def create(self, item):
         return self._get_delegate().create(item)

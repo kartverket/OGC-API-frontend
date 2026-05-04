@@ -5,12 +5,16 @@ COPY initdb.sh /docker-entrypoint-initdb.d/initdb.sh
 
 WORKDIR /tmp/dumps
 
-RUN apk --update add --no-cache unzip \
+RUN apk --update add --no-cache unzip dos2unix \
     && unzip -p fylker.zip > fylker.sql \
     && unzip -p kommuner.zip > kommuner.sql \
+    && unzip -p tellekretser.zip > tellekretser.sql \
     && rm *.zip \
+    && dos2unix /docker-entrypoint-initdb.d/initdb.sh \
     && chown -R postgres:postgres /tmp/dumps \
     && chmod +x /docker-entrypoint-initdb.d/initdb.sh
+
+WORKDIR /
 
 USER postgres
 

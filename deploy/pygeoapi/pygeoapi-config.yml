@@ -106,9 +106,9 @@ resources:
           dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [administrative_enheter_fylker]
+          search_path: [administrative_enheter]
         id_field: objid
-        table: fylke
+        table: fylker
         geom_field: omrade
         crs:
           - http://www.opengis.net/def/crs/OGC/1.3/CRS84
@@ -126,9 +126,9 @@ resources:
           dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [administrative_enheter_fylker]
+          search_path: [administrative_enheter]
         id_field: objid
-        table: fylke
+        table: fylker
         geom_field: omrade
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
         options:
@@ -144,7 +144,7 @@ resources:
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         options:
           type: MS_LAYER_POLYGON
-          layer_data: "omrade FROM administrative_enheter_fylker.fylke USING UNIQUE objid USING SRID=25833"
+          layer_data: "omrade FROM administrative_enheter.fylker USING UNIQUE objid USING SRID=25833"
           projection: 25833
           # style: /pygeoapi/styles/fylker.sld <-- Eksempel på hvor styles kan legges og hvordanet refereres til
           style: /apiconfig/styles/fylker.inc
@@ -180,9 +180,9 @@ resources:
           dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [administrative_enheter_kommuner]
+          search_path: [administrative_enheter]
         id_field: objid
-        table: kommune
+        table: kommuner
         geom_field: omrade
         crs:
           - http://www.opengis.net/def/crs/OGC/1.3/CRS84
@@ -200,9 +200,9 @@ resources:
           dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [administrative_enheter_kommuner]
+          search_path: [administrative_enheter]
         id_field: objid
-        table: kommune
+        table: kommuner
         geom_field: omrade
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
         options:
@@ -218,7 +218,7 @@ resources:
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         options:
           type: MS_LAYER_POLYGON
-          layer_data: "omrade FROM administrative_enheter_kommuner.kommune USING UNIQUE objid USING SRID=25833"
+          layer_data: "omrade FROM administrative_enheter.kommuner USING UNIQUE objid USING SRID=25833"
           projection: 25833
           style: /apiconfig/styles/kommuner.inc
         format:
@@ -250,8 +250,8 @@ resources:
           dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [administrative_enheter_tellekretser]
-        id_field: objid
+          search_path: [administrative_enheter]
+        id_field: nr
         table: tellekretser_kystkontur
         geom_field: omrade
         crs:
@@ -270,8 +270,8 @@ resources:
           dbname: ${POSTGRES_DB}
           user: ${POSTGRES_USER}
           password: ${POSTGRES_PASSWORD}
-          search_path: [administrative_enheter_tellekretser]
-        id_field: objid
+          search_path: [administrative_enheter]
+        id_field: nr
         table: tellekretser_kystkontur
         geom_field: omrade
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
