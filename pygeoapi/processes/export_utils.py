@@ -165,20 +165,23 @@ def get_area_geometry(
 ) -> str | None:
     """
     Fetch the WKT geometry of a single area feature by calling the OGC API
-    Features endpoint rather than querying the data source directly.
+    Features endpoint rather than querying PostGIS directly.
 
     Uses the internal service URL from the pygeoapi config so the request
-    stays inside the Docker network (port 5000, not the mapped port).
+    stays inside the Docker network (port 5000, not the mapped 5001).
 
     Returns WKT string in EPSG:4326, or None if no matching feature found.
     """
     import urllib.request
     import urllib.parse
     import json
-    import re
     from shapely.geometry import shape
 
     base_url = config.get('server', {}).get('url', 'http://localhost:5000').rstrip('/')
+
+    # Replace any public-facing hostname/port with localhost:5000 so the
+    # request stays inside the container network
+    import re
     internal_base = re.sub(r'https?://[^/]+', 'http://localhost:5000', base_url)
 
     params = urllib.parse.urlencode({

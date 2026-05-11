@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Kommuner",
+  "description": "Feltdefinisjoner for kommune-samlingen (administrative enheter – kommuner).",
+  "properties": {
+    "objid": {
+      "type": "string",
+      "title": "Objekt-ID",
+      "description": "Unik identifikator for objektet.",
+      "x-ogc-role": "id",
+      "x-ogc-sortable": false,
+      "x-ogc-filterable": false
+    },
+    "datafangstdato": {
+      "type": "string",
+      "format": "date",
+      "title": "Datafangstdato",
+      "description": "Dato når dataene ble fanget.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    },
+    "oppdateringsdato": {
+      "type": "string",
+      "format": "date",
+      "title": "Oppdateringsdato",
+      "description": "Dato for siste oppdatering av objektet.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    },
+    "datauttaksdato": {
+      "type": "string",
+      "format": "date",
+      "title": "Datauttaksdato",
+      "description": "Dato for datauttaket.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    },
+    "opphav": {
+      "type": "string",
+      "title": "Opphav",
+      "description": "Kilde eller opphav til dataene.",
+      "x-ogc-sortable": false,
+      "x-ogc-filterable": true
+    },
+    "malemetode": {
+      "type": "string",
+      "title": "Målemetode",
+      "description": "Metode brukt for måling.",
+      "x-ogc-sortable": false,
+      "x-ogc-filterable": true
+    },
+    "noyaktighet": {
+      "type": "integer",
+      "title": "Nøyaktighet",
+      "description": "Nøyaktighet i meter.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    },
+    "synbarhet": {
+      "type": "string",
+      "title": "Synbarhet",
+      "description": "Objektets synbarhet.",
+      "x-ogc-sortable": false,
+      "x-ogc-filterable": true
+    },
+    "medium": {
+      "type": "string",
+      "title": "Medium",
+      "description": "Medium objektet befinner seg i.",
+      "x-ogc-sortable": false,
+      "x-ogc-filterable": true
+    },
+    "verifiseringsdato": {
+      "type": "string",
+      "format": "date",
+      "title": "Verifiseringsdato",
+      "description": "Dato for verifisering av objektet.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    },
+    "informasjon": {
+      "type": "string",
+      "title": "Informasjon",
+      "description": "Tilleggsinformasjon om objektet.",
+      "x-ogc-sortable": false,
+      "x-ogc-filterable": false
+    },
+    "kommunenummer": {
+      "type": "string",
+      "title": "Kommunenummer",
+      "description": "Firesifret nummeridentifikasjon for kommunen.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    },
+    "kommunenavn": {
+      "type": "string",
+      "title": "Kommunenavn",
+      "description": "Navn på kommunen.",
+      "x-ogc-sortable": true,
+      "x-ogc-filterable": true
+    }
+  }
+}

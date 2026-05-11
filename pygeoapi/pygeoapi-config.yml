@@ -3,7 +3,7 @@ server:
     host: 0.0.0.0
     port: 5000
   cors: true
-  url: ${PYGEOAPI_URL}
+  url: ${PUBLIC_URL}
   mimetype: application/json; charset=UTF-8
   encoding: utf-8
   gzip: false
@@ -12,7 +12,7 @@ server:
   pretty_print: true
   limits:
     default_items: 20
-    max_items: 1000
+    max_items: 500
   map:
     url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
@@ -22,7 +22,8 @@ server:
     static: /pygeoapi/pygeoapi/static
 
 logging:
-  level: INFO
+  level: DEBUG
+  logfile: /logs/pygeoapi.log
 
 metadata:
   identification:
@@ -40,7 +41,6 @@ metadata:
         - Fylkesgrenser
         - Kommunegrenser
         - Riksgrense
-        - Tellekretser
     keywords_type: theme
     terms_of_service: https://www.kartverket.no/geodataarbeid/norge-digitalt/partsinformasjon/avtaler-og-vilkar/norge-digitalt-lisens
     url: https://www.kartverket.no
@@ -68,7 +68,7 @@ resources:
   export-all-gpkg:
     type: process
     processor:
-      name: processes.gpkg_all_collections.ExportAllGpkgProcessor
+      name: processes.gpkg_all_collections.ExportAllGpkgProcessor 
   export-by-area-gpkg:
     type: process
     processor:
@@ -77,7 +77,6 @@ resources:
     type: process
     processor:
       name: processes.csv_collection.ExportCollectionCsvProcessor
-
   fylker:
     type: collection
     title:
@@ -100,16 +99,17 @@ resources:
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker/6093c8a8-fa80-11e6-bc64-92361f002671
     providers:
       - type: feature
-        name: PostgreSQL
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/fylker.json
         data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter]
+        id_field: objid
         table: fylker
-        geom_field: geometry
+        geom_field: omrade
         crs:
           - http://www.opengis.net/def/crs/OGC/1.3/CRS84
           - http://www.opengis.net/def/crs/EPSG/0/25832
@@ -119,18 +119,17 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/4326
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
-
       - type: tile
         name: MVT-postgresql
         data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter]
+        id_field: objid
         table: fylker
-        geom_field: geometry
+        geom_field: omrade
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
         options:
           zoom:
@@ -139,69 +138,19 @@ resources:
         format:
           name: pbf
           mimetype: application/vnd.mapbox-vector-tile
-
       - type: map
         name: postgis_mapscript.PostGISMapScriptProvider
-        data: "host=${db_host} dbname=${db_name} user=${db_user} password=${password}"
+        data: "host=${POSTGRES_HOST} dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        always_xy: true
         options:
           type: MS_LAYER_POLYGON
-          layer_data: "geometry FROM public.fylker USING UNIQUE nr USING SRID=25833"
+          layer_data: "omrade FROM administrative_enheter.fylker USING UNIQUE objid USING SRID=25833"
           projection: 25833
-          style: /pygeoapi/styles/fylker.inc
+          # style: /pygeoapi/styles/fylker.sld <-- Eksempel på hvor styles kan legges og hvordanet refereres til
+          style: /apiconfig/styles/fylker.inc
         format:
           name: png
           mimetype: image/png
-
-  fylker_kystkontur:
-    type: collection
-    title:
-      en: Fylker kystkontur
-    description:
-      en: >
-        Datasettet viser fylkesinndelingen i landet med kystkontur
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
-    keywords:
-      en:
-        - Fylke
-        - Fylkesgrense
-        - Kystkontur
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: PostgreSQL
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
-        table: fylker_kystkontur
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
-
   kommuner:
     type: collection
     title:
@@ -209,12 +158,6 @@ resources:
     description:
       en: >
         Datasettet viser kommuneinndelingen i landet med de mest nøyaktige grensene som er registrert digitalt og som er samlet i ett datasett.
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
     keywords:
       en:
         - Kommune
@@ -230,16 +173,17 @@ resources:
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b
     providers:
       - type: feature
-        name: PostgreSQL
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/kommuner.json
         data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter]
+        id_field: objid
         table: kommuner
-        geom_field: geometry
+        geom_field: omrade
         crs:
           - http://www.opengis.net/def/crs/OGC/1.3/CRS84
           - http://www.opengis.net/def/crs/EPSG/0/25832
@@ -252,14 +196,14 @@ resources:
       - type: tile
         name: MVT-postgresql
         data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter]
+        id_field: objid
         table: kommuner
-        geom_field: geometry
+        geom_field: omrade
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
         options:
           zoom:
@@ -270,151 +214,46 @@ resources:
           mimetype: application/vnd.mapbox-vector-tile
       - type: map
         name: postgis_mapscript.PostGISMapScriptProvider
-        data: "host=${db_host} dbname=${db_name} user=${db_user} password=${password}"
+        data: "host=${POSTGRES_HOST} dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        always_xy: true
         options:
           type: MS_LAYER_POLYGON
-          layer_data: "geometry FROM public.kommuner USING UNIQUE nr USING SRID=25833"
+          layer_data: "omrade FROM administrative_enheter.kommuner USING UNIQUE objid USING SRID=25833"
           projection: 25833
-          style: /pygeoapi/styles/kommuner.inc
+          style: /apiconfig/styles/kommuner.inc
         format:
           name: png
           mimetype: image/png
-
-  kommuner_kystkontur:
-    type: collection
-    title:
-      en: Kommuner kystkontur
-    description:
-      en: >
-        Datasettet viser kommuneinndelingen i landet med kystkontur
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
-    keywords:
-      en:
-        - Kommune
-        - Kommunegrense
-        - Kystkontur
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: PostgreSQL
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
-        table: kommuner_kystkontur
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
-
-  tellekretser:
+  tellekrets:
     type: collection
     title:
       en: Tellekretser
     description:
       en: >
-        Datasettet viser tellekretser i Norge
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
+        Datasettet inneholder valgkretser (tellekretser) med kystkontur for Norge,
+        inkludert informasjon om valgdistrikt, fylke og kommune.
     keywords:
       en:
         - Tellekrets
-        - Statistikk
+        - Valgkrets
+        - Valgdistrikt
     extents:
       spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
+        bbox: [4.087524, 57.759005, 31.761592, 71.384878]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
       - type: feature
-        name: PostgreSQL
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /apiconfig/schemas/tellekrets.json
         data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
-        table: tellekrets
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
-
-  tellekretser_kystkontur:
-    type: collection
-    title:
-      en: Tellekretser kystkontur
-    description:
-      en: >
-        Datasettet viser tellekretser i Norge med kystkontur
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
-    keywords:
-      en:
-        - Tellekrets
-        - Statistikk
-        - Kystkontur
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: PostgreSQL
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter]
         id_field: nr
         table: tellekretser_kystkontur
-        geom_field: geometry
+        geom_field: omrade
         crs:
           - http://www.opengis.net/def/crs/OGC/1.3/CRS84
           - http://www.opengis.net/def/crs/EPSG/0/25832
@@ -424,25 +263,22 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/4326
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
-
-  myr:
-    type: collection
-    title:
-      en: Myr
-    description:
-      en: Local GeoTIFF coverage for myr.
-    keywords:
-      en:
-        - Myr
-        - GeoTIFF
-    extents:
-      spatial:
-        bbox: [-180, -90, 180, 90]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: coverage
-        name: rasterio
-        data: /pygeoapi/data/myr.tif
+      - type: tile
+        name: MVT-postgresql
+        data:
+          host: ${POSTGRES_HOST}
+          dbname: ${POSTGRES_DB}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          search_path: [administrative_enheter]
+        id_field: nr
+        table: tellekretser_kystkontur
+        geom_field: omrade
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+        options:
+          zoom:
+            min: 12
+            max: 18
         format:
-          name: GeoTIFF
-          mimetype: image/tiff
+          name: pbf
+          mimetype: application/vnd.mapbox-vector-tile
