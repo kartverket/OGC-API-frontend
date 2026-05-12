@@ -8,7 +8,7 @@ categories:
   - title: '🐛 Bug Fixes'
     labels: ['bug', 'fix']
   - title: '🔧 Maintenance'
-    labels: ['chore', 'deps', 'ci']
+    labels: ['chore', 'dependencies', 'github_actions']
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 version-resolver:
   major:
@@ -16,7 +16,7 @@ version-resolver:
   minor:
     labels: ['feature', 'enhancement']
   patch:
-    labels: ['bug', 'fix', 'chore', 'deps', 'ci']
+    labels: ['bug', 'fix', 'chore', 'dependencies', 'github_actions']
   default: patch
 template: |
   ## What's Changed
