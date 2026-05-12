@@ -1,0 +1,97 @@
+# .github/workflows/tag-release.yml
+name: Tag and release
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: 'Component to release'
+        required: true
+        type: choice
+        options: [frontend, pygeoapi]
+      bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options: [patch, minor, major]
+
+jobs:
+  tag-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.next.outputs.NEXT_TAG }}
+      version: ${{ steps.next.outputs.NEXT_VERSION }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Calculate next version
+        id: next
+        env:
+          COMPONENT: ${{ inputs.component }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          LATEST=$(git tag --list "${COMPONENT}-v*" | sort -V | tail -1)
+
+          if [ -z "$LATEST" ]; then
+            NEXT_VERSION="0.1.0"
+          else
+            VERSION=${LATEST#${COMPONENT}-v}
+            MAJOR=$(echo $VERSION | cut -d. -f1)
+            MINOR=$(echo $VERSION | cut -d. -f2)
+            PATCH=$(echo $VERSION | cut -d. -f3)
+            case $BUMP in
+              major) NEXT_VERSION="$((MAJOR+1)).0.0" ;;
+              minor) NEXT_VERSION="${MAJOR}.$((MINOR+1)).0" ;;
+              patch) NEXT_VERSION="${MAJOR}.${MINOR}.$((PATCH+1))" ;;
+            esac
+          fi
+
+          NEXT_TAG="${COMPONENT}-v${NEXT_VERSION}"
+
+          if git rev-parse "$NEXT_TAG" >/dev/null 2>&1; then
+            echo "ERROR: tag $NEXT_TAG already exists"
+            exit 1
+          fi
+
+          echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_OUTPUT
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "Will create tag: $NEXT_TAG"
+
+      - name: Push tag
+        run: |
+          git config user.email "noreply@kartverket.no"
+          git config user.name "Dataprodukter CI"
+          git tag ${{ steps.next.outputs.NEXT_TAG }}
+          git push origin ${{ steps.next.outputs.NEXT_TAG }}
+
+  release-frontend:
+    needs: tag-and-release
+    if: inputs.component == 'frontend'
+    uses: ./.github/workflows/release-reusable.yml
+    with:
+      tag: ${{ needs.tag-and-release.outputs.tag }}
+      version: ${{ needs.tag-and-release.outputs.version }}
+      image_name: kartverket/datadeling-ogcapi-frontend
+      build_context: .
+      drafter_config: release-drafter-frontend.yml
+    permissions:
+      contents: write
+      packages: write
+
+  release-pygeoapi:
+    needs: tag-and-release
+    if: inputs.component == 'pygeoapi'
+    uses: ./.github/workflows/release-reusable.yml
+    with:
+      tag: ${{ needs.tag-and-release.outputs.tag }}
+      version: ${{ needs.tag-and-release.outputs.version }}
+      image_name: kartverket/datadeling-ogcapi-pygeoapi
+      build_context: pygeoapi
+      drafter_config: release-drafter-pygeoapi.yml
+    permissions:
+      contents: write
+      packages: write
