@@ -38,9 +38,11 @@ jobs:
 
       - name: Derive version prefix
         id: ver
+        env:
+          VERSION: ${{ inputs.version }}
         run: |
-          PREFIX=$(echo "${{ inputs.version }}" | cut -d. -f1-2)
-          echo "PREFIX=$PREFIX" >> $GITHUB_OUTPUT
+          PREFIX=$(echo "$VERSION" | cut -d. -f1-2)
+          echo "PREFIX=$PREFIX" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
