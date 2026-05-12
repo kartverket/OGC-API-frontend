@@ -73,7 +73,7 @@ jobs:
   release-frontend:
     needs: tag-and-release
     if: inputs.component == 'frontend'
-    uses: ./.github/workflows/release-reusable.yml
+    uses: ./.github/workflows/release.yml
     with:
       tag: ${{ needs.tag-and-release.outputs.tag }}
       version: ${{ needs.tag-and-release.outputs.version }}
@@ -87,7 +87,7 @@ jobs:
   release-pygeoapi:
     needs: tag-and-release
     if: inputs.component == 'pygeoapi'
-    uses: ./.github/workflows/release-reusable.yml
+    uses: ./.github/workflows/release.yml
     with:
       tag: ${{ needs.tag-and-release.outputs.tag }}
       version: ${{ needs.tag-and-release.outputs.version }}
