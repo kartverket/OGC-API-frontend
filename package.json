@@ -10,8 +10,8 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@digdir/designsystemet-css": "^1.13.3",
-    "@digdir/designsystemet-react": "^1.13.3",
+    "@digdir/designsystemet-css": "^1.14.0",
+    "@digdir/designsystemet-react": "^1.14.0",
     "@navikt/aksel-icons": "^8.10.5",
     "@reduxjs/toolkit": "^2.11.2",
     "@turf/bbox": "^7.3.5",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.15",
-    "@digdir/designsystemet": "^1.13.3",
+    "@digdir/designsystemet": "^1.14.0",
     "@svgr/webpack": "^8.1.0"
   },
   "overrides": {
