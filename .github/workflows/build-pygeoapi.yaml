@@ -1,6 +1,5 @@
 name: Pygeoapi
-# This workflow builds the backend image and pushes it to the GitHub Container Registry.
-# It is triggered on pushes to the main branch, specifically when changes are made to the "pygeoapi" directory.
+
 on:
   push:
     branches:

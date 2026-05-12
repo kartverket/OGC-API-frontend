@@ -1,6 +1,5 @@
 name: Frontend
-# This workflow builds the frontend image and pushes it to the GitHub Container Registry.
-# It is triggered on pushes to the main branch, specifically when changes are made to the "geonorge-server" directory.
+
 on:
   push:
     branches:

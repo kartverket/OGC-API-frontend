@@ -1,5 +1,4 @@
-# .github/workflows/release-reusable.yml
-name: Release (reusable)
+name: Release
 
 on:
   workflow_call:
