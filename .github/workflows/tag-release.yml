@@ -57,16 +57,18 @@ jobs:
             exit 1
           fi
 
-          echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_OUTPUT
-          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "NEXT_TAG=$NEXT_TAG" >> "$GITHUB_OUTPUT"
+          echo "NEXT_VERSION=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
           echo "Will create tag: $NEXT_TAG"
 
       - name: Push tag
+        env:
+          NEXT_TAG: ${{ steps.next.outputs.NEXT_TAG }}
         run: |
           git config user.email "noreply@kartverket.no"
           git config user.name "Dataprodukter CI"
-          git tag ${{ steps.next.outputs.NEXT_TAG }}
-          git push origin ${{ steps.next.outputs.NEXT_TAG }}
+          git tag "$NEXT_TAG"
+          git push origin "$NEXT_TAG"
 
   release-frontend:
     needs: tag-and-release
