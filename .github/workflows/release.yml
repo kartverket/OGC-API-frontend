@@ -62,10 +62,8 @@ jobs:
             ghcr.io/${{ inputs.image_name }}:latest
 
       - name: Publish GitHub Release
-        uses: release-drafter/release-drafter@v6
+        uses: release-drafter/release-drafter@v7
         with:
           config-name: ${{ inputs.drafter_config }}
           publish: true
           tag: ${{ inputs.tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
