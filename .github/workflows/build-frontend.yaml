@@ -1,6 +1,5 @@
 name: Frontend
-# This workflow builds the frontend image and pushes it to the GitHub Container Registry.
-# It is triggered on pushes to the main branch, specifically when changes are made to the "geonorge-server" directory.
+
 on:
   push:
     branches:
@@ -33,10 +32,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Get package version
-        id: pkg
-        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
-
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v6
@@ -44,7 +39,6 @@ jobs:
           images: ${{ env.docker_registry }}/${{ env.image_name}}
           tags: |
             type=sha,format=long
-            ${{ steps.pkg.outputs.version }}
 
       - name: Get commit message
         id: get_commit_message
