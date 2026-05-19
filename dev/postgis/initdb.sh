@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+# Keep this POSIX-compatible for Alpine images and cross-platform checkouts.
 set -e
 
 directory=/tmp/dumps

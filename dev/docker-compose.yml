@@ -40,7 +40,6 @@ services:
       - db_user=postgres
       - password=qwer1234
       - CONTAINER_PORT=5000
-      - PYGEOAPI_OPENAPI=/tmp/local.openapi.yml
       - WSGI_WORKERS=1
       - WSGI_WORKER_CLASS=gevent
     restart: always
