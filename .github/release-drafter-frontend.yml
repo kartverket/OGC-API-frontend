@@ -2,6 +2,7 @@ name-template: 'Frontend v$RESOLVED_VERSION'
 tag-template: 'frontend-v$RESOLVED_VERSION'
 include-labels:
   - 'frontend'
+  - 'javascript'
 categories:
   - title: '🚀 Features'
     labels: ['feature', 'enhancement']

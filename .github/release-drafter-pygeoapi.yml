@@ -2,6 +2,7 @@ name-template: 'Pygeoapi v$RESOLVED_VERSION'
 tag-template: 'pygeoapi-v$RESOLVED_VERSION'
 include-labels:
   - 'pygeoapi'
+  - 'docker'
 categories:
   - title: '🚀 Features'
     labels: ['feature', 'enhancement']
