@@ -23,7 +23,7 @@ services:
       - "5001:5000"
     volumes:
       # Mount source files for live editing during development
-      - ../pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
+      - ../pygeoapi/pygeoapi-config.yml:/pygeoapi/pygeoapi-config.yml
       - ../pygeoapi/processes:/pygeoapi/processes
       - ../pygeoapi/templates:/pygeoapi/custom_templates
       - ../pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py

@@ -14,7 +14,7 @@ COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
 COPY maps.py /pygeoapi/pygeoapi/api/maps.py
 
 # pygeoapi configuration
-COPY pygeoapi-config.yml /pygeoapi/local.config.yml
+COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml
 
 # Process plugins
 COPY processes/ /pygeoapi/processes/
@@ -39,11 +39,9 @@ RUN /venv/bin/python3 -m pip install \
 
 # Ensure OpenAPI output files are writable by the runtime user.
 RUN mkdir -p /apiconfig \
-        && touch /apiconfig/openapi.yml /pygeoapi/local.openapi.yml \
+        && touch /apiconfig/openapi.yml \
         && chown -R 150:150 /apiconfig \
-        && chown 150:150 /pygeoapi/local.openapi.yml \
-        && chmod -R 775 /apiconfig \
-        && chmod 664 /pygeoapi/local.openapi.yml
+        && chmod -R 775 /apiconfig
 
 EXPOSE 5000
 
@@ -51,7 +49,7 @@ ENV PYTHONPATH="/pygeoapi"
 ENV WSGI_APP=pygeoapi.entrypoint_dnd:app
 ENV GUNICORN_CMD_ARGS="--config /pygeoapi/gunicorn_conf_dnd.py"
 ENV PROMETHEUS_MULTIPROC_DIR=/tmp
-ENV PYGEOAPI_CONFIG=/pygeoapi/local.config.yml
+ENV PYGEOAPI_CONFIG=/pygeoapi/pygeoapi-config.yml
 ENV PYGEOAPI_OPENAPI=/apiconfig/openapi.yml
 
 USER 150:150
