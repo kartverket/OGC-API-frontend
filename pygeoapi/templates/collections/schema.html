@@ -31,10 +31,10 @@
           <tr>
             <td>{{ qname }}</td>
             <td>{{ qinfo['title'] if 'title' in qinfo else '' }}</td>
-            {% if qname == 'geometry' %}
+            {% if qname == 'geometry' and '$ref' in qinfo %}
             <td><a href="{{ qinfo['$ref'] }}">{{ qname }}</a></td>
             {% else %}
-            <td><code>{{ qinfo['type'] }}</code>
+            <td><code>{{ qinfo['type'] if 'type' in qinfo else '' }}</code>
             {% if 'format' in qinfo %}
             (<code>{{ qinfo['format'] }}</code>)
             {% endif %}
