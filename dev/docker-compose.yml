@@ -30,7 +30,6 @@ services:
       - ../pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
       - ../pygeoapi/mapserver/fonts.txt:/pygeoapi/fonts.txt
       - ../pygeoapi/mapserver/styles:/pygeoapi/styles
-      - ../pygeoapi/data:/pygeoapi/data
       - ./volumes/logs:/logs
     environment:
       - PYGEOAPI_URL=http://localhost:5001/
