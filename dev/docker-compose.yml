@@ -49,24 +49,22 @@ services:
       - pygeoapi-network
 
   t-rex:
-    image: sourcepole/t-rex:v0.14.3
-    networks:
-      - pygeoapi-network
-    depends_on:
-      postgis:
-        condition: service_healthy
+    build:
+      context: ../trex
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=qwer1234
       - DB_HOST=postgis
       - DB_NAME=pygeoapi_test
       - DATASOURCE_NAME=tellekretser
-    ports:
-      - "8080:8080"
-    platform: linux/amd64
-    volumes:
-      - ./t-rex.toml:/var/data/t-rex.toml:ro
-    command: ["serve", "--config", "/var/data/t-rex.toml"]
+    depends_on:
+      postgis:
+        condition: service_healthy
+    networks:
+      - pygeoapi-network
 
   postgis:
     build:
