@@ -1,5 +1,6 @@
 name-template: 'Frontend v$RESOLVED_VERSION'
 tag-template: 'frontend-v$RESOLVED_VERSION'
+tag-prefix: 'frontend-'
 include-labels:
   - 'frontend'
   - 'javascript'

@@ -1,5 +1,6 @@
 name-template: 'Pygeoapi v$RESOLVED_VERSION'
 tag-template: 'pygeoapi-v$RESOLVED_VERSION'
+tag-prefix: 'pygeoapi-'
 include-labels:
   - 'pygeoapi'
   - 'docker'
