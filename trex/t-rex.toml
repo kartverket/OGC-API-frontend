@@ -3,7 +3,7 @@ viewer = true
 
 [[datasource]]
 name = "tellekretser"
-dbconn = "postgresql://{{env.POSTGRES_USER}}:{{env.POSTGRES_PASSWORD}}@{{env.DB_HOST}}/{{env.DB_NAME}}"
+dbconn = "postgresql://{{env.DB_USER}}:{{env.password}}@{{env.DB_HOST}}/{{env.DB_NAME}}"
 # clip = false
 
 [grid]
@@ -39,7 +39,7 @@ srid = 25833
 #
 # [[tileset.layer]]
 # name = "tellekretser_polar"
-# datasource = "{{env.DATASOURCE_NAME}}"
+# datasource = "tellekretser"
 # geometry_field = "geometry"
 # geometry_type = "POLYGON"
 # # Clip polygons with a buffer
