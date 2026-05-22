@@ -2,7 +2,7 @@
 viewer = true
 
 [[datasource]]
-name = "{{env.DATASOURCE_NAME}}"
+name = "tellekretser"
 dbconn = "postgresql://{{env.POSTGRES_USER}}:{{env.POSTGRES_PASSWORD}}@{{env.DB_HOST}}/{{env.DB_NAME}}"
 # clip = false
 
@@ -10,11 +10,11 @@ dbconn = "postgresql://{{env.POSTGRES_USER}}:{{env.POSTGRES_PASSWORD}}@{{env.DB_
 predefined = "web_mercator"
 
 [[tileset]]
-name = "{{env.DATASOURCE_NAME}}"
+name = "tellekretser"
 
 [[tileset.layer]]
 name = "tellekretser"
-datasource = "{{env.DATASOURCE_NAME}}"
+datasource = "tellekretser"
 geometry_field = "geometry"
 geometry_type = "POLYGON"
 # Clip polygons with a buffer
