@@ -36,10 +36,17 @@ RUN /venv/bin/python3 -m pip install \
         psycopg2-binary \
         GeoAlchemy2
 
+ENV USER_ID=150 \
+    USER_NAME=apprunner \
+    TZ=Europe/Oslo
+
+RUN groupadd -g ${USER_ID} ${USER_NAME} && \
+    useradd --system --no-create-home -u ${USER_ID} -g ${USER_NAME} ${USER_NAME}
+
 # Ensure OpenAPI output files are writable by the runtime user.
 RUN mkdir -p /apiconfig \
         && touch /apiconfig/openapi.yml \
-        && chown -R 150:150 /apiconfig \
+        && chown -R ${USER_ID}:${USER_ID} /apiconfig \
         && chmod -R 775 /apiconfig
 
 EXPOSE 5000
@@ -51,7 +58,7 @@ ENV PROMETHEUS_MULTIPROC_DIR=/tmp
 ENV PYGEOAPI_CONFIG=/pygeoapi/pygeoapi-config.yml
 ENV PYGEOAPI_OPENAPI=/apiconfig/openapi.yml
 
-USER 150:150
+USER ${USER_NAME}
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD [ "python3", "-c", "import urllib.request, sys; sys.exit(0) if urllib.request.urlopen('http://localhost:5000/').getcode() == 200 else sys.exit(1)" ]

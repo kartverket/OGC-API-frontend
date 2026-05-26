@@ -11,6 +11,8 @@ predefined = "web_mercator"
 
 [[tileset]]
 name = "tellekretser"
+extent = { minx = 4.0, miny = 57.0, maxx = 32.0, maxy = 72.0 }
+cache_limits = { minzoom = 0, maxzoom = 10, no_cache = false }
 
 [[tileset.layer]]
 name = "tellekretser"
