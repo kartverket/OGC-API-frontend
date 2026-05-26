@@ -358,7 +358,7 @@ resources:
     providers:
       - type: feature
         name: schema_provider.SchemaPostgreSQLProvider
-        schema_file: /apiconfig/schemas/tellekrets.json
+        schema_file: /pygeoapi/schemas/tellekrets.json
         data:
           host: ${db_host}
           dbname: ${db_name}
