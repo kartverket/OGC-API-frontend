@@ -15,6 +15,7 @@ COPY maps.py /pygeoapi/pygeoapi/api/maps.py
 
 # pygeoapi configuration
 COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml
+COPY schemas/ /pygeoapi/schemas/
 
 # Process plugins
 COPY processes/ /pygeoapi/processes/

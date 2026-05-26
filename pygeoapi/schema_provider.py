@@ -9,7 +9,7 @@ Configuration (in pygeoapi-config.yml):
     providers:
       - type: feature
         name: schema_provider.SchemaPostgreSQLProvider
-        schema_file: /apiconfig/schemas/<collection>.json  # optional
+                schema_file: /pygeoapi/schemas/<collection>.json  # optional
         data:
           ...   (same as regular PostgreSQL provider)
         id_field: objid
