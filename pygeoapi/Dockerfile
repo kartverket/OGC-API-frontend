@@ -26,8 +26,6 @@ COPY templates/ /pygeoapi/custom_templates/
 COPY mapserver/fonts.txt /pygeoapi/fonts.txt
 COPY mapserver/styles/ /pygeoapi/styles/
 
-COPY data /pygeoapi/data
-
 RUN /venv/bin/python3 -m pip install \
         prometheus_client \
         prometheus_flask_exporter \

@@ -1,0 +1,36 @@
+name: Release Drafter
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  draft-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: release-drafter/release-drafter@v7
+        id: release-drafter-frontend
+        with:
+          config-name: release-drafter-frontend.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Print release body
+        run: echo "${{ steps.release-drafter-frontend.outputs.body }}"
+
+  draft-pygeoapi:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: release-drafter/release-drafter@v7
+        id: release-drafter-pygeoapi
+        with:
+          config-name: release-drafter-pygeoapi.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Print release body
+        run: echo "${{ steps.release-drafter-pygeoapi.outputs.body }}"

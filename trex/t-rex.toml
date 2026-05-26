@@ -1,0 +1,57 @@
+[service.mvt]
+viewer = true
+
+[[datasource]]
+name = "tellekretser"
+dbconn = "postgresql://{{env.DB_USER}}:{{env.password}}@{{env.DB_HOST}}/{{env.DB_NAME}}"
+# clip = false
+
+[grid]
+predefined = "web_mercator"
+
+[[tileset]]
+name = "tellekretser"
+
+[[tileset.layer]]
+name = "tellekretser"
+datasource = "tellekretser"
+geometry_field = "geometry"
+geometry_type = "POLYGON"
+# Clip polygons with a buffer
+buffer_size = 10
+simplify = true
+# Queries for different zoom levels:
+table_name = "tellekrets"
+srid = 25833
+
+# [grid.polar]
+# width = 256
+# height = 256
+# extent = {minx=-4889334.802954878, miny=-4889334.802954878, maxx=4889334.802954878, maxy=4889334.802954878}
+# srid = 25833
+# units = "m"
+# resolutions = [38197.92815, 19098.96407, 9549.482037, 4774.741019, 2387.370509, 1193.685255, 596.8426273, 298.4213137, 149.2106568, 74.60532841, 37.30266421, 18.6513321, 9.325666052, 4.662833026, 2.331416513, 1.165708256, 0.582854128, 0.291427064]
+# origin = "TopLeft"
+#
+# [[tileset]]
+# name = "tellekrets_polar"
+# grid = "polar"
+#
+# [[tileset.layer]]
+# name = "tellekretser_polar"
+# datasource = "tellekretser"
+# geometry_field = "geometry"
+# geometry_type = "POLYGON"
+# # Clip polygons with a buffer
+# buffer_size = 10
+# simplify = true
+# # Queries for different zoom levels:
+# table_name = "tellekrets"
+# srid = 25833
+
+[cache.file]
+base = "/var/cache/mvtcache"
+
+[webserver]
+bind = "0.0.0.0"
+port = 8080
