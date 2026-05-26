@@ -23,13 +23,15 @@ services:
       - "5001:5000"
     volumes:
       # Mount source files for live editing during development
-      - ../pygeoapi/pygeoapi-config.yml:/pygeoapi/local.config.yml
+      - ../pygeoapi/pygeoapi-config.yml:/pygeoapi/pygeoapi-config.yml
       - ../pygeoapi/processes:/pygeoapi/processes
       - ../pygeoapi/templates:/pygeoapi/custom_templates
       - ../pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py
       - ../pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
       - ../pygeoapi/mapserver/fonts.txt:/pygeoapi/fonts.txt
       - ../pygeoapi/mapserver/styles:/pygeoapi/styles
+      - ../pygeoapi/apiconfig/schemas:/apiconfig/schemas
+      - ../pygeoapi/data:/pygeoapi/data
       - ./volumes/logs:/logs
     environment:
       - PYGEOAPI_URL=http://localhost:5001/

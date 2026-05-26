@@ -46,7 +46,12 @@ def get_postgis_collections(config: dict) -> dict[str, dict]:
 
         # We only care about the first (feature) provider
         prov = providers[0]
-        if prov.get('name') not in ('PostgreSQL', 'MVT-postgresql'):
+        provider_name = prov.get('name', '')
+        if provider_name not in (
+            'PostgreSQL',
+            'MVT-postgresql',
+            'schema_provider.SchemaPostgreSQLProvider',
+        ):
             continue
 
         data = prov.get('data', {})
