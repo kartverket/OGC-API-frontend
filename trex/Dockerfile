@@ -16,4 +16,4 @@ RUN groupadd -g ${USER_ID} ${USER_NAME} && \
 
 USER ${USER_NAME}
 
-CMD ["serve", "--config", "/var/data/t-rex.toml"]
+ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/t_rex generate --config /var/data/t-rex.toml & exec /usr/bin/t_rex serve --config /var/data/t-rex.toml"]
