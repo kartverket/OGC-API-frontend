@@ -5,9 +5,11 @@ COPY initdb.sh /docker-entrypoint-initdb.d/initdb.sh
 
 WORKDIR /tmp/dumps
 
+# Normalize line endings so init scripts run on Linux even from Windows checkouts.
 RUN apk --update add --no-cache unzip \
     && unzip '*.zip' \
     && rm *.zip \
+    && sed -i 's/\r$//' /docker-entrypoint-initdb.d/initdb.sh \
     && chown -R postgres:postgres /tmp/dumps \
     && chmod +x /docker-entrypoint-initdb.d/initdb.sh
 
