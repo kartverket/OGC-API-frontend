@@ -51,12 +51,16 @@ RUN mkdir -p /apiconfig \
 
 EXPOSE 5000
 
+ENV CONTAINER_PORT=5000
 ENV PYTHONPATH="/pygeoapi"
 ENV WSGI_APP=pygeoapi.entrypoint_dnd:app
 ENV GUNICORN_CMD_ARGS="--config /pygeoapi/gunicorn_conf_dnd.py"
 ENV PROMETHEUS_MULTIPROC_DIR=/tmp
 ENV PYGEOAPI_CONFIG=/pygeoapi/pygeoapi-config.yml
 ENV PYGEOAPI_OPENAPI=/apiconfig/openapi.yml
+# Kubernetes manages horizontal scaling. Consider more workers if pod upscaling is considered too slow.
+ENV WSGI_WORKERS=1
+ENV WSGI_WORKER_CLASS=gevent
 
 USER ${USER_NAME}
 
