@@ -52,7 +52,7 @@ srid = 25833
 # srid = 25833
 
 [cache.file]
-base = "/var/cache/mvtcache"
+base = "/tmp/mvtcache"
 
 [webserver]
 bind = "0.0.0.0"
