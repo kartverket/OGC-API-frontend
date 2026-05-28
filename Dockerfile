@@ -1,4 +1,4 @@
-FROM node:25-alpine AS base
+FROM node:26-alpine AS base
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
@@ -18,7 +18,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:25-alpine AS runner
+FROM node:26-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
