@@ -11,7 +11,11 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "docker"
-    directory: "/"
+    directories:
+      - "/"
+      - "/pygeoapi"
+      - "/trex"
+      - "/dev/postgis"
     schedule:
       interval: "daily"
 
