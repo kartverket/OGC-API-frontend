@@ -43,12 +43,6 @@ ENV USER_ID=150 \
 RUN groupadd -g ${USER_ID} ${USER_NAME} && \
     useradd --system --no-create-home -u ${USER_ID} -g ${USER_NAME} ${USER_NAME}
 
-# Ensure OpenAPI output files are writable by the runtime user.
-RUN mkdir -p /apiconfig \
-        && touch /apiconfig/openapi.yml \
-        && chown -R ${USER_ID}:${USER_ID} /apiconfig \
-        && chmod -R 775 /apiconfig
-
 EXPOSE 5000
 
 ENV CONTAINER_PORT=5000
@@ -57,7 +51,7 @@ ENV WSGI_APP=pygeoapi.entrypoint_dnd:app
 ENV GUNICORN_CMD_ARGS="--config /pygeoapi/gunicorn_conf_dnd.py"
 ENV PROMETHEUS_MULTIPROC_DIR=/tmp
 ENV PYGEOAPI_CONFIG=/pygeoapi/pygeoapi-config.yml
-ENV PYGEOAPI_OPENAPI=/apiconfig/openapi.yml
+ENV PYGEOAPI_OPENAPI=/tmp/openapi.yml
 # Kubernetes manages horizontal scaling. Consider more workers if pod upscaling is considered too slow.
 ENV WSGI_WORKERS=1
 ENV WSGI_WORKER_CLASS=gevent
