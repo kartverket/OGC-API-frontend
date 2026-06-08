@@ -16,7 +16,7 @@ import {
   DownloadPanel,
   ErrorPage,
 } from "@/components";
-import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
+import { collectionHasMapProvider, hasExportProcessors } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
 import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
@@ -38,6 +38,8 @@ export default async function Collection({ params }) {
   }
 
   const hasMap = collectionHasMapProvider(collection);
+  const hasDownload = hasExportProcessors();
+
   const bbox = data.extent.spatial.bbox[0];
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
 
@@ -100,8 +102,8 @@ export default async function Collection({ params }) {
               </div>
 
               {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
-
-              <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />
+              
+              { hasDownload && <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} /> }
             </div>
           </div>
           <div className={styles.right}>
