@@ -15,7 +15,6 @@
 .table {
     border-collapse: separate;
     border-spacing: 0;
-    width: max-content;
 
     & tr.selected td {
         background: var(--dsc-table-border-color) !important;

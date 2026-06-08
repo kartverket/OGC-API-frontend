@@ -51,7 +51,7 @@ export function getCollections() {
             title: resource.title?.en || resource.title || id,
             description: resource.description?.en || resource.description?.no || resource.description || '',
             keywords: resource.keywords?.en || resource.keywords?.no || resource.keywords || [],
-            bbox: resource.extents?.spatial?.bbox || {},
+            bbox: resource.extents?.spatial?.bbox || {}
         }));
 }
 
@@ -67,7 +67,7 @@ export function getCollection(collectionId) {
         title: resource.title?.en || resource.title || collectionId,
         description: resource.description?.en || resource.description?.no || resource.description || '',
         keywords: resource.keywords?.en || resource.keywords?.no || resource.keywords || [],
-        bbox: resource.extents?.spatial?.bbox || {},
+        bbox: resource.extents?.spatial?.bbox || {}
     };
 }
 
@@ -97,4 +97,17 @@ export function collectionHasMapProvider(collectionId) {
     if (!resource || resource.type !== 'collection') return false;
 
     return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
+}
+
+export function getCollectionFeatureIdField(collectionId) {
+    const resources = getResources();
+    if (!resources) return null;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return null;
+
+    const provider = (resource.providers ?? [])
+        .find(p => p.type === 'feature');
+
+    return provider?.id_field ?? null;
 }

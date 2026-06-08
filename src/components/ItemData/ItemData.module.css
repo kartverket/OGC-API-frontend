@@ -1,0 +1,41 @@
+.itemData>div {
+    margin-bottom: var(--ds-size-3);
+
+    .header {
+        font-size: var(--ds-font-size-2);
+        font-weight: 700;
+        color: var(--ds-color-neutral-text-subtle);
+        text-transform: uppercase;
+    }
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+}
+
+.label {
+    font-weight: 500;
+    min-width: 30%
+}
+
+.value {
+    font-weight: 400;
+    word-break: break-all;
+}
+
+.label,
+.value {
+    font-size: var(--ds-font-size-3);
+    color: var(--ds-color-neutral-text-default);
+}
+
+.header>div,
+.label,
+.value {
+    padding: var(--ds-size-2) 0;
+}
+
+.link {
+    margin-bottom: var(--ds-size-3);
+}

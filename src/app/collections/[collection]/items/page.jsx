@@ -1,6 +1,7 @@
 import { fetchItemsPageData } from "@/services/pageData";
 import { createItemsMetadata } from "@/services/pageMetadata";
 import { ErrorPage, ItemsPage } from "@/components";
+import { getCollectionFeatureIdField } from "@/config/readPygeoapiConfig";
 
 export async function generateMetadata({ params }) {
   const { collection } = await params;
@@ -16,11 +17,14 @@ export default async function Items({ params, searchParams }) {
     return <ErrorPage status={status} />;
   }
 
+  const idField = getCollectionFeatureIdField(collection);
+
   return (
     <ItemsPage
       srvData={data}
       collection={collection}
       searchParams={_searchParams}
+      idField={idField}
     />
   );
 }

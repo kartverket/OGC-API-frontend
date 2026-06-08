@@ -1,14 +1,12 @@
-import { Fragment } from "react";
 import NextLink from "next/link";
 import { fetchItemPageData } from "@/services/pageData";
 import { createItemMetadata } from "@/services/pageMetadata";
+import { getCollectionFeatureIdField } from "@/config/readPygeoapiConfig";
 import { Card, Heading, Link } from "@digdir/designsystemet-react";
 import {
   Breadcrumbs,
-  Details,
-  DetailsContent,
-  DetailsSummary,
   ErrorPage,
+  ItemData,
   ItemMap,
 } from "@/components";
 import { ArrowLeftIcon, ArrowRightIcon } from "@navikt/aksel-icons";
@@ -27,34 +25,7 @@ export default async function Item({ params }) {
     return <ErrorPage status={status} />;
   }
 
-  function renderValue(value) {
-    return value !== null && value !== "" ? value.toString() : "-";
-  }
-
-  function renderDetails() {
-    return (
-      <Card className={styles.itemCard}>
-        <div className={styles.cardContent}>
-          <div className={styles.details}>
-            <div className={styles.header}>
-              <div>Egenskap</div>
-              <div>Verdi</div>
-            </div>
-
-            <div className={styles.property}>id</div>
-            <div className={styles.value}>{data.id}</div>
-
-            {Object.entries(data.properties).map(([propName, value]) => (
-              <Fragment key={propName}>
-                <div className={styles.property}>{propName}</div>
-                <div className={styles.value}>{renderValue(value)}</div>
-              </Fragment>
-            ))}
-          </div>
-        </div>
-      </Card>
-    );
-  }
+  const idField = getCollectionFeatureIdField(collection);
 
   return (
     <>
@@ -79,7 +50,9 @@ export default async function Item({ params }) {
           </div>
 
           <div className={styles.infoCard}>
-            {renderDetails()}
+            <Card className={styles.itemCard}>
+              <ItemData data={data} idField={idField} />
+            </Card>
 
             <div className={styles.nextPrevLinks}>
               <Link asChild>

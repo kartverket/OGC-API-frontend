@@ -15,48 +15,16 @@
     gap: var(--ds-size-15);
 }
 
+.infoCard {
+    flex: 1;
+}
+
 .itemCard {
     border: 0 none;
     margin-bottom: var(--ds-size-3);
 
     &>* {
         margin: 0;
-    }
-}
-
-.details {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    margin-bottom: var(--ds-size-3);
-
-    .header {
-        display: contents;
-        grid-column: 1 / -1;
-        font-size: var(--ds-font-size-2);
-        font-weight: 700;
-        color: var(--ds-color-neutral-text-subtle);
-        text-transform: uppercase;
-    }
-
-    .property {
-        font-weight: 500;
-    }
-
-    .value {
-        font-weight: 400;
-        word-break: break-word;
-    }
-
-    .property,
-    .value {
-        font-size: var(--ds-font-size-3);
-        color: var(--ds-color-neutral-text-default);
-    }
-
-    .header>div,
-    .property,
-    .value {
-        padding: var(--ds-size-2) 0;
     }
 }
 
@@ -94,7 +62,7 @@
     }
 }
 
-.detailsLinks > div {
+.detailsLinks>div {
     display: flex;
     flex-direction: column;
     gap: var(--ds-size-2);

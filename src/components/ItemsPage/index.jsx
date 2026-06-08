@@ -12,7 +12,7 @@ import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/comp
 import styles from './ItemsPage.module.css';
 
 
-export default function Items({ srvData, collection, searchParams }) {
+export default function Items({ srvData, collection, searchParams, idField }) {
     const { apiBaseUrl } = useApiBaseUrlSWR();
     const searchKey = new URLSearchParams(searchParams).toString();
 
@@ -92,7 +92,7 @@ export default function Items({ srvData, collection, searchParams }) {
                         </div>
 
                         <div className={styles.bottom}>
-                            {data.features.length > 0 && <ItemsTable data={data} />}
+                            {data.features.length > 0 && <ItemsTable data={data} idField={idField} />}
                         </div>
                     </ItemsProvider>
                 </div>
