@@ -1,0 +1,60 @@
+[[datasource]]
+name = "url"
+[datasource.postgis]
+url = "postgres://must-be-overridden/by-env"
+
+[[tilestore]]
+name = "filecache"
+[tilestore.files]
+base_dir = "/var/cache/bbox"
+
+[[tileset]]
+name = "tellekretser"
+cache = "filecache"
+[tileset.postgis]
+datasource = "url"
+
+[[tileset.postgis.layer]]
+name = "tellekretser"
+geometry_field = "geom"
+srid = 3857
+geometry_type = "MULTIPOLYGON"
+buffer_size = 100
+simplify = true
+table_name = "tellekrets"
+
+[[tileset.postgis.layer.query]]
+sql = """
+SELECT *, ST_Transform(geometry, 3857) AS geom
+FROM public.tellekrets
+"""
+
+[[tileset]]
+name = "tellekrets_polar"
+[tileset.postgis]
+datasource = "url"
+extent = [-329524.06482982653, -3547118.6003243104, 811520.9549221481, -1973647.0992851218]
+
+[[tileset.tms]]
+id = "3575"
+
+[[tileset.postgis.layer]]
+name = "tellekrets_polar"
+geometry_field = "geom"
+srid = 3575
+geometry_type = "MULTIPOLYGON"
+buffer_size = 100
+simplify = true
+table_name = "tellekrets"
+
+[[tileset.postgis.layer.query]]
+sql = """
+SELECT *, ST_Transform(geometry, 3575) AS geom
+FROM public.tellekrets
+"""
+
+[[grid]]
+json = "/assets/custom-grid-3575.json"
+
+[webserver.cors]
+allow_all_origins = true
