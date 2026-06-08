@@ -1,5 +1,7 @@
 import { get as getProjectionByCode, transformExtent as _transformExtent } from 'ol/proj';
 import { roundDecimals } from '../helper';
+import { MAX_BBOX } from '@/config/constants';
+import './setup';
 
 const URI_REGEX = /^http:\/\/www\.opengis\.net\/def\/crs\/(?<auth>\w+)\/.*\/(?<code>\w+)$/m;
 const URN_REGEX = /^urn:ogc:def:crs:(?<auth>\w+):.*?:(?<code>\w+)$/m;
@@ -31,6 +33,30 @@ export function zoomToFeature(map, id) {
 
         view.fit(geometry, { padding: [50, 50, 50, 50], duration: 500 });
     }
+}
+
+export function getBbox(bbox, crs) {
+    let maxBbox = getMaxBbox();
+
+    if (maxBbox === null) {
+        return bbox;
+    }
+
+    const crsCode = getCrsCode(crs);
+
+    if (crsCode !== 'OGC:CRS84') {
+        maxBbox = transformExtent(maxBbox, 'OGC:CRS84', crsCode)
+    }
+
+    const [maxMinX, maxMinY, maxMaxX, maxMaxY] = maxBbox;
+    const [minX, minY, maxX, maxY] = bbox;
+
+    return [
+        minX < maxMinX ? maxMinX : minX,
+        minY < maxMinY ? maxMinY : minY,
+        maxX > maxMaxX ? maxMaxX : maxX,
+        maxY > maxMaxY ? maxMaxY : maxY
+    ];
 }
 
 export function getCrsCode(crsName) {
@@ -163,4 +189,14 @@ export function isBboxValid(bbox) {
 
 function getCrsName(geoJson) {
     return geoJson?.crs?.properties?.name || null;
+}
+
+function getMaxBbox() {
+    const maxBbox = (MAX_BBOX ?? '')
+        .split(',')
+        .map(coord => parseFloat(coord.trim()));
+
+    return Array.isArray(maxBbox) && maxBbox.length === 4
+        ? maxBbox
+        : null;
 }

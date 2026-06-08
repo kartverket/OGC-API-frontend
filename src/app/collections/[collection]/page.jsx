@@ -20,6 +20,7 @@ import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
 import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
+import { getBbox } from "@/utils/map/helpers";
 
 // Force runtime reading (needed for config file access)
 export const dynamic = "force-dynamic";
@@ -38,7 +39,7 @@ export default async function Collection({ params }) {
   }
 
   const hasMap = collectionHasMapProvider(collection);
-  const bbox = data.extent.spatial.bbox[0];
+  const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
 
   return (
