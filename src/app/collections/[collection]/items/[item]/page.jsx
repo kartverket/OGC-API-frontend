@@ -1,7 +1,6 @@
 import NextLink from "next/link";
 import { fetchItemPageData } from "@/services/pageData";
 import { createItemMetadata } from "@/services/pageMetadata";
-import { getCollectionFeatureIdField } from "@/config/readPygeoapiConfig";
 import { Card, Heading, Link } from "@digdir/designsystemet-react";
 import {
   Breadcrumbs,
@@ -24,8 +23,6 @@ export default async function Item({ params }) {
   if (status !== 200) {
     return <ErrorPage status={status} />;
   }
-
-  const idField = getCollectionFeatureIdField(collection);
 
   return (
     <>
@@ -51,7 +48,7 @@ export default async function Item({ params }) {
 
           <div className={styles.infoCard}>
             <Card className={styles.itemCard}>
-              <ItemData data={data} idField={idField} />
+              <ItemData data={data} />
             </Card>
 
             <div className={styles.nextPrevLinks}>

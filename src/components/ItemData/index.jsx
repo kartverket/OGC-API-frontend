@@ -1,8 +1,8 @@
 import ItemDataProperty from './ItemDataProperty';
 import styles from './ItemData.module.css';
 
-export default function ItemData({ data, idField }) {
-    const { [idField]: _, ...properties } = data.properties;
+export default function ItemData({ data }) {
+    const { [data.idField]: _, ...properties } = data.properties;
 
     return (
         <div className={styles.itemData}>

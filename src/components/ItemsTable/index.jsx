@@ -14,13 +14,13 @@ const LIMITS = {
     '500': '500'
 };
 
-export default function ItemsTable({ data, idField }) {
+export default function ItemsTable({ data }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const selectedFeature = useSelector(state => state.map.selectedFeature);
     const features = data.features;
-    const columnNames = Object.keys(features[0].properties).filter(key => key !== idField);
+    const columnNames = Object.keys(features[0].properties).filter(key => key !== data.idField);
 
     const limit = getLimit(searchParams) || parseInt(Object.keys(LIMITS)[0], 10);
     const currentPage = getCurrentPage(searchParams);
@@ -148,7 +148,7 @@ export default function ItemsTable({ data, idField }) {
                                         <TableCell>{feature.id}</TableCell>
                                         {
                                             Object.entries(feature.properties)
-                                                .filter(entry => entry[0] !== idField)
+                                                .filter(entry => entry[0] !== data.idField)
                                                 .map(entry => (
                                                     <TableCell key={`${feature.id}-${entry[0]}`}>
                                                         <span title={formatValue(entry[1])}>{formatValue(entry[1])}</span>
