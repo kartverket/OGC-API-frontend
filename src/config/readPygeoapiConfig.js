@@ -98,3 +98,16 @@ export function collectionHasMapProvider(collectionId) {
 
     return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
 }
+
+export function getCollectionFeatureTitleField(collectionId) {
+    const resources = getResources();
+    if (!resources) return null;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return null;
+
+    const provider = (resource.providers ?? [])
+        .find(p => p.type === 'feature');
+
+    return provider?.title_field ?? null;
+}
