@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { isBboxValid, parseBboxStr, transformExtent } from '@/utils/map/helpers';
+import { getBbox, isBboxValid, parseBboxStr, transformExtent } from '@/utils/map/helpers';
 
 
 export default function ItemsProvider({ data, children }) {
@@ -22,7 +22,8 @@ export default function ItemsProvider({ data, children }) {
             let bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
 
             if (!isBboxValid(bbox)) {
-                bbox = transformExtent(data.collection.extent.bbox, data.collection.extent.crs, 'EPSG:4326');
+                const extent = data.collection.extent;
+                bbox = transformExtent(getBbox(extent.bbox, extent.crs), extent.crs, 'OGC:CRS84');
             }
 
             setBbox(bbox);

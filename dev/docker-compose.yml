@@ -33,6 +33,7 @@ services:
       - ../pygeoapi/schemas:/pygeoapi/schemas
       - ../pygeoapi/data:/pygeoapi/data
       - ./volumes/logs:/logs
+      - ../pygeoapi/resources/definitions/tiles/EPSG3575Quad.json:/pygeoapi/pygeoapi/resources/definitions/tiles/EPSG3575Quad.json:ro
     environment:
       - PYGEOAPI_URL=http://localhost:5001/
       - db_host=postgis
@@ -46,17 +47,14 @@ services:
     networks:
       - pygeoapi-network
 
-  t-rex:
+  bbox-tile-server:
     build:
-      context: ../trex
+      context: ../bbox
     platform: linux/amd64
     ports:
       - "8080:8080"
     environment:
-      - DB_USER=postgres
-      - password=qwer1234
-      - DB_HOST=postgis
-      - DB_NAME=pygeoapi_test
+      - BBOX_DATASOURCE_URL=postgres://postgres:qwer1234@postgis:5432/pygeoapi_test?sslmode=disable
     depends_on:
       postgis:
         condition: service_healthy

@@ -6,7 +6,7 @@ import {
   fetchQueryables
 } from '@/utils/api/server';
 import { createErrorResponse } from '@/utils/api/utils';
-import { getMetadata, getCollectionDownloadConfig, getCollectionFeatureIdField } from '@/config/readPygeoapiConfig';
+import { getMetadata, getCollectionDownloadConfig, getCollectionFeatureIdField, getCollectionFeatureTitleField } from '@/config/readPygeoapiConfig';
 
 /**
  * Fetches data for the home page.
@@ -133,7 +133,8 @@ export async function fetchItemPageData(collection, itemId) {
         ...itemData,
         collection: { title: collectionData.title },
         dataset: { title: homeData.title },
-        idField: getCollectionFeatureIdField(collection)
+        idField: getCollectionFeatureIdField(collection),
+        titleField: getCollectionFeatureTitleField(collection)
       },
       status: 200
     };

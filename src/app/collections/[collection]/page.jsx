@@ -16,10 +16,11 @@ import {
   DownloadPanel,
   ErrorPage,
 } from "@/components";
-import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
+import { collectionHasMapProvider, hasExportProcessors } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
 import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
+import { getBbox } from "@/utils/map/helpers";
 
 // Force runtime reading (needed for config file access)
 export const dynamic = "force-dynamic";
@@ -38,7 +39,9 @@ export default async function Collection({ params }) {
   }
 
   const hasMap = collectionHasMapProvider(collection);
-  const bbox = data.extent.spatial.bbox[0];
+  const hasDownload = hasExportProcessors();
+
+  const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
 
   return (
@@ -100,8 +103,8 @@ export default async function Collection({ params }) {
               </div>
 
               {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
-
-              <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />
+              
+              { hasDownload && <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} /> }
             </div>
           </div>
           <div className={styles.right}>

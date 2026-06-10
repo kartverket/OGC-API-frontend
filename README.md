@@ -22,6 +22,35 @@ docker compose down -v
 docker compose up --build
 ```
 
+### Vector tiles med BBOX Tile Server
+
+Prosjektet bruker `bbox-tile-server` med en native BBOX-konfig.
+
+- Compose-service: `bbox-tile-server` (port `8080`)
+- Konfigurasjon: `bbox/bbox.toml`
+- Tile-endepunkt brukt av pygeoapi: `http://bbox-tile-server:8080/xyz/tellekretser/{z}/{x}/{y}.mvt`
+
+Enkel sjekk lokalt etter oppstart:
+
+```shell
+curl -I http://localhost:8080/xyz/tellekretser/0/0/0.mvt
+```
+
+Datasource URL for BBOX er definert i `dev/docker-compose.yml` via `BBOX_DATASOURCE_URL`.
+
+Start bbox-tile-server:
+
+```shell
+docker compose -f dev/docker-compose.yml up -d --build bbox-tile-server
+```
+
+Valgfritt: overstyr verdien midlertidig i PowerShell:
+
+```powershell
+$env:BBOX_DATASOURCE_URL = "postgres://postgres:qwer1234@postgis:5432/pygeoapi_test?sslmode=disable"
+docker compose -f dev/docker-compose.yml up -d --build bbox-tile-server
+```
+
 ### Konfigurasjonsfil (pygeoapi-config.yml)
 
 Frontenden leser per nå metadata fra pygeoapi sin YAML-konfigurasjonsfil for å vise informasjon om datasettet.
