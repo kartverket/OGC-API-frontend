@@ -105,7 +105,7 @@ export function hasExportProcessors() {
     const exportProcessors = (EXPORT_PROCESSORS ?? '').split(',');
 
     if (exportProcessors.length === 0) {
-        return false;
+        return true;
     }
 
     return Object.values(resources)
@@ -114,4 +114,17 @@ export function hasExportProcessors() {
                 const name = value.processor?.name?.trim() ?? '';
                 return name.endsWith(processor)
             }));
+}
+
+export function getCollectionFeatureTitleField(collectionId) {
+    const resources = getResources();
+    if (!resources) return null;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return null;
+
+    const provider = (resource.providers ?? [])
+        .find(p => p.type === 'feature');
+
+    return provider?.title_field ?? null;
 }

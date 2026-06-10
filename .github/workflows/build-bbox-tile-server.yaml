@@ -1,17 +1,16 @@
-name: T-Rex
+name: BBOX Tile Server
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - "trex/**"
+      - "bbox/**"
 
 env:
   docker_registry: ghcr.io
-  image_name: kartverket/datadeling-ogcapi-trex
-  argo_version_file: ogcapi-trex-version
+  image_name: kartverket/datadeling-ogcapi-bbox-tile-server
+  argo_version_file: ogcapi-bbox-tile-server-version
 
 jobs:
   build:
@@ -60,7 +59,7 @@ jobs:
         id: docker
         uses: docker/build-push-action@v7
         with:
-          context: trex
+          context: bbox
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
