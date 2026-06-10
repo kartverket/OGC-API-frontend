@@ -238,6 +238,7 @@ resources:
           password: ${password}
           search_path: [public]
         id_field: nr
+        title_field: navn
         table: kommuner
         geom_field: geometry
         crs:
@@ -379,13 +380,42 @@ resources:
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
       - type: tile
         name: MVT-proxy
-        data: http://t-rex:8080/tellekretser/{z}/{x}/{y}.pbf
+        data: http://bbox-tile-server:8080/xyz/tellekretser/{z}/{x}/{y}.mvt
         options:
           zoom:
             min: 0
             max: 15
           schemes:
-            - WebMercatorQuad # this option is needed in the MVT-proxy provider
+            - WebMercatorQuad
+        format:
+          name: pbf
+          mimetype: application/x-protobuf; type=mapbox-vector-tile
+
+  tellekretser_polar:
+    type: collection
+    title:
+      en: Tellekretser i polar projeksjonen
+    description:
+      en: >
+        Datasettet viser tellekretser i Norge
+    keywords:
+      en:
+        - Tellekrets
+        - Statistikk
+    extents:
+      spatial:
+        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: tile
+        name: MVT-proxy
+        data: http://bbox-tile-server:8080/xyz/tellekrets_polar/{z}/{x}/{y}.mvt
+        options:
+          zoom:
+            min: 0
+            max: 12
+          schemes:
+            - EPSG3575Quad
         format:
           name: pbf
           mimetype: application/x-protobuf; type=mapbox-vector-tile

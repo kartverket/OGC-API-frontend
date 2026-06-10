@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 
 const CONFIG_PATH = process.env.PYGEOAPI_CONFIG_PATH_FRONTEND || '/volumes/pygeoapi-config.yml';
+const EXPORT_PROCESSORS = process.env.EXPORT_PROCESSORS;
 
 let cachedConfig = null;
 let cacheTimestamp = 0;
@@ -97,4 +98,33 @@ export function collectionHasMapProvider(collectionId) {
     if (!resource || resource.type !== 'collection') return false;
 
     return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
+}
+
+export function hasExportProcessors() {
+    const resources = getResources();
+    const exportProcessors = (EXPORT_PROCESSORS ?? '').split(',');
+
+    if (exportProcessors.length === 0) {
+        return true;
+    }
+
+    return Object.values(resources)
+        .some(value => value.type === 'process' && exportProcessors
+            .some(processor => {
+                const name = value.processor?.name?.trim() ?? '';
+                return name.endsWith(processor)
+            }));
+}
+
+export function getCollectionFeatureTitleField(collectionId) {
+    const resources = getResources();
+    if (!resources) return null;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return null;
+
+    const provider = (resource.providers ?? [])
+        .find(p => p.type === 'feature');
+
+    return provider?.title_field ?? null;
 }
