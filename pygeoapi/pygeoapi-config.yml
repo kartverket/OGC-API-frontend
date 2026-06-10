@@ -238,6 +238,7 @@ resources:
           password: ${password}
           search_path: [public]
         id_field: nr
+        title_field: navn
         table: kommuner
         geom_field: geometry
         crs:

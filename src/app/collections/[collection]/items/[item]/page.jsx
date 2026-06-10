@@ -27,6 +27,12 @@ export default async function Item({ params }) {
     return <ErrorPage status={status} />;
   }
 
+  function getTitle() {
+    return data.titleField !== null 
+      ? data.properties[data.titleField]
+      : data.id;
+  }
+
   function renderValue(value) {
     return value !== null && value !== "" ? value.toString() : "-";
   }
@@ -70,7 +76,7 @@ export default async function Item({ params }) {
 
       <div className={styles.page}>
         <Heading level={1} data-size="sm" className={styles.heading}>
-          {data.id}
+          {getTitle()}
         </Heading>
 
         <div className={styles.content}>
