@@ -12,6 +12,7 @@ export { default as ExampleUseCard } from './ExampleUseCard';
 export { default as FilterCard } from './FilterCard';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';
+export { default as ItemData } from './ItemData';
 export { default as ItemMap } from './ItemMap';
 export { default as ItemsMap } from './ItemsMap';
 export { default as ItemsPage } from './ItemsPage';

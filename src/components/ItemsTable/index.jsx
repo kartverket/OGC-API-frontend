@@ -5,6 +5,7 @@ import { Pagination, Select, SelectOption, Table, TableBody, TableCell, TableHea
 import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
 import styles from './ItemsTable.module.css';
 import { useSelector } from 'react-redux';
+import { isPlainObject } from '@/utils/helper';
 
 const LIMITS = {
     '20': '20 (standard)',
@@ -19,7 +20,7 @@ export default function ItemsTable({ data }) {
     const searchParams = useSearchParams();
     const selectedFeature = useSelector(state => state.map.selectedFeature);
     const features = data.features;
-    const columnNames = Object.keys(features[0].properties);
+    const columnNames = Object.keys(features[0].properties).filter(key => key !== data.idField);
 
     const limit = getLimit(searchParams) || parseInt(Object.keys(LIMITS)[0], 10);
     const currentPage = getCurrentPage(searchParams);
@@ -55,7 +56,15 @@ export default function ItemsTable({ data }) {
     }
 
     function formatValue(value) {
-        return value !== null ? value.toString() : '-';
+        if (value === null) {
+            return '-';
+        }
+
+        if (isPlainObject(value)) {
+            return JSON.stringify(value, null, 2);
+        }
+
+        return value.toString();
     }
 
     return (
@@ -138,11 +147,13 @@ export default function ItemsTable({ data }) {
                                     >
                                         <TableCell>{feature.id}</TableCell>
                                         {
-                                            Object.entries(feature.properties).map(entry => (
-                                                <TableCell key={`${feature.id}-${entry[0]}`}>
-                                                    <span title={formatValue(entry[1])}>{formatValue(entry[1])}</span>
-                                                </TableCell>
-                                            ))
+                                            Object.entries(feature.properties)
+                                                .filter(entry => entry[0] !== data.idField)
+                                                .map(entry => (
+                                                    <TableCell key={`${feature.id}-${entry[0]}`}>
+                                                        <span title={formatValue(entry[1])}>{formatValue(entry[1])}</span>
+                                                    </TableCell>
+                                                ))
                                         }
                                     </TableRow>
                                 ))

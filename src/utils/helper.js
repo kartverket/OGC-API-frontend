@@ -42,8 +42,17 @@ export function roundDecimals(number, precision) {
     }
 
     const factor = Math.pow(10, precision);
-    
+
     return Math.round(number * factor) / factor;
+}
+
+export function isPlainObject(value) {
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === null || prototype === Object.prototype;
 }
 
 function countDecimalPlaces(number) {
@@ -51,7 +60,7 @@ function countDecimalPlaces(number) {
 
     if (numberAsString.includes('.')) {
         return numberAsString.split('.')[1].length;
-    } 
+    }
 
     return 0;
 }
