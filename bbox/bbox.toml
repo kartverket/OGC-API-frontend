@@ -6,7 +6,7 @@ url = "postgres://must-be-overridden/by-env"
 [[tilestore]]
 name = "filecache"
 [tilestore.files]
-base_dir = "/var/cache/bbox"
+base_dir = "/tmp"
 
 [[tileset]]
 name = "tellekretser"
