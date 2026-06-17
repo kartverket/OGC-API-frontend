@@ -44,6 +44,8 @@ services:
     depends_on:
       postgis:
         condition: service_healthy
+      bbox-tile-server:
+        condition: service_started
     networks:
       - pygeoapi-network
 
@@ -58,6 +60,7 @@ services:
     depends_on:
       postgis:
         condition: service_healthy
+    restart: always
     networks:
       - pygeoapi-network
 
