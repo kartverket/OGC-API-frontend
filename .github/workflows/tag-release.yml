@@ -23,7 +23,7 @@ jobs:
       tag: ${{ steps.next.outputs.NEXT_TAG }}
       version: ${{ steps.next.outputs.NEXT_VERSION }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
