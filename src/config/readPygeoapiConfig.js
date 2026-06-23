@@ -102,6 +102,8 @@ export function collectionHasMapProvider(collectionId) {
 
 export function hasExportProcessors() {
     const resources = getResources();
+    if (!resources) return false;
+
     const exportProcessors = (EXPORT_PROCESSORS ?? '').split(',').map(p => p.trim()).filter(Boolean);
 
     if (exportProcessors.length === 0) {
