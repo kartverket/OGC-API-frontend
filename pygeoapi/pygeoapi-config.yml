@@ -153,6 +153,8 @@ resources:
         format:
           name: png
           mimetype: image/png
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
   fylker_kystkontur:
     type: collection
