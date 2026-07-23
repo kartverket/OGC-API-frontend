@@ -1,4 +1,4 @@
-FROM geopython/pygeoapi:0.23.4@sha256:c8adf6b8e245d315d937eb06f33c3f1cf867e007871d3ac975c9944371ce720b
+FROM geopython/pygeoapi:0.23.5@sha256:33819a06084c74eaa024f536426863e3374e497f5a2ef4c96ff5bc813509720c
 
 # Custom Python scripts
 COPY distinct_values.py /pygeoapi/distinct_values.py
