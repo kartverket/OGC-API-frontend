@@ -19,15 +19,17 @@ export function proxy(request) {
 
   const isProxyPath = PROXY_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'));
   const isNonHtmlFormat = format && format.toLowerCase() !== 'html';
-  const acceptHeader = request.headers.get('accept') || '*/*';
-  const wantsHtml = acceptHeader.includes('text/html') || acceptHeader.includes('*/*');
+  const acceptHeaderRaw = request.headers.get('accept');
+  const acceptHeader = (acceptHeaderRaw || '').toLowerCase();
+  const wantsHtml =
+    !acceptHeaderRaw || acceptHeader.includes('text/html') || acceptHeader.trim() === '*/*';
   const requestsNonHtmlAccept = !wantsHtml;
 
   if (!isProxyPath && !isNonHtmlFormat && !requestsNonHtmlAccept) {
     return NextResponse.next();
   }
 
-  const apiBaseUrl = process.env.API_BASE_URL;
+  const apiBaseUrl = (process.env.API_BASE_URL || '').trim();
 
   if (!apiBaseUrl) {
     return NextResponse.json(
