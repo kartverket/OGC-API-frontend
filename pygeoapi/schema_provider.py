@@ -68,19 +68,48 @@ _JSONSCHEMA_TO_PYGEOAPI_TYPE = {
 }
 
 
-def _parse_fields(schema: dict) -> dict:
+def _is_geometry_property(prop: dict) -> bool:
+    """Check if a JSON Schema property represents a geometry field.
+
+    Geometry properties are identified by either:
+    - A ``format`` value starting with ``geometry-`` (e.g. geometry-point,
+      geometry-multipolygon) as per OGC API Features schema extension.
+    - An ``x-ogc-role`` of ``primary-geometry``.
+    """
+    fmt = prop.get("format", "")
+    if isinstance(fmt, str) and fmt.startswith("geometry-"):
+        return True
+    if prop.get("x-ogc-role") == "primary-geometry":
+        return True
+    return False
+
+
+def _parse_fields(schema: dict) -> tuple[dict, str | None]:
     """
     Convert a JSON Schema ``properties`` map into the dict format that
     pygeoapi expects from ``BaseProvider.get_fields()``.
+
+    Geometry properties (identified by ``format: geometry-*`` or
+    ``x-ogc-role: primary-geometry``) are excluded from the returned fields
+    since pygeoapi handles geometry separately via ``geom_field``.
 
     Args:
         schema: Parsed JSON Schema document (a dict with a ``properties`` key).
 
     Returns:
-        Dict mapping field names to their pygeoapi field descriptors.
+        Tuple of (fields_dict, primary_geometry_name).
+        ``primary_geometry_name`` is the property name tagged with
+        ``x-ogc-role: primary-geometry``, or the single geometry property
+        if only one exists, or None.
     """
     fields = {}
+    geometry_properties = []
+
     for name, prop in schema.get("properties", {}).items():
+        if _is_geometry_property(prop):
+            geometry_properties.append((name, prop))
+            continue
+
         raw_type = prop.get("type", "string")
 
         # Handle nullable union types: {"type": ["string", "null"]}
@@ -101,7 +130,26 @@ def _parse_fields(schema: dict) -> dict:
 
         fields[name] = field
 
-    return fields
+    # Determine primary geometry name per OGC spec:
+    # - Explicit x-ogc-role: primary-geometry takes precedence
+    # - If only one geometry property exists, it is the primary geometry
+    primary_geometry = None
+    for name, prop in geometry_properties:
+        if prop.get("x-ogc-role") == "primary-geometry":
+            primary_geometry = name
+            break
+    if primary_geometry is None and len(geometry_properties) == 1:
+        primary_geometry = geometry_properties[0][0]
+
+    if geometry_properties:
+        LOGGER.debug(
+            "Excluded %d geometry property/properties from fields: %s (primary=%s)",
+            len(geometry_properties),
+            [name for name, _ in geometry_properties],
+            primary_geometry,
+        )
+
+    return fields, primary_geometry
 
 
 class SchemaPostgreSQLProvider(BaseProvider):
@@ -133,8 +181,17 @@ class SchemaPostgreSQLProvider(BaseProvider):
             with open(schema_file, encoding="utf-8") as fh:
                 raw_schema = json.load(fh)
 
-            # Store in _fields so the BaseProvider.fields property also works.
-            self._fields = _parse_fields(raw_schema)
+            fields, primary_geometry = _parse_fields(raw_schema)
+            self._fields = fields
+
+            # If the schema declares a primary geometry and the provider_def
+            # doesn't already specify geom_field, use the one from the schema.
+            if primary_geometry and not provider_def.get("geom_field"):
+                self.geom_field = primary_geometry
+                LOGGER.info(
+                    "Using primary geometry '%s' from schema file",
+                    primary_geometry,
+                )
 
             LOGGER.info(
                 "Loaded %d field(s) from %s",
