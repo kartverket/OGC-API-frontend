@@ -72,7 +72,7 @@ jobs:
             ghcr.io/${{ inputs.image_name }}:${{ inputs.tag }}
 
       - name: Publish GitHub Release
-        uses: release-drafter/release-drafter@v7
+        uses: release-drafter/release-drafter@v7.6.0
         with:
           config-name: ${{ inputs.drafter_config }}
           publish: true
