@@ -187,6 +187,7 @@ class SchemaPostgreSQLProvider(BaseProvider):
             # If the schema declares a primary geometry and the provider_def
             # doesn't already specify geom_field, use the one from the schema.
             if primary_geometry and not provider_def.get("geom_field"):
+                provider_def["geom_field"] = primary_geometry
                 self.geom_field = primary_geometry
                 LOGGER.info(
                     "Using primary geometry '%s' from schema file",
