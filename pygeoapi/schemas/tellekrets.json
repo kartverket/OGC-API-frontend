@@ -4,7 +4,7 @@
   "title": "land_datadeling_dev_admin_enheter_gold_tellekrets",
   "description": "The table contains information related to electoral districts. It includes details such as district names, numbers, and various identifiers used by electoral authorities. This data can be utilized for analyzing electoral boundaries, understanding district representation, and supporting electoral research.",
   "license": "https://creativecommons.org/licenses/by/4.0/",
-  "type": "object",
+  "type": "feature",
   "properties": {
     "navn": {
       "type": [
@@ -427,23 +427,14 @@
       "x-ogc-example": "0301"
     },
     "representasjonspunkt": {
-      "contentEncoding": "base64",
-      "x-databricks-tags": [
-        "epsg:25833",
-        "geometri_encoding:wkb",
-        "geometri_type:point"
+      "type": [
+        "string",
+        "null"
       ],
-      "description": "Representasjonspunktet er et enkelt senterpunkt for geometry",
-      "format": "geometry-point",
-      "x-ogc-role": "primary-geometry"
+      "description": "Representasjonspunktet er et enkelt senterpunkt for geometry"
     },
     "geometry": {
-      "contentEncoding": "base64",
-      "x-databricks-tags": [
-        "epsg:25833",
-        "geometri_encoding:wkb",
-        "geometri_type:multipolygon"
-      ],
+      "x-ogc-role": "primary-geometry",
       "format": "geometry-multipolygon"
     },
     "valgdirnummer": {
