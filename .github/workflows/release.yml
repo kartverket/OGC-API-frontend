@@ -47,7 +47,7 @@ jobs:
           echo "PREFIX=$PREFIX" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
-        uses: docker/login-action@v4
+        uses: docker/login-action@v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -72,7 +72,7 @@ jobs:
             ghcr.io/${{ inputs.image_name }}:${{ inputs.tag }}
 
       - name: Publish GitHub Release
-        uses: release-drafter/release-drafter@v7
+        uses: release-drafter/release-drafter@v7.7.0
         with:
           config-name: ${{ inputs.drafter_config }}
           publish: true
