@@ -74,6 +74,10 @@ class JsonFgFormatter(BaseFormatter):
             if feature_type:
                 result['conformsTo'].append(_TYPES_SCHEMAS_URI)
                 result['featureType'] = feature_type
+            schema_url = self._extract_schema_url(result)
+            if schema_url:
+                result['featureSchema'] = schema_url
+                self._add_describedby_link(result, schema_url)
             if not is_wgs84 and crs_uri:
                 result['coordRefSys'] = crs_uri
             # featureType on the collection applies to all features;
@@ -86,6 +90,10 @@ class JsonFgFormatter(BaseFormatter):
             if feature_type:
                 result['conformsTo'].append(_TYPES_SCHEMAS_URI)
                 result['featureType'] = feature_type
+            schema_url = self._extract_schema_url(result)
+            if schema_url:
+                result['featureSchema'] = schema_url
+                self._add_describedby_link(result, schema_url)
             if not is_wgs84 and crs_uri:
                 result['coordRefSys'] = crs_uri
             self._transform_feature(result, is_wgs84)
@@ -133,3 +141,29 @@ class JsonFgFormatter(BaseFormatter):
                     return parts[-1]
 
         return None
+
+    def _extract_schema_url(self, data):
+        """Build the schema URL from the collection link.
+
+        :param data: GeoJSON dict (Feature or FeatureCollection)
+        :returns: schema URL string or None
+        """
+
+        for link in data.get('links', []):
+            if link.get('rel') == 'collection':
+                href = link.get('href', '').rstrip('/')
+                if href:
+                    return f'{href}/schema'
+
+        return None
+
+    def _add_describedby_link(self, data, schema_url):
+        """Add a 'describedby' link to the schema for JSON Schema validation."""
+
+        links = data.setdefault('links', [])
+        links.append({
+            'rel': 'describedby',
+            'type': 'application/schema+json',
+            'title': 'Schema',
+            'href': schema_url,
+        })
