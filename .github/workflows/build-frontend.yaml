@@ -88,6 +88,7 @@ jobs:
         uses: kartverket/pharos@v0.6.4
         with:
           image_url: ${{ needs.build_frontend.outputs.image_url }}
+          trivy_category: 'Frontend'
 
   argo:
     name: Update version in apps-repo
