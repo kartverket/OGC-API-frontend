@@ -4,5 +4,5 @@ metadata:
   name: OGC-API-frontend
 spec:
   type: website
-  owner: datadeling_og_distribusjon
+  owner: group:default/dataprodukter
   lifecycle: production
