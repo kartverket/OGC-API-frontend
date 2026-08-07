@@ -38,17 +38,21 @@ export default async function Collections() {
 
         <div className={styles.collections}>
           {data.collections.map((collection) => {
-            const collectionWithFileCount = {
-              ...collection,
-              fileCount: getCollectionReferencedFileCount(collection.id),
-            };
+            const hasCoverage = collectionHasCoverageProvider(collection.id);
+            const hasMap = collectionHasMapProvider(collection.id);
+            const collectionWithFileCount = hasCoverage
+              ? {
+                ...collection,
+                fileCount: getCollectionReferencedFileCount(collection.id),
+              }
+              : collection;
 
             return (
             <CollectionCard
               key={collection.id}
               collection={collectionWithFileCount}
-              hasMap={collectionHasMapProvider(collection.id)}
-              hasCoverage={collectionHasCoverageProvider(collection.id)}
+              hasMap={hasMap}
+              hasCoverage={hasCoverage}
             />
             );
           })}

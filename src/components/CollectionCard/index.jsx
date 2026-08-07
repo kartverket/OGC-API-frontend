@@ -43,7 +43,7 @@ export default async function CollectionCard({ collection, hasMap, hasCoverage }
     <Card className={styles.card}>
       <div className={styles.cardContent}>
         <NextLink
-          href={`/collections/${collection.id}/items`}
+          href={`/collections/${collection.id}`}
           className={styles.thumbnail}
         >
           <Image
