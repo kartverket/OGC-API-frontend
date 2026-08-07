@@ -469,3 +469,42 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
 
+  norge-raster:
+    type: collection
+    title:
+      en: Norge raster
+    description:
+      en: Topography-Bathymetry coverage (EGM2008 height)
+    keywords:
+      en:
+        - coverage
+        - raster
+        - topography
+        - bathymetry
+    extents:
+      spatial:
+        bbox: [3.0, 56.5, 32.0, 71.5]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - type: text/html
+        rel: related
+        title: NCEI/NOAA
+        href: https://www.ncei.noaa.gov/
+    providers:
+      - type: coverage
+        name: rasterio
+        data: /pygeoapi/data/norway_wgs84_cog.tif
+        format:
+          name: GTiff
+          mimetype: image/tiff; application=geotiff
+      - type: map
+        name: MapScript
+        data: /pygeoapi/data/norway_wgs84_cog.tif
+        options:
+          type: MS_LAYER_RASTER
+        format:
+          name: png
+          mimetype: image/png
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/4326
+
+
