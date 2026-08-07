@@ -31,6 +31,10 @@ COPY templates/ /pygeoapi/custom_templates/
 COPY mapserver/fonts.txt /pygeoapi/fonts.txt
 COPY mapserver/styles/ /pygeoapi/styles/
 
+# TEMPORARY: Patch pip inside the base image's venv for CVE-2026-8643 (fixed in pip 26.1.2).
+# Remove once upstream base image ships a patched pip, hopefully any version after 0.24.0
+RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade "pip>=26.1.2"
+
 RUN /venv/bin/python3 -m pip install \
         prometheus_client \
         prometheus_flask_exporter \
