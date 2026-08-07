@@ -100,6 +100,56 @@ export function collectionHasMapProvider(collectionId) {
     return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
 }
 
+export function collectionHasCoverageProvider(collectionId) {
+    const resources = getResources();
+    if (!resources) return false;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return false;
+
+    return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'coverage');
+}
+
+function _isFileReference(value) {
+    if (typeof value !== 'string') return false;
+
+    // Ignore connection strings like "host=... dbname=...".
+    if (value.includes('=') && value.includes(' ')) return false;
+
+    return /\.(tif|tiff|vrt|nc|grib2?|asc|gpkg|geojson|json|csv|parquet|mbtiles|sqlite)$/i.test(value);
+}
+
+function _collectFileReferences(value, output) {
+    if (typeof value === 'string') {
+        if (_isFileReference(value)) output.add(value);
+        return;
+    }
+
+    if (Array.isArray(value)) {
+        value.forEach(entry => _collectFileReferences(entry, output));
+        return;
+    }
+
+    if (value && typeof value === 'object') {
+        Object.values(value).forEach(entry => _collectFileReferences(entry, output));
+    }
+}
+
+export function getCollectionReferencedFileCount(collectionId) {
+    const resources = getResources();
+    if (!resources) return 0;
+
+    const resource = resources[collectionId];
+    if (!resource || resource.type !== 'collection') return 0;
+
+    const refs = new Set();
+    for (const provider of (resource.providers ?? [])) {
+        _collectFileReferences(provider?.data, refs);
+    }
+
+    return refs.size;
+}
+
 export function hasExportProcessors() {
     const resources = getResources();
     if (!resources) return false;
