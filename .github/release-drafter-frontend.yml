@@ -1,25 +1,33 @@
 name-template: 'Frontend v$RESOLVED_VERSION'
 tag-template: 'frontend-v$RESOLVED_VERSION'
 tag-prefix: 'frontend-'
-include-labels:
-  - 'frontend'
-  - 'javascript'
+
 categories:
-  - title: '🚀 Features'
-    labels: ['feature', 'enhancement']
+  - type: 'pre-exclude'
+    when:
+      paths:
+        - pygeoapi/**
+        - bbox/**
+        - public/**
+        - dev/**
   - title: '🐛 Bug Fixes'
-    labels: ['bug', 'fix']
+    semver-increment: patch
+    when:
+      labels:
+        - 'bug'
+        - 'fix'
   - title: '🔧 Maintenance'
-    labels: ['chore', 'dependencies', 'github_actions']
+    semver-increment: patch
+    when:
+      labels:
+        - 'chore'
+        - 'dependencies'
+        - 'github_actions'
+  - title: '🚀 Changes'
+    semver-increment: minor
+
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
-version-resolver:
-  major:
-    labels: ['breaking']
-  minor:
-    labels: ['feature', 'enhancement']
-  patch:
-    labels: ['bug', 'fix', 'chore', 'dependencies', 'github_actions']
-  default: patch
+
 template: |
   ## What's Changed
   $CHANGES
