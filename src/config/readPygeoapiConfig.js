@@ -110,7 +110,7 @@ export function collectionHasCoverageProvider(collectionId) {
     return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'coverage');
 }
 
-function _isFileReference(value) {
+export function isFileReference(value) {
     if (typeof value !== 'string') return false;
 
     // Ignore connection strings like "host=... dbname=...".
@@ -119,19 +119,19 @@ function _isFileReference(value) {
     return /\.(tif|tiff|vrt|nc|grib2?|asc|gpkg|geojson|json|csv|parquet|mbtiles|sqlite)$/i.test(value);
 }
 
-function _collectFileReferences(value, output) {
+export function collectFileReferences(value, output) {
     if (typeof value === 'string') {
-        if (_isFileReference(value)) output.add(value);
+        if (isFileReference(value)) output.add(value);
         return;
     }
 
     if (Array.isArray(value)) {
-        value.forEach(entry => _collectFileReferences(entry, output));
+        value.forEach(entry => collectFileReferences(entry, output));
         return;
     }
 
     if (value && typeof value === 'object') {
-        Object.values(value).forEach(entry => _collectFileReferences(entry, output));
+        Object.values(value).forEach(entry => collectFileReferences(entry, output));
     }
 }
 
@@ -144,7 +144,7 @@ export function getCollectionReferencedFileCount(collectionId) {
 
     const refs = new Set();
     for (const provider of (resource.providers ?? [])) {
-        _collectFileReferences(provider?.data, refs);
+        collectFileReferences(provider?.data, refs);
     }
 
     return refs.size;
