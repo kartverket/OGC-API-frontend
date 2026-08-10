@@ -16,8 +16,7 @@ import {
   DownloadPanel,
   ErrorPage,
 } from "@/components";
-import { collectionHasMapProvider, hasExportProcessors } from "@/config/readPygeoapiConfig";
-import { collectionHasCoverageProvider } from "@/config/readPygeoapiConfig";
+import { collectionHasMapProvider, collectionHasCoverageProvider, hasExportProcessors } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
 import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";

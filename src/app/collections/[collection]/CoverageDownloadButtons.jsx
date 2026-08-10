@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button, Card } from '@digdir/designsystemet-react';
-import { DownloadIcon, PackageFillIcon, ChevronRightIcon } from '@navikt/aksel-icons';
+import { DownloadIcon, ChevronRightIcon } from '@navikt/aksel-icons';
 import styles from './page.module.css';
 
 function getDownloadFilename(link) {
@@ -33,19 +33,25 @@ async function downloadLink(href, filename) {
 
 export default function CoverageDownloadButtons({ links }) {
     const [busyHref, setBusyHref] = useState('');
+    const [errorHref, setErrorHref] = useState('');
 
     return links.map((link) => {
         const filename = getDownloadFilename(link);
         const label = link.label;
         const busy = busyHref === link.href;
+        const hasError = errorHref === link.href;
 
         return (
             <Card key={link.href} className={styles.objectCard} data-variant="tinted" data-color="accent">
                 <Button
                     onClick={async () => {
                         setBusyHref(link.href);
+                        setErrorHref('');
                         try {
                             await downloadLink(link.href, filename);
+                        } catch (err) {
+                            console.error('Nedlasting feilet:', err);
+                            setErrorHref(link.href);
                         } finally {
                             setBusyHref('');
                         }
@@ -57,6 +63,7 @@ export default function CoverageDownloadButtons({ links }) {
                     <span>{busy ? 'Laster ned…' : label}</span>
                     <ChevronRightIcon title="a11y-title" fontSize="36px" />
                 </Button>
+                {hasError && <span role="alert">Nedlasting feilet. Prøv igjen.</span>}
             </Card>
         );
     });
