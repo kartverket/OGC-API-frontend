@@ -17,10 +17,12 @@ import {
   ErrorPage,
 } from "@/components";
 import { collectionHasMapProvider, hasExportProcessors } from "@/config/readPygeoapiConfig";
+import { collectionHasCoverageProvider } from "@/config/readPygeoapiConfig";
 import { fetchCollectionPageData } from "@/services/pageData";
 import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
 import { getBbox } from "@/utils/map/helpers";
+import CoverageDownloadButtons from "./CoverageDownloadButtons";
 
 // Force runtime reading (needed for config file access)
 export const dynamic = "force-dynamic";
@@ -28,6 +30,18 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }) {
   const { collection } = await params;
   return createCollectionMetadata(collection);
+}
+
+function getCoverageLinkLabel(link) {
+  if (link.type === "application/prs.coverage+json") {
+    return "Coverage as covjson";
+  }
+
+  if ((link.type ?? "").toLowerCase().includes("image/tiff")) {
+    return "Coverage data as GTiff";
+  }
+
+  return link.title || link.type || "Coverage";
 }
 
 export default async function Collection({ params }) {
@@ -39,7 +53,21 @@ export default async function Collection({ params }) {
   }
 
   const hasMap = collectionHasMapProvider(collection);
+  const hasCoverage = collectionHasCoverageProvider(collection);
   const hasDownload = hasExportProcessors();
+  const coverageLinks = hasCoverage
+    ? (data.links ?? []).filter((link) => {
+        return link.rel?.endsWith("/coverage") && link.type !== "text/html";
+      })
+    : [];
+
+  const coverageDownloads = coverageLinks.map((link) => ({
+    href: link.href,
+    label: getCoverageLinkLabel(link),
+    filename: (link.type ?? '').toLowerCase().includes('image/tiff')
+      ? `${data.id}.tif`
+      : `${data.id}.json`,
+  }));
 
   const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
@@ -73,18 +101,23 @@ export default async function Collection({ params }) {
 
             <div className={styles.topLeftBottom}>
               <div className={styles.actionCards}>
-                <Card
-                  asChild
-                  data-variant="tinted"
-                  data-color="accent"
-                  className={styles.objectCard}
-                >
-                  <NextLink href={`/collections/${data.id}/items`}>
-                    <PackageFillIcon title="a11y-title" fontSize="36px" />
-                    <span>Vis objekter i datasettet</span>
-                    <ChevronRightIcon title="a11y-title" fontSize="36px" />
-                  </NextLink>
-                </Card>
+                {hasCoverage
+                  ? <CoverageDownloadButtons
+                      links={coverageDownloads}
+                    />
+                  : <Card
+                      asChild
+                      data-variant="tinted"
+                      data-color="accent"
+                      className={styles.objectCard}
+                    >
+                      <NextLink href={`/collections/${data.id}/items`}>
+                        <PackageFillIcon title="a11y-title" fontSize="36px" />
+                        <span>Vis objekter i datasettet</span>
+                        <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                      </NextLink>
+                    </Card>
+                }
 
                 {hasMap && (
                   <Card
@@ -116,7 +149,12 @@ export default async function Collection({ params }) {
               </div>
             </div>
 
-            <DatasetInfoCard collection={data} metadata={data.metadata} />
+            <DatasetInfoCard
+              collection={data}
+              metadata={data.metadata}
+              hasMap={hasMap}
+              hasCoverage={hasCoverage}
+            />
           </div>
         </div>
       </div>

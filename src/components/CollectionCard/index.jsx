@@ -7,6 +7,10 @@ import styles from "./CollectionCard.module.css";
 import { fetchCollection } from "@/utils/api/server";
 
 export default async function CollectionCard({ collection, hasMap, hasCoverage }) {
+  const mainLink = hasCoverage
+    ? `/collections/${collection.id}`
+    : `/collections/${collection.id}/items`;
+
   // Fetch one item to check geometry type
   let geometryType = null;
   if (!hasCoverage) {
@@ -43,7 +47,7 @@ export default async function CollectionCard({ collection, hasMap, hasCoverage }
     <Card className={styles.card}>
       <div className={styles.cardContent}>
         <NextLink
-          href={`/collections/${collection.id}`}
+          href={mainLink}
           className={styles.thumbnail}
         >
           <Image
@@ -58,7 +62,7 @@ export default async function CollectionCard({ collection, hasMap, hasCoverage }
           <div className={styles.top}>
             <div className={styles.left}>
               <Link asChild>
-                <NextLink href={`/collections/${collection.id}`}>
+                <NextLink href={mainLink}>
                   <Heading level={2} data-size="xs" className={styles.title}>
                     {collection.title}
                   </Heading>

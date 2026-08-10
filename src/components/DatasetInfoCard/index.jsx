@@ -4,7 +4,18 @@ import { Details, DetailsContent, DetailsSummary } from '..';
 import { InformationSquareIcon } from '@navikt/aksel-icons';
 import styles from './DatasetInfoCard.module.css';
 
-export default function DatasetInfoCard({ collection, metadata, hasMap }) {
+export default function DatasetInfoCard({ collection, metadata, hasMap, hasCoverage }) {
+    const crsList = Array.isArray(collection.crs)
+        ? collection.crs
+        : collection.crs
+            ? [collection.crs]
+            : collection.extent?.spatial?.crs
+                ? [collection.extent.spatial.crs]
+                : [];
+    const serviceType = [hasCoverage ? 'Coverage' : collection.itemType, hasMap ? 'Maps' : null]
+        .filter(Boolean)
+        .join(', ');
+
     return (
         <Card className={styles.datasetInfoCard}>
             <div className={styles.heading}>
@@ -16,13 +27,15 @@ export default function DatasetInfoCard({ collection, metadata, hasMap }) {
                 <div>
                     <div className={styles.label}>Tjenestetype</div>
                     <div className={styles.value} style={{ textTransform: 'capitalize' }}>
-                        {[collection.itemType, hasMap ? 'Maps' : null].filter(Boolean).join(', ')}
+                        {serviceType}
                     </div>
                 </div>
-                <div>
-                    <div className={styles.label}>Antall objekter (items)</div>
-                    <div className={styles.value}>{collection.itemCount}</div>
-                </div>
+                {!hasCoverage && (
+                    <div>
+                        <div className={styles.label}>Antall objekter (items)</div>
+                        <div className={styles.value}>{collection.itemCount}</div>
+                    </div>
+                )}
                 <div>
                     <div className={styles.label}>Tilbyder</div>
                     <div className={styles.value}>{metadata?.provider?.name || 'Kartverket'}</div>
@@ -76,12 +89,10 @@ export default function DatasetInfoCard({ collection, metadata, hasMap }) {
                         <DetailsSummary>Koordinatsystemer</DetailsSummary>
                         <DetailsContent className={styles.detailsContent}>
                             <ListUnordered data-size="sm">
-                                {
-                                    collection.crs.map(crs => {
-                                        const crsCode = getCrsCode(crs);
-                                        return <ListItem key={crsCode}>{crsCode}</ListItem>
-                                    })
-                                }
+                                {crsList.map(crs => {
+                                    const crsCode = getCrsCode(crs);
+                                    return <ListItem key={crsCode}>{crsCode}</ListItem>
+                                })}
                             </ListUnordered>
                         </DetailsContent>
                     </Details>

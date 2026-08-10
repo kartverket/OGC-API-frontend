@@ -65,15 +65,20 @@ export async function fetchCollections() {
 }
 
 export async function fetchCollection(name) {
-    const result = await Promise.all([
-        _fetchCollection(name),
-        _fetchItemCount(name)
-    ])
+    const collection = await _fetchCollection(name);
+
+    const hasFeatureProvider = collection.itemType === 'feature'
+        || (Array.isArray(collection.providers)
+            && collection.providers.some(provider => provider.type === 'feature'));
+
+    const itemCountResult = hasFeatureProvider
+        ? await _fetchItemCount(name)
+        : { count: 0, geometryType: null };
 
     return {
-        ...result[0],
-        itemCount: result[1].count,
-        geometryType: result[1].geometryType
+        ...collection,
+        itemCount: itemCountResult.count,
+        geometryType: itemCountResult.geometryType
     }
 }
 
