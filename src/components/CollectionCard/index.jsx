@@ -6,22 +6,27 @@ import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
 import styles from "./CollectionCard.module.css";
 import { fetchCollection } from "@/utils/api/server";
 
-export default async function CollectionCard({ collection, hasMap }) {
+export default async function CollectionCard({ collection, hasMap, hasCoverage }) {
   // Fetch one item to check geometry type
   let geometryType = null;
-  try {
-    const itemsData = await fetchCollection(collection.id);
-    geometryType = itemsData.geometryType || null;
-  } catch (error) {
-    console.error(
-      `[CollectionCard] Failed to fetch items for collection ${collection.id}:`,
-      error,
-    );
+  if (!hasCoverage) {
+    try {
+      const itemsData = await fetchCollection(collection.id);
+      geometryType = itemsData.geometryType || null;
+    } catch (error) {
+      console.error(
+        `[CollectionCard] Failed to fetch items for collection ${collection.id}:`,
+        error,
+      );
+    }
   }
-  // Determine which icon to use based on geometry type (default to polygon)
-  let geometryIconPath = "/gfx/polygon.svg";
 
-  if (geometryType) {
+  // Determine which icon to use based on geometry type (default to polygon)
+  let geometryIconPath = hasCoverage ? "/gfx/raster.svg" : "/gfx/polygon.svg";
+  const countValue = hasCoverage ? collection.fileCount : collection.itemCount;
+  const countLabel = hasCoverage ? "files" : "features";
+
+  if (!hasCoverage && geometryType) {
     if (/polygon/i.test(geometryType)) {
       geometryIconPath = "/gfx/polygon.svg";
     } else if (/line/i.test(geometryType)) {
@@ -38,7 +43,7 @@ export default async function CollectionCard({ collection, hasMap }) {
     <Card className={styles.card}>
       <div className={styles.cardContent}>
         <NextLink
-          href={`/collections/${collection.id}/items`}
+          href={`/collections/${collection.id}`}
           className={styles.thumbnail}
         >
           <Image
@@ -53,7 +58,7 @@ export default async function CollectionCard({ collection, hasMap }) {
           <div className={styles.top}>
             <div className={styles.left}>
               <Link asChild>
-                <NextLink href={`/collections/${collection.id}/items`}>
+                <NextLink href={`/collections/${collection.id}`}>
                   <Heading level={2} data-size="xs" className={styles.title}>
                     {collection.title}
                   </Heading>
@@ -61,9 +66,9 @@ export default async function CollectionCard({ collection, hasMap }) {
                   <ChevronRightIcon fontSize="24px" />
                 </NextLink>
               </Link>
-              {collection.itemCount && (
+              {countValue > 0 && (
                 <span className={`${styles.itemCount} ${styles.tag}`}>
-                  {collection.itemCount} features
+                  {countValue} {countLabel}
                 </span>
               )}
             </div>
@@ -90,12 +95,18 @@ export default async function CollectionCard({ collection, hasMap }) {
 
           <div className={styles.bottom}>
             <div className={styles.left}>
-              <span className={`${styles.itemType} ${styles.tag}`}>
-                {collection.itemType}
-              </span>
+              {collection.itemType && (
+                <span className={`${styles.itemType} ${styles.tag}`}>
+                  {collection.itemType}
+                </span>
+              )}
 
               {hasMap && (
                 <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>
+              )}
+
+              {hasCoverage && (
+                <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>
               )}
 
               <div className={styles.keywords}>

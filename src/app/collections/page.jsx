@@ -2,7 +2,11 @@ import { fetchCollectionsPageData } from "@/services/pageData";
 import { createCollectionsMetadata } from "@/services/pageMetadata";
 import { Heading } from "@digdir/designsystemet-react";
 import { Breadcrumbs, CollectionCard, ErrorPage } from "@/components";
-import { collectionHasMapProvider } from "@/config/readPygeoapiConfig";
+import {
+  getCollectionReferencedFileCount,
+  collectionHasCoverageProvider,
+  collectionHasMapProvider,
+} from "@/config/readPygeoapiConfig";
 // import CollectionCard from "@/components/CollectionCard";
 import styles from "./page.module.css";
 
@@ -33,9 +37,25 @@ export default async function Collections() {
         </Heading>
 
         <div className={styles.collections}>
-          {data.collections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} hasMap={collectionHasMapProvider(collection.id)} />
-          ))}
+          {data.collections.map((collection) => {
+            const hasCoverage = collectionHasCoverageProvider(collection.id);
+            const hasMap = collectionHasMapProvider(collection.id);
+            const collectionWithFileCount = hasCoverage
+              ? {
+                ...collection,
+                fileCount: getCollectionReferencedFileCount(collection.id),
+              }
+              : collection;
+
+            return (
+            <CollectionCard
+              key={collection.id}
+              collection={collectionWithFileCount}
+              hasMap={hasMap}
+              hasCoverage={hasCoverage}
+            />
+            );
+          })}
         </div>
       </div>
     </>
