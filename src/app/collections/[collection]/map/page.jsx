@@ -26,7 +26,11 @@ export default async function CollectionMap({ params }) {
     if (!hasMap) notFound();
 
     const bbox = data.extent?.spatial?.bbox?.[0];
-    const crsOptions = data.crs;
+    const crsOptions = Array.isArray(data.crs)
+        ? data.crs
+        : data.extent?.spatial?.crs
+            ? [data.extent.spatial.crs]
+            : [];
 
     if (!Array.isArray(bbox) || bbox.length !== 4) notFound();
     if (!Array.isArray(crsOptions) || crsOptions.length === 0) notFound();
