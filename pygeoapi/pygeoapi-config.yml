@@ -203,6 +203,8 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/4326
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
   kommuner:
     type: collection
@@ -284,6 +286,8 @@ resources:
         format:
           name: png
           mimetype: image/png
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
   kommuner_kystkontur:
     type: collection
@@ -332,6 +336,8 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/4326
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
   tellekretser:
     type: collection
@@ -392,6 +398,8 @@ resources:
         format:
           name: pbf
           mimetype: application/x-protobuf; type=mapbox-vector-tile
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
   tellekretser_polar:
     type: collection
@@ -470,4 +478,6 @@ resources:
           - http://www.opengis.net/def/crs/EPSG/0/4326
           - http://www.opengis.net/def/crs/EPSG/0/3857
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
