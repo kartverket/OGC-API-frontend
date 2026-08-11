@@ -493,13 +493,13 @@ resources:
     providers:
       - type: coverage
         name: rasterio
-        data: /pygeoapi/data/norway_wgs84_cog.tif
+        data: ${NORGE_EXAMPLE_RASTER_PATH}
         format:
           name: GTiff
           mimetype: image/tiff; application=geotiff
       - type: map
         name: MapScript
-        data: /pygeoapi/data/norway_wgs84_cog.tif
+        data: ${NORGE_EXAMPLE_RASTER_PATH}
         options:
           type: MS_LAYER_RASTER
         format:

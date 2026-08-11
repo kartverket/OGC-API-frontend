@@ -13,8 +13,6 @@ COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
 # Patched maps module
 COPY maps.py /pygeoapi/pygeoapi/api/maps.py
 
-# Coverage data
-COPY data/ /pygeoapi/data/
 
 # pygeoapi configuration
 COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml
