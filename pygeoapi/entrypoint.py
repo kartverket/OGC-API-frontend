@@ -2,6 +2,11 @@
 import re
 from modify_openapi import remove_post_endpoints
 
+# Remove GOOGLE_APPLICATION_CREDENTIALS from the environment to avoid GDAL
+# trying to use it for authentication.
+import os
+os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
+
 _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 
 # Remove POST endpoints from /collections/{id}/items in the generated OpenAPI spec.
