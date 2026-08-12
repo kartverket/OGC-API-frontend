@@ -1,6 +1,7 @@
 import { SKIP_SSG } from '@/config/constants';
 import { getResponse } from './utils';
 import { getApiBaseUrlServer } from './baseUrl';
+import { collectionHasFeatureCapability } from './capabilities';
 
 
 function requireBaseUrl() {
@@ -46,7 +47,7 @@ export async function fetchCollections() {
     const promises = [];
 
     for (const collection of data.collections) {
-        if (collection.itemType === 'feature') {
+        if (collectionHasFeatureCapability(collection.links)) {
             promises.push(_fetchItemCount(collection.id))
         }
     }
@@ -67,11 +68,7 @@ export async function fetchCollections() {
 export async function fetchCollection(name) {
     const collection = await _fetchCollection(name);
 
-    const hasFeatureProvider = collection.itemType === 'feature'
-        || (Array.isArray(collection.providers)
-            && collection.providers.some(provider => provider.type === 'feature'));
-
-    const itemCountResult = hasFeatureProvider
+    const itemCountResult = collectionHasFeatureCapability(collection.links)
         ? await _fetchItemCount(name)
         : { count: 0, geometryType: null };
 

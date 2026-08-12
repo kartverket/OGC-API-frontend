@@ -108,18 +108,20 @@ export default async function Collection({ params }) {
                   ? <CoverageDownloadButtons
                       links={coverageDownloads}
                     />
-                  : <Card
-                      asChild
-                      data-variant="tinted"
-                      data-color="accent"
-                      className={styles.objectCard}
-                    >
-                      <NextLink href={`/collections/${data.id}/items`}>
-                        <PackageFillIcon title="a11y-title" fontSize="36px" />
-                        <span>Vis objekter i datasettet</span>
-                        <ChevronRightIcon title="a11y-title" fontSize="36px" />
-                      </NextLink>
-                    </Card>
+                  : hasFeature && (
+                      <Card
+                        asChild
+                        data-variant="tinted"
+                        data-color="accent"
+                        className={styles.objectCard}
+                      >
+                        <NextLink href={`/collections/${data.id}/items`}>
+                          <PackageFillIcon title="a11y-title" fontSize="36px" />
+                          <span>Vis objekter i datasettet</span>
+                          <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                        </NextLink>
+                      </Card>
+                    )
                 }
 
                 {hasTiles && (

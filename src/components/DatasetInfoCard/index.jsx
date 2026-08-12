@@ -13,7 +13,7 @@ export default function DatasetInfoCard({ collection, metadata, hasFeature, hasM
                 ? [collection.extent.spatial.crs]
                 : [];
     const serviceType = [
-        hasFeature ? 'Feature' : null,
+        hasFeature ? (collection.itemType || 'Feature') : null,
         hasMap ? 'Maps' : null,
         hasCoverage ? 'Coverage' : null,
         hasTiles ? 'Tiles' : null,

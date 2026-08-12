@@ -16,6 +16,7 @@ import Zoom from '@/components/Map/Zoom';
 import { getCrsCode, getLayer, isGeographicCrs, transformExtent } from '@/utils/map/helpers';
 import { createBaseMapSource, isBasemapProjection } from '@/utils/map/baseMap';
 import basemapConfig from '@/config/basemap';
+import { useCopyToClipboard } from '@/hooks';
 import styles from './MapViewer.module.css';
 
 function createSource(collectionId, apiBaseUrl, olMapRef, crsUri) {
@@ -48,7 +49,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
     const [olMap, setOlMap] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState('');
-    const [copied, setCopied] = useState(false);
+    const { copied, copy } = useCopyToClipboard();
 
     // Mount OL map
     useEffect(() => {
@@ -219,11 +220,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
                     <span className={styles.url}>{decodeURIComponent(mapUrl)}</span>
                     <button
                         type="button"
-                        onClick={() => {
-                            navigator.clipboard.writeText(decodeURIComponent(mapUrl)).catch(() => {});
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }}
+                        onClick={() => copy(decodeURIComponent(mapUrl))}
                         aria-label="Kopier URL"
                         className={`${styles.iconButton} ${copied ? styles.iconButtonCopied : ''}`}
                     >

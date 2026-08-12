@@ -16,6 +16,7 @@ import { createTilesMap } from '@/utils/map/map';
 import { createVectorTileSource, buildTileGridFromDefinition } from '@/utils/map/vectorTilesLayer';
 import { getLayer } from '@/utils/map/helpers';
 import Zoom from '@/components/Map/Zoom';
+import { useCopyToClipboard } from '@/hooks';
 import styles from './TilesViewer.module.css';
 
 function substitutePlaceholders(href, apiBaseUrl, tmsId) {
@@ -28,13 +29,6 @@ function substitutePlaceholders(href, apiBaseUrl, tmsId) {
 // Synchronous part of parsing the /tiles response: URL templates and the
 // hrefs needed for enrichment, but not the enrichment itself (that's async).
 function buildTileMatrixSetSummaries(data, apiBaseUrl) {
-    // The top-level tile-item link contains {tileMatrixSetId} as a placeholder.
-    // Matched by rel="item" rather than a specific vector-tile media type,
-    // since that varies by provider (e.g. pygeoapi's native MVT-postgresql
-    // provider reports "application/vnd.mapbox-vector-tile", while its
-    // MVT-proxy provider passes through whatever the proxied tile server
-    // reports, e.g. "application/x-protobuf; type=mapbox-vector-tile") —
-    // rel="item" is the stable OGC API - Tiles convention either way.
     const mvtTemplate = (data.links ?? []).find(
         l => l.rel === 'item' && l.href?.includes('{tileMatrixSetId}')
     );
@@ -68,42 +62,45 @@ function buildTileMatrixSetSummaries(data, apiBaseUrl) {
         .filter(Boolean);
 }
 
+async function fetchTilingScheme(href, tmsId) {
+    if (!href) return { tileGrid: null, projectionCode: null };
+    try {
+        const res = await fetch(href);
+        if (res.ok) {
+            const definition = await res.json();
+            const built = buildTileGridFromDefinition(definition);
+            if (built) return built;
+        }
+    } catch (err) {
+        console.warn(`Kunne ikke bygge flisegrid for TileMatrixSet "${tmsId}":`, err);
+    }
+    return { tileGrid: null, projectionCode: null };
+}
+
+async function fetchTileJsonZoomRange(href, tmsId) {
+    if (!href) return { minzoom: undefined, maxzoom: undefined };
+    try {
+        const res = await fetch(href);
+        if (res.ok) {
+            const tileJson = await res.json();
+            return {
+                minzoom: typeof tileJson.minzoom === 'number' ? tileJson.minzoom : undefined,
+                maxzoom: typeof tileJson.maxzoom === 'number' ? tileJson.maxzoom : undefined,
+            };
+        }
+    } catch (err) {
+        console.warn(`Kunne ikke laste TileJSON for TileMatrixSet "${tmsId}":`, err);
+    }
+    return { minzoom: undefined, maxzoom: undefined };
+}
+
 // Fetches this TMS's tiling-scheme definition (-> tile grid) and TileJSON
-// metadata (-> zoom range), tolerating either failing independently.
+// metadata (-> zoom range) in parallel, tolerating either failing independently.
 async function enrichTileMatrixSet(summary) {
-    let tileGrid = null;
-    let projectionCode = null;
-    let minzoom;
-    let maxzoom;
-
-    if (summary.tilingSchemeHref) {
-        try {
-            const res = await fetch(summary.tilingSchemeHref);
-            if (res.ok) {
-                const definition = await res.json();
-                const built = buildTileGridFromDefinition(definition);
-                if (built) {
-                    tileGrid = built.tileGrid;
-                    projectionCode = built.projectionCode;
-                }
-            }
-        } catch (err) {
-            console.warn(`Kunne ikke bygge flisegrid for TileMatrixSet "${summary.id}":`, err);
-        }
-    }
-
-    if (summary.tileJsonHref) {
-        try {
-            const res = await fetch(summary.tileJsonHref);
-            if (res.ok) {
-                const tileJson = await res.json();
-                if (typeof tileJson.minzoom === 'number') minzoom = tileJson.minzoom;
-                if (typeof tileJson.maxzoom === 'number') maxzoom = tileJson.maxzoom;
-            }
-        } catch (err) {
-            console.warn(`Kunne ikke laste TileJSON for TileMatrixSet "${summary.id}":`, err);
-        }
-    }
+    const [{ tileGrid, projectionCode }, { minzoom, maxzoom }] = await Promise.all([
+        fetchTilingScheme(summary.tilingSchemeHref, summary.id),
+        fetchTileJsonZoomRange(summary.tileJsonHref, summary.id),
+    ]);
 
     return { ...summary, tileGrid, projectionCode, minzoom, maxzoom };
 }
@@ -128,7 +125,7 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
     const [activeTms, setActiveTms] = useState(null);
     const [currentZoom, setCurrentZoom] = useState(null);
     const [error, setError] = useState(null);
-    const [copied, setCopied] = useState(false);
+    const { copied, copy } = useCopyToClipboard();
 
     const activeEntry = tileMatrixSets.find(t => t.id === activeTms) ?? null;
 
@@ -190,18 +187,17 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
         };
     }, [apiBaseUrl, collectionId]);
 
-    // Apply tile source whenever the map is ready or the active TMS changes.
-    // Depends on activeTms (a stable string), not the derived activeEntry
-    // object, so this doesn't re-fire on every unrelated render.
+    // Apply tile source whenever the map is ready or the active TMS entry changes.
+    // activeEntry is referentially stable across renders that don't touch
+    // tileMatrixSets or activeTms (Array.find returns the same object
+    // reference), so this doesn't re-fire on every unrelated render.
     useEffect(() => {
-        if (!olMap || !activeTms) return;
-        const entry = tileMatrixSets.find(t => t.id === activeTms);
-        if (!entry) return;
+        if (!olMap || !activeEntry) return;
         const tileLayer = getLayer(olMap, 'vector-tiles');
         if (tileLayer) {
-            tileLayer.setSource(createVectorTileSource(entry.urlTemplate, entry.tileGrid, entry.projectionCode));
+            tileLayer.setSource(createVectorTileSource(activeEntry.urlTemplate, activeEntry.tileGrid, activeEntry.projectionCode));
         }
-    }, [olMap, activeTms, tileMatrixSets]);
+    }, [olMap, activeEntry]);
 
     // Live "current zoom" in the active TMS's own zoom indexing. This
     // replicates the exact formula ol/source/VectorTile's getSourceTiles()
@@ -209,23 +205,21 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
     // source (verified in node_modules/ol/source/VectorTile.js:218-230) —
     // a flat getMetersPerUnit() ratio, not a latitude-aware calculation.
     useEffect(() => {
-        if (!olMap || !activeTms) return;
-        const entry = tileMatrixSets.find(t => t.id === activeTms);
-        if (!entry) return;
+        if (!olMap || !activeEntry) return;
 
         const view = olMap.getView();
         const viewProjection = view.getProjection();
+        const tmsProjection = activeEntry.projectionCode ? getProjectionByCode(activeEntry.projectionCode) : null;
 
         function updateCurrentZoom() {
-            if (!entry.tileGrid || !entry.projectionCode) {
+            if (!activeEntry.tileGrid || !tmsProjection) {
                 setCurrentZoom(Math.round(view.getZoom()));
                 return;
             }
-            const tmsProjection = getProjectionByCode(entry.projectionCode);
             const sourceResolution = view.getResolution()
                 / tmsProjection.getMetersPerUnit()
                 * viewProjection.getMetersPerUnit();
-            setCurrentZoom(Math.round(entry.tileGrid.getZForResolution(sourceResolution)));
+            setCurrentZoom(Math.round(activeEntry.tileGrid.getZForResolution(sourceResolution)));
         }
 
         updateCurrentZoom();
@@ -234,7 +228,7 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
         return () => {
             view.un('change:resolution', updateCurrentZoom);
         };
-    }, [olMap, activeTms, tileMatrixSets]);
+    }, [olMap, activeEntry]);
 
     function handleTmsChange(tmsId) {
         setActiveTms(tmsId);
@@ -242,9 +236,7 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
 
     function handleCopyUrl() {
         if (!activeEntry) return;
-        navigator.clipboard.writeText(activeEntry.urlTemplate).catch(() => {});
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        copy(activeEntry.urlTemplate);
     }
 
     if (error) {
