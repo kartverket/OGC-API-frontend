@@ -3,6 +3,7 @@ import {
   ChevronRightIcon,
   LayersFillIcon,
   PackageFillIcon,
+  SquareGridFillIcon,
 } from "@navikt/aksel-icons";
 import Image from "next/image";
 import NextLink from "next/link";
@@ -16,7 +17,8 @@ import {
   DownloadPanel,
   ErrorPage,
 } from "@/components";
-import { collectionHasMapProvider, collectionHasCoverageProvider, hasExportProcessors } from "@/config/readPygeoapiConfig";
+import { hasExportProcessors } from "@/config/readPygeoapiConfig";
+import { collectionHasFeatureCapability, collectionHasMapCapability, collectionHasCoverageCapability, collectionHasVectorTileCapability } from "@/utils/api/capabilities";
 import { fetchCollectionPageData } from "@/services/pageData";
 import { createCollectionMetadata } from "@/services/pageMetadata";
 import styles from "./page.module.css";
@@ -51,8 +53,10 @@ export default async function Collection({ params }) {
     return <ErrorPage status={status} />;
   }
 
-  const hasMap = collectionHasMapProvider(collection);
-  const hasCoverage = collectionHasCoverageProvider(collection);
+  const hasFeature = collectionHasFeatureCapability(data.links);
+  const hasMap = collectionHasMapCapability(data.links);
+  const hasCoverage = collectionHasCoverageCapability(data.links);
+  const hasTiles = collectionHasVectorTileCapability(data.links);
   const hasDownload = hasExportProcessors();
   const coverageLinks = hasCoverage
     ? (data.links ?? []).filter((link) => {
@@ -118,6 +122,21 @@ export default async function Collection({ params }) {
                     </Card>
                 }
 
+                {hasTiles && (
+                  <Card
+                    asChild
+                    data-variant="tinted"
+                    data-color="accent"
+                    className={styles.objectCard}
+                  >
+                    <NextLink href={`/collections/${data.id}/tiles`}>
+                      <SquareGridFillIcon title="a11y-title" fontSize="36px" />
+                      <span>Vis fliser</span>
+                      <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                    </NextLink>
+                  </Card>
+                )}
+
                 {hasMap && (
                   <Card
                     asChild
@@ -151,8 +170,10 @@ export default async function Collection({ params }) {
             <DatasetInfoCard
               collection={data}
               metadata={data.metadata}
+              hasFeature={hasFeature}
               hasMap={hasMap}
               hasCoverage={hasCoverage}
+              hasTiles={hasTiles}
             />
           </div>
         </div>

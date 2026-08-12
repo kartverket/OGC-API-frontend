@@ -1,10 +1,9 @@
-import { fetchCollectionPageData } from '@/services/pageData';
-import { Breadcrumbs } from '@/components';
-import { Heading } from '@digdir/designsystemet-react';
-import { getApiBaseUrlPublic } from '@/utils/api/baseUrl';
-import { collectionHasMapCapability } from '@/utils/api/capabilities';
 import { notFound } from 'next/navigation';
-import MapViewer from '@/components/MapViewer';
+import { Heading } from '@digdir/designsystemet-react';
+import { Breadcrumbs, TilesViewer } from '@/components';
+import { collectionHasVectorTileCapability } from '@/utils/api/capabilities';
+import { fetchCollectionPageData } from '@/services/pageData';
+import { getApiBaseUrlPublic } from '@/utils/api/baseUrl';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -13,27 +12,20 @@ export async function generateMetadata({ params }) {
     const { collection } = await params;
     const { data, status } = await fetchCollectionPageData(collection);
     if (status !== 200) return {};
-    return { title: `${data.title} — Kart` };
+    return { title: `${data.title} — Fliser` };
 }
 
-export default async function CollectionMap({ params }) {
+export default async function CollectionTiles({ params }) {
     const { collection } = await params;
     const { data, status } = await fetchCollectionPageData(collection);
 
     if (status !== 200) notFound();
 
-    const hasMap = collectionHasMapCapability(data.links);
-    if (!hasMap) notFound();
+    const hasTiles = collectionHasVectorTileCapability(data.links);
+    if (!hasTiles) notFound();
 
     const bbox = data.extent?.spatial?.bbox?.[0];
-    const crsOptions = Array.isArray(data.crs)
-        ? data.crs
-        : data.extent?.spatial?.crs
-            ? [data.extent.spatial.crs]
-            : [];
-
     if (!Array.isArray(bbox) || bbox.length !== 4) notFound();
-    if (!Array.isArray(crsOptions) || crsOptions.length === 0) notFound();
 
     const apiBaseUrl = getApiBaseUrlPublic();
     if (!apiBaseUrl) notFound();
@@ -45,15 +37,14 @@ export default async function CollectionMap({ params }) {
                     '/': data.dataset.title,
                     '/collections': 'Collections',
                     [`/collections/${data.id}`]: data.title,
-                    [`/collections/${data.id}/map`]: 'Kart'
+                    [`/collections/${data.id}/tiles`]: 'Fliser',
                 }}
             />
             <div className={styles.page}>
-                <Heading level={1} data-size="sm">{data.title} — kart</Heading>
-                <MapViewer
+                <Heading level={1} data-size="sm">{data.title} — fliser</Heading>
+                <TilesViewer
                     collectionId={data.id}
                     defaultBbox={bbox}
-                    crsOptions={crsOptions}
                     apiBaseUrl={apiBaseUrl}
                 />
             </div>

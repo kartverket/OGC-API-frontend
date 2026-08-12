@@ -2,11 +2,8 @@ import { fetchCollectionsPageData } from "@/services/pageData";
 import { createCollectionsMetadata } from "@/services/pageMetadata";
 import { Heading } from "@digdir/designsystemet-react";
 import { Breadcrumbs, CollectionCard, ErrorPage } from "@/components";
-import {
-  getCollectionReferencedFileCount,
-  collectionHasCoverageProvider,
-  collectionHasMapProvider,
-} from "@/config/readPygeoapiConfig";
+import { getCollectionReferencedFileCount } from "@/config/readPygeoapiConfig";
+import { collectionHasCoverageCapability, collectionHasFeatureCapability, collectionHasMapCapability, collectionHasVectorTileCapability } from "@/utils/api/capabilities";
 // import CollectionCard from "@/components/CollectionCard";
 import styles from "./page.module.css";
 
@@ -38,8 +35,10 @@ export default async function Collections() {
 
         <div className={styles.collections}>
           {data.collections.map((collection) => {
-            const hasCoverage = collectionHasCoverageProvider(collection.id);
-            const hasMap = collectionHasMapProvider(collection.id);
+            const hasFeature = collectionHasFeatureCapability(collection.links);
+            const hasCoverage = collectionHasCoverageCapability(collection.links);
+            const hasMap = collectionHasMapCapability(collection.links);
+            const hasTiles = collectionHasVectorTileCapability(collection.links);
             const collectionWithFileCount = hasCoverage
               ? {
                 ...collection,
@@ -51,8 +50,10 @@ export default async function Collections() {
             <CollectionCard
               key={collection.id}
               collection={collectionWithFileCount}
+              hasFeature={hasFeature}
               hasMap={hasMap}
               hasCoverage={hasCoverage}
+              hasTiles={hasTiles}
             />
             );
           })}

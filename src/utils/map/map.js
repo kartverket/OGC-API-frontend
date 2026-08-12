@@ -4,6 +4,7 @@ import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import proj4 from 'proj4';
 import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
 import { createBaseMap } from './baseMap';
+import { createVectorTileLayer } from './vectorTilesLayer';
 import { getLayer, transformExtent } from './helpers';
 import basemap from '@/config/basemap';
 import store from '@/store';
@@ -102,6 +103,26 @@ export async function createMapViewerMap(defaultBbox) {
         layers: [
             await createBaseMap(),
             imageLayer,
+        ].filter(Boolean)
+    });
+
+    map.setView(new View({
+        padding: MAP_PADDING,
+        projection: basemap.projection,
+        maxZoom: basemap.maxZoom,
+    }));
+
+    return { map, initialExtent };
+}
+
+export async function createTilesMap(defaultBbox) {
+    // defaultBbox is in OGC:CRS84 (lon/lat) — transform to EPSG:3857 for OL
+    const initialExtent = transformExtent(defaultBbox, 'OGC:CRS84', 'EPSG:3857');
+
+    const map = new Map({
+        layers: [
+            await createBaseMap(),
+            createVectorTileLayer(),
         ].filter(Boolean)
     });
 

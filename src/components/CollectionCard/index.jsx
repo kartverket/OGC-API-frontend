@@ -6,7 +6,7 @@ import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
 import styles from "./CollectionCard.module.css";
 import { fetchCollection } from "@/utils/api/server";
 
-export default async function CollectionCard({ collection, hasMap, hasCoverage }) {
+export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
   const mainLink = hasCoverage
     ? `/collections/${collection.id}`
     : `/collections/${collection.id}/items`;
@@ -99,10 +99,8 @@ export default async function CollectionCard({ collection, hasMap, hasCoverage }
 
           <div className={styles.bottom}>
             <div className={styles.left}>
-              {collection.itemType && (
-                <span className={`${styles.itemType} ${styles.tag}`}>
-                  {collection.itemType}
-                </span>
+              {hasFeature && (
+                <span className={`${styles.itemType} ${styles.tag}`}>Feature</span>
               )}
 
               {hasMap && (
@@ -111,6 +109,10 @@ export default async function CollectionCard({ collection, hasMap, hasCoverage }
 
               {hasCoverage && (
                 <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>
+              )}
+
+              {hasTiles && (
+                <span className={`${styles.itemType} ${styles.tag}`}>Tiles</span>
               )}
 
               <div className={styles.keywords}>
