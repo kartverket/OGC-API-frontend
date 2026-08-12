@@ -29,6 +29,9 @@ COPY templates/ /pygeoapi/custom_templates/
 COPY mapserver/fonts.txt /pygeoapi/fonts.txt
 COPY mapserver/styles/ /pygeoapi/styles/
 
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 # TEMPORARY: Patch pip inside the base image's venv for CVE-2026-8643 (fixed in pip 26.1.2).
 # Remove once upstream base image ships a patched pip, hopefully any version after 0.24.0
 RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade "pip>=26.1.2"
@@ -61,11 +64,7 @@ ENV PYGEOAPI_OPENAPI=/tmp/openapi.yml
 # Kubernetes manages horizontal scaling. Consider more workers if pod upscaling is considered too slow.
 ENV WSGI_WORKERS=1
 ENV WSGI_WORKER_CLASS=gevent
-# Remove GOOGLE_APPLICATION_CREDENTIALS from the environment to avoid GDAL
-# trying to use it for authentication.
-ENV GOOGLE_APPLICATION_CREDENTIALS=""
 
 USER ${USER_NAME}
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD [ "python3", "-c", "import urllib.request, sys; sys.exit(0) if urllib.request.urlopen('http://localhost:5000/').getcode() == 200 else sys.exit(1)" ]
+ENTRYPOINT ["/docker-entrypoint.sh"]
