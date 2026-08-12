@@ -213,7 +213,8 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
 
         function updateCurrentZoom() {
             if (!activeEntry.tileGrid || !tmsProjection) {
-                setCurrentZoom(Math.round(view.getZoom()));
+                const zoom = view.getZoom();
+                setCurrentZoom(typeof zoom === 'number' ? Math.round(zoom) : null);
                 return;
             }
             const sourceResolution = view.getResolution()

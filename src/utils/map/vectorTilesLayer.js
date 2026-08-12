@@ -12,8 +12,8 @@ export function createVectorTileSource(urlTemplate, tileGrid, projectionCode) {
     return new VectorTileSource({
         format: new MVT(),
         url: urlTemplate,
-        tileGrid,
-        projection: projectionCode,
+        ...(tileGrid && { tileGrid }),
+        ...(projectionCode && { projection: projectionCode }),
     });
 }
 
