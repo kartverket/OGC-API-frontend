@@ -61,6 +61,9 @@ ENV PYGEOAPI_OPENAPI=/tmp/openapi.yml
 # Kubernetes manages horizontal scaling. Consider more workers if pod upscaling is considered too slow.
 ENV WSGI_WORKERS=1
 ENV WSGI_WORKER_CLASS=gevent
+# Remove GOOGLE_APPLICATION_CREDENTIALS from the environment to avoid GDAL
+# trying to use it for authentication.
+ENV GOOGLE_APPLICATION_CREDENTIALS=""
 
 USER ${USER_NAME}
 
