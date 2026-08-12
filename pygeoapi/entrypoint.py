@@ -3,7 +3,9 @@
 # Remove GOOGLE_APPLICATION_CREDENTIALS from the environment to avoid GDAL
 # trying to use it for authentication.
 import os
+print("BEFORE POP:", os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
 os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
+print("AFTER POP:", os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
 
 import re
 from modify_openapi import remove_post_endpoints
