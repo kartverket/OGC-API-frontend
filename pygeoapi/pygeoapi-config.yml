@@ -8,6 +8,7 @@ server:
   encoding: utf-8
   gzip: false
   languages:
+    - nb-NO
     - en-US
   pretty_print: true
   limits:
@@ -27,12 +28,19 @@ logging:
 metadata:
   identification:
     title:
-      en: Administrative enheter
+      nb-NO: Administrative enheter
+      en-US: Administrative units
     description:
-      en: >
-        Datasettet inneholder administrative grenser og områder for Norge, inkludert fylker og kommuner.
+      nb-NO: >
+        Dette er en referanseimplementasjon beregnet for utviklere som evaluerer eller tester OGC API-frontend-applikasjonen.
+        Den skal ikke brukes som en produksjonstjeneste eller som en autoritativ datakilde.
+        Datasettene som er inkludert (administrative grenser for Norge og eksempel raster data) er kun levert for demonstrasjons- og testformål.
+      en-US: >
+        This is a reference implementation intended for developers evaluating or testing the OGC API frontend application.
+        It should not be used as a production service or as an authoritative source of data.
+        The datasets included (administrative boundaries for Norway and example raster data) are provided solely for demonstration and testing purposes.
     keywords:
-      en:
+      nb-NO:
         - Fylke
         - Kommune
         - Administrativ inndeling
@@ -41,6 +49,15 @@ metadata:
         - Kommunegrenser
         - Riksgrense
         - Tellekretser
+      en-US:
+        - County
+        - Municipality
+        - Administrative division
+        - Administrative boundaries
+        - County boundaries
+        - Municipal boundaries
+        - National border
+        - Counting districts
     keywords_type: theme
     terms_of_service: https://www.kartverket.no/geodataarbeid/norge-digitalt/partsinformasjon/avtaler-og-vilkar/norge-digitalt-lisens
     url: https://www.kartverket.no
@@ -81,14 +98,20 @@ resources:
   fylker:
     type: collection
     title:
-      en: Fylker
+      nb-NO: Fylker
+      en-US: Counties
     description:
-      en: >
+      nb-NO: >
         Datasettet viser fylkesinndelingen i landet med de mest nøyaktige grensene som er registrert digitalt og som er samlet i ett datasett
+      en-US: >
+        The dataset shows the county division of the country with the most accurate boundaries registered digitally and compiled in one dataset.
     keywords:
-      en:
+      nb-NO:
         - Fylke
         - Fylkesgrense
+      en-US:
+        - County
+        - County boundary
     extents:
       spatial:
         bbox: [4.087524, 57.759005, 31.761592, 71.384878]
@@ -108,6 +131,9 @@ resources:
           password: ${password}
           search_path: [public]
         id_field: nr
+        properties:
+          - navn
+          - nr
         table: fylker
         geom_field: geometry
         crs:
@@ -154,61 +180,17 @@ resources:
           name: png
           mimetype: image/png
 
-  fylker_kystkontur:
-    type: collection
-    title:
-      en: Fylker kystkontur
-    description:
-      en: >
-        Datasettet viser fylkesinndelingen i landet med kystkontur
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
-    keywords:
-      en:
-        - Fylke
-        - Fylkesgrense
-        - Kystkontur
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: PostgreSQL
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
-        table: fylker_kystkontur
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
 
   kommuner:
     type: collection
     title:
-      en: Kommuner
+      nb-NO: Kommuner
+      en-US: Municipalities
     description:
-      en: >
+      nb-NO: >
         Datasettet viser kommuneinndelingen i landet med de mest nøyaktige grensene som er registrert digitalt og som er samlet i ett datasett.
+      en-US: >
+        The dataset shows the municipality division of the country with the most accurate boundaries registered digitally and compiled in one dataset.
     download:
       area_filters:
         - type: fylke
@@ -216,9 +198,12 @@ resources:
           name_field: navn
           label: Fylke
     keywords:
-      en:
+      nb-NO:
         - Kommune
         - Kommunegrenser
+      en-US:
+        - Municipality
+        - Municipal boundaries
     extents:
       spatial:
         bbox: [4.087524, 57.759005, 31.761592, 71.384878]
@@ -238,6 +223,9 @@ resources:
           password: ${password}
           search_path: [public]
         id_field: nr
+        properties:
+          - navn
+          - nr
         title_field: navn
         table: kommuner
         geom_field: geometry
@@ -283,61 +271,17 @@ resources:
           name: png
           mimetype: image/png
 
-  kommuner_kystkontur:
-    type: collection
-    title:
-      en: Kommuner kystkontur
-    description:
-      en: >
-        Datasettet viser kommuneinndelingen i landet med kystkontur
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
-    keywords:
-      en:
-        - Kommune
-        - Kommunegrense
-        - Kystkontur
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: PostgreSQL
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
-        table: kommuner_kystkontur
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
 
   tellekretser:
     type: collection
     title:
-      en: Tellekretser
+      nb-NO: Tellekretser
+      en-US: Counting districts
     description:
-      en: >
+      nb-NO: >
         Datasettet viser tellekretser i Norge
+      en-US: >
+        The dataset shows counting districts in Norway.
     download:
       area_filters:
         - type: fylke
@@ -349,9 +293,12 @@ resources:
           name_field: navn
           label: Kommune
     keywords:
-      en:
+      nb-NO:
         - Tellekrets
         - Statistikk
+      en-US:
+        - Counting district
+        - Statistics
     extents:
       spatial:
         bbox: [4.626095, 57.977101, 31.125157, 71.188325]
@@ -366,7 +313,14 @@ resources:
           user: ${db_user}
           password: ${password}
           search_path: [public]
-        id_field: nr
+        id_field: id
+        properties:
+          - navn
+          - nr
+          - fylkesnummer
+          - kommunenummer
+          - valgdistriktsnummer_valgdirektoratet
+          - valgdistriktsnummer_ssb
         table: tellekrets
         geom_field: geometry
         crs:
@@ -394,19 +348,54 @@ resources:
   tellekretser_polar:
     type: collection
     title:
-      en: Tellekretser i polar projeksjonen
+      nb-NO: Tellekretser i polar projeksjonen - test for tiles
+      en-US: Counting districts in polar projection - tile test
     description:
-      en: >
+      nb-NO: >
         Datasettet viser tellekretser i Norge
+      en-US: >
+        The dataset shows counting districts in Norway.
     keywords:
-      en:
+      nb-NO:
         - Tellekrets
         - Statistikk
+      en-US:
+        - Counting district
+        - Statistics
     extents:
       spatial:
         bbox: [4.626095, 57.977101, 31.125157, 71.188325]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
     providers:
+      - type: feature
+        name: schema_provider.SchemaPostgreSQLProvider
+        schema_file: /pygeoapi/schemas/tellekrets.json
+        data:
+          host: ${db_host}
+          dbname: ${db_name}
+          user: ${db_user}
+          password: ${password}
+          search_path: [public]
+        id_field: id
+        properties:
+          - navn
+          - nr
+          - fylkesnummer
+          - kommunenummer
+          - valgdistriktsnummer_valgdirektoratet
+          - valgdistriktsnummer_ssb
+        table: tellekrets
+        geom_field: geometry
+        crs:
+          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
+          - http://www.opengis.net/def/crs/EPSG/0/25832
+          - http://www.opengis.net/def/crs/EPSG/0/25833
+          - http://www.opengis.net/def/crs/EPSG/0/25835
+          - http://www.opengis.net/def/crs/EPSG/0/4258
+          - http://www.opengis.net/def/crs/EPSG/0/4326
+          - http://www.opengis.net/def/crs/EPSG/0/3857
+        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
+
       - type: tile
         name: MVT-proxy
         data: http://bbox-tile-server:8080/xyz/tellekrets_polar/{z}/{x}/{y}.mvt
@@ -421,62 +410,22 @@ resources:
           mimetype: application/x-protobuf; type=mapbox-vector-tile
 
 
-  tellekretser_kystkontur:
-    type: collection
-    title:
-      en: Tellekretser kystkontur
-    description:
-      en: >
-        Datasettet viser tellekretser i Norge med kystkontur
-    download:
-      area_filters:
-        - type: fylke
-          collection: fylker
-          name_field: navn
-          label: Fylke
-        - type: kommune
-          collection: kommuner
-          name_field: navn
-          label: Kommune
-    keywords:
-      en:
-        - Tellekrets
-        - Statistikk
-        - Kystkontur
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: schema_provider.SchemaPostgreSQLProvider
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: nr
-        table: tellekretser_kystkontur
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
 
   norge-raster:
     type: collection
     title:
-      en: Norge raster
+      nb-NO: Norge raster
+      en-US: Norway raster
     description:
-      en: Topography-Bathymetry coverage (EGM2008 height)
+      nb-NO: Topografi-batymetri-dekning (EGM2008-høyde)
+      en-US: Topography-Bathymetry coverage (EGM2008 height)
     keywords:
-      en:
+      nb-NO:
+        - dekning
+        - raster
+        - topografi
+        - batymetri
+      en-US:
         - coverage
         - raster
         - topography
