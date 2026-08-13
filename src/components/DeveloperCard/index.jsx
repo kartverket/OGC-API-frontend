@@ -55,7 +55,7 @@ function DeveloperCard() {
                 swagger: `${apiBaseUrl}/openapi?f=html`,
                 openapi: `${apiBaseUrl}/openapi?f=json`,
                 conformance: `${apiBaseUrl}/conformance?f=html`,
-                tileMatrixSets: `${apiBaseUrl}/TileMatrixSets?f=html`
+                tileMatrixSets: `/TileMatrixSets?f=json`
             };
         },
         [apiBaseUrl]
