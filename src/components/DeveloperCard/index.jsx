@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import {
     Card,
@@ -45,7 +45,8 @@ function DeveloperCard() {
                     root: "",
                     swagger: "",
                     openapi: "",
-                    conformance: ""
+                    conformance: "",
+                    tileMatrixSets: ""
                 };
             }
 
@@ -53,7 +54,8 @@ function DeveloperCard() {
                 root: apiBaseUrl,
                 swagger: `${apiBaseUrl}/openapi?f=html`,
                 openapi: `${apiBaseUrl}/openapi?f=json`,
-                conformance: `${apiBaseUrl}/conformance?f=html`
+                conformance: `${apiBaseUrl}/conformance?f=html`,
+                tileMatrixSets: `/TileMatrixSets?f=json`
             };
         },
         [apiBaseUrl]
@@ -81,7 +83,7 @@ function DeveloperCard() {
                 <Link
                     href="https://kartverket.github.io/dnd-docs/docs/ogc-api/ogc-api-features/bruk"
                     target="_blank"
-                    rel="noopener noreferrer" 
+                    rel="noopener noreferrer"
                     className={styles.link}
                 >
                     Se mer info
@@ -123,6 +125,12 @@ function DeveloperCard() {
                 <Link asChild className={styles.link}>
                     <NextLink href={links.conformance} target="_blank">
                         Conformance
+                        <ArrowRightIcon title="a11y-title" fontSize="28px" />
+                    </NextLink>
+                </Link>
+                <Link asChild className={styles.link}>
+                    <NextLink href={links.tileMatrixSets} target="_blank">
+                        Tile Matrix Sets
                         <ArrowRightIcon title="a11y-title" fontSize="28px" />
                     </NextLink>
                 </Link>

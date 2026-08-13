@@ -4,7 +4,7 @@ import { Details, DetailsContent, DetailsSummary } from '..';
 import { InformationSquareIcon } from '@navikt/aksel-icons';
 import styles from './DatasetInfoCard.module.css';
 
-export default function DatasetInfoCard({ collection, metadata, hasMap, hasCoverage }) {
+export default function DatasetInfoCard({ collection, metadata, hasFeature, hasMap, hasCoverage, hasTiles }) {
     const crsList = Array.isArray(collection.crs)
         ? collection.crs
         : collection.crs
@@ -12,7 +12,12 @@ export default function DatasetInfoCard({ collection, metadata, hasMap, hasCover
             : collection.extent?.spatial?.crs
                 ? [collection.extent.spatial.crs]
                 : [];
-    const serviceType = [hasCoverage ? 'Coverage' : collection.itemType, hasMap ? 'Maps' : null]
+    const serviceType = [
+        hasFeature ? (collection.itemType || 'Feature') : null,
+        hasMap ? 'Maps' : null,
+        hasCoverage ? 'Coverage' : null,
+        hasTiles ? 'Tiles' : null,
+    ]
         .filter(Boolean)
         .join(', ');
 
@@ -30,7 +35,7 @@ export default function DatasetInfoCard({ collection, metadata, hasMap, hasCover
                         {serviceType}
                     </div>
                 </div>
-                {!hasCoverage && (
+                {hasFeature && (
                     <div>
                         <div className={styles.label}>Antall objekter (items)</div>
                         <div className={styles.value}>{collection.itemCount}</div>

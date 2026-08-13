@@ -22,3 +22,4 @@ export { default as MapPopover } from './MapPopover';
 export { default as Popover } from './Popover';
 export { default as Provider } from './Provider';
 export { default as ServiceInfoCard } from './ServiceInfoCard';
+export { default as TilesViewer } from './TilesViewer';
