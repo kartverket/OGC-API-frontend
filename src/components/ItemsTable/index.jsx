@@ -20,7 +20,7 @@ export default function ItemsTable({ data }) {
     const searchParams = useSearchParams();
     const selectedFeature = useSelector(state => state.map.selectedFeature);
     const features = data.features;
-    const columnNames = Object.keys(features[0].properties).filter(key => key !== data.idField);
+    const columnNames = Object.keys(features[0].properties);
 
     const limit = getLimit(searchParams) || parseInt(Object.keys(LIMITS)[0], 10);
     const currentPage = getCurrentPage(searchParams);
@@ -129,7 +129,6 @@ export default function ItemsTable({ data }) {
                     <Table stickyHeader={true} zebra={true} data-size="sm" className={styles.table}>
                         <TableHead>
                             <TableRow>
-                                <TableHeaderCell>id</TableHeaderCell>
                                 {
                                     columnNames.map(name => (
                                         <TableHeaderCell key={name}>{name}</TableHeaderCell>
@@ -145,10 +144,8 @@ export default function ItemsTable({ data }) {
                                         onClick={() => goToItem(feature.id)} 
                                         className={selectedFeature?.id === feature.id ? styles.selected : ''}
                                     >
-                                        <TableCell>{feature.id}</TableCell>
                                         {
                                             Object.entries(feature.properties)
-                                                .filter(entry => entry[0] !== data.idField)
                                                 .map(entry => (
                                                     <TableCell key={`${feature.id}-${entry[0]}`}>
                                                         <span title={formatValue(entry[1])}>{formatValue(entry[1])}</span>
