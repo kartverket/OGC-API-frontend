@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Paths that should always be proxied to the backend regardless of format
-const PROXY_PATHS = ['/openapi'];
+const PROXY_PATHS = ['/openapi', '/processes', '/jobs'];
 
 /**
  * Proxy that handles OGC API content negotiation.
@@ -10,6 +10,7 @@ const PROXY_PATHS = ['/openapi'];
  * as well as Accept-header based negotiation (e.g. QGIS, curl).
  *
  * A request is served by Next.js only when:
+ * - The request path is not one of the PROXY_PATHS
  * - No ?f= parameter is set (or ?f=html), AND
  * - The Accept header includes text/html (or is missing/wildcard)
  */
@@ -23,9 +24,9 @@ export function proxy(request) {
   const acceptHeader = (acceptHeaderRaw || '').toLowerCase();
   const wantsHtml =
     !acceptHeaderRaw || acceptHeader.includes('text/html') || acceptHeader.trim() === '*/*';
-  const requestsNonHtmlAccept = !wantsHtml;
+  const acceptHeaderIsNonHtml = !wantsHtml;
 
-  if (!isProxyPath && !isNonHtmlFormat && !requestsNonHtmlAccept) {
+  if (!isProxyPath && !isNonHtmlFormat && !acceptHeaderIsNonHtml) {
     return NextResponse.next();
   }
 

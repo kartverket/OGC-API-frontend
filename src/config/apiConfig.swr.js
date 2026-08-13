@@ -3,7 +3,6 @@
 
 import useSWRImmutable from "swr/immutable";
 
-
 let _cachedBaseUrl = null;
 
 async function fetchRuntimeConfigBaseUrl() {
@@ -15,7 +14,7 @@ async function fetchRuntimeConfigBaseUrl() {
   }
 
   const data = await response.json();
-  const url = data?.apiBaseUrl;
+  const url = data?.baseUrl;
 
   if (url && typeof url === "string" && url.trim().length > 0) {
     return url.replace(/\/+$/, "");
@@ -24,9 +23,9 @@ async function fetchRuntimeConfigBaseUrl() {
   return undefined;
 }
 
-export function useApiBaseUrlSWR() {
+export function useBaseUrlSWR() {
   const { data, error, isLoading } = useSWRImmutable(
-    "runtime-config:apiBaseUrl",
+    "config:baseUrl",
     async () => {
       if (_cachedBaseUrl) return _cachedBaseUrl;
       const url = await fetchRuntimeConfigBaseUrl();
@@ -39,5 +38,5 @@ export function useApiBaseUrlSWR() {
     }
   );
 
-  return { apiBaseUrl: data, error, isLoading };
+  return { baseUrl: data, error, isLoading };
 }

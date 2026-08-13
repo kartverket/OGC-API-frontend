@@ -18,7 +18,7 @@ import {
 import CopyIcon from "@/assets/gfx/icon-copy.svg";
 import styles from "./DeveloperCard.module.css";
 import NextLink from "next/link";
-import { useApiBaseUrlSWR } from "@/config/apiConfig.swr";
+import { useBaseUrlSWR } from "@/config/apiConfig.swr";
 
 function DeveloperCardWrapper({ children }) {
     return (
@@ -36,11 +36,11 @@ function DeveloperCardWrapper({ children }) {
 
 function DeveloperCard() {
     const [copied, setCopied] = useState(false);
-    const { apiBaseUrl } = useApiBaseUrlSWR();
+    const { baseUrl } = useBaseUrlSWR();
 
     const links = useMemo(
         () => {
-            if (!apiBaseUrl) {
+            if (!baseUrl) {
                 return {
                     root: "",
                     swagger: "",
@@ -51,14 +51,14 @@ function DeveloperCard() {
             }
 
             return {
-                root: apiBaseUrl,
-                swagger: `${apiBaseUrl}/openapi?f=html`,
-                openapi: `${apiBaseUrl}/openapi?f=json`,
-                conformance: `${apiBaseUrl}/conformance?f=html`,
-                tileMatrixSets: `/TileMatrixSets?f=json`
+                root: baseUrl,
+                swagger: `/openapi?f=html`,
+                openapi: `/openapi?f=json`,
+                conformance: `/conformance?f=json`,
+                tileMatrixSets: `/TileMatrixSets?f=json`,
             };
         },
-        [apiBaseUrl]
+        [baseUrl]
     );
 
     async function copyUrl() {
@@ -81,7 +81,7 @@ function DeveloperCard() {
                 <span className={styles.divider}></span>
 
                 <Link
-                    href="https://kartverket.github.io/dnd-docs/docs/ogc-api/ogc-api-features/bruk"
+                    href="https://kartverket.github.io/ogcapi-docs/docs/bruk"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.link}
@@ -135,29 +135,6 @@ function DeveloperCard() {
                     </NextLink>
                 </Link>
             </div>
-
-            {/* <Divider />
-
-      <div className={styles.downloadButtons}>
-        <div className={styles.text}>Last ned datasett</div>
-
-        <div className={styles.buttonRow}>
-          <Button variant="secondary" data-size="sm">
-            <DownloadIcon aria-hidden fontSize="1.5rem" />
-            GeoJSON
-          </Button>
-
-          <Button variant="secondary" data-size="sm">
-            <DownloadIcon aria-hidden fontSize="1.5rem" />
-            GPKG
-          </Button>
-
-          <Button variant="secondary" data-size="sm">
-            <DownloadIcon aria-hidden fontSize="1.5rem" />
-            GML
-          </Button>
-        </div>
-      </div> */}
         </DeveloperCardWrapper>
     );
 }

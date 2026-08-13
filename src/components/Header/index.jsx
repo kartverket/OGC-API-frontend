@@ -7,21 +7,16 @@ import NextLink from "next/link";
 import { Link } from "@digdir/designsystemet-react";
 import styles from "./Header.module.css";
 import { useMemo } from "react";
-import { useApiBaseUrlSWR } from "@/config/apiConfig.swr";
-import { joinApiUrl } from "@/config/apiConfig";
-
 
 export default function Header() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { apiBaseUrl } = useApiBaseUrlSWR();
 
   const jsonLink = useMemo(() => {
-    if (!apiBaseUrl) return "";
     const params = new URLSearchParams(searchParams.toString());
     params.set("f", "json");
-    return `${joinApiUrl(apiBaseUrl, pathname)}?${params.toString()}`;
-  }, [apiBaseUrl, pathname, searchParams]);
+    return `${pathname}?${params.toString()}`;
+  }, [pathname, searchParams]);
 
   return (
     <div className={styles.header}>

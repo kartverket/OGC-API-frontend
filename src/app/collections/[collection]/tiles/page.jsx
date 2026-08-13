@@ -3,7 +3,7 @@ import { Heading } from '@digdir/designsystemet-react';
 import { Breadcrumbs, TilesViewer } from '@/components';
 import { collectionHasVectorTileCapability } from '@/utils/api/capabilities';
 import { fetchCollectionPageData } from '@/services/pageData';
-import { getApiBaseUrlPublic } from '@/utils/api/baseUrl';
+import { getBaseUrlPublic } from '@/utils/api/baseUrl';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -27,8 +27,8 @@ export default async function CollectionTiles({ params }) {
     const bbox = data.extent?.spatial?.bbox?.[0];
     if (!Array.isArray(bbox) || bbox.length !== 4) notFound();
 
-    const apiBaseUrl = getApiBaseUrlPublic();
-    if (!apiBaseUrl) notFound();
+    const baseUrl = getBaseUrlPublic();
+    if (!baseUrl) notFound();
 
     return (
         <>
@@ -45,7 +45,7 @@ export default async function CollectionTiles({ params }) {
                 <TilesViewer
                     collectionId={data.id}
                     defaultBbox={bbox}
-                    apiBaseUrl={apiBaseUrl}
+                    baseUrl={baseUrl}
                 />
             </div>
         </>
