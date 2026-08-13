@@ -90,26 +90,6 @@ export function getCollectionDownloadConfig(collectionId) {
     return resource.download ?? null;
 }
 
-export function collectionHasMapProvider(collectionId) {
-    const resources = getResources();
-    if (!resources) return false;
-
-    const resource = resources[collectionId];
-    if (!resource || resource.type !== 'collection') return false;
-
-    return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'map');
-}
-
-export function collectionHasCoverageProvider(collectionId) {
-    const resources = getResources();
-    if (!resources) return false;
-
-    const resource = resources[collectionId];
-    if (!resource || resource.type !== 'collection') return false;
-
-    return Array.isArray(resource.providers) && resource.providers.some(p => p.type === 'coverage');
-}
-
 export function isFileReference(value) {
     if (typeof value !== 'string') return false;
 

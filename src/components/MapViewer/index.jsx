@@ -16,6 +16,7 @@ import Zoom from '@/components/Map/Zoom';
 import { getCrsCode, getLayer, isGeographicCrs, transformExtent } from '@/utils/map/helpers';
 import { createBaseMapSource, isBasemapProjection } from '@/utils/map/baseMap';
 import basemapConfig from '@/config/basemap';
+import { useCopyToClipboard } from '@/hooks';
 import styles from './MapViewer.module.css';
 
 function createSource(collectionId, apiBaseUrl, olMapRef, crsUri) {
@@ -39,7 +40,7 @@ function viewProjectionFor(crsUri) {
     return toOlProjection(crsUri);
 }
 
-export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBaseUrl }) {
+export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseUrl }) {
     const containerRef = useRef(null);
     const olMapRef = useRef(null);
     const unwireRef = useRef(null);
@@ -48,7 +49,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
     const [olMap, setOlMap] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState('');
-    const [copied, setCopied] = useState(false);
+    const { copied, copy } = useCopyToClipboard();
 
     // Mount OL map
     useEffect(() => {
@@ -65,7 +66,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
             map.setTarget(containerRef.current);
             map.getView().fit(initialExtent);
 
-            const source = createSource(collectionId, apiBaseUrl, olMapRef, crsOptions[0]);
+            const source = createSource(collectionId, baseUrl, olMapRef, crsOptions[0]);
             getLayer(map, 'ogc-image').setSource(source);
             unwireRef.current = wireLoadingEvents(source);
             updateMapUrl(map, crsOptions[0]);
@@ -110,7 +111,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
         const bbox = viewProj === targetProj
             ? extent
             : transformExtent(extent, viewProj, targetProj);
-        setMapUrl(buildOgcMapsUrl(apiBaseUrl, collectionId, { bbox, bboxCrs: activeCrs, crs: activeCrs, width: w, height: h }));
+        setMapUrl(buildOgcMapsUrl(baseUrl, collectionId, { bbox, bboxCrs: activeCrs, crs: activeCrs, width: w, height: h }));
     }
 
     async function handleCrsChange(newCrs) {
@@ -158,7 +159,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
 
         // Recreate the source for the new CRS so it fetches in the correct projection.
         const imageLayer = getLayer(map, 'ogc-image');
-        const newSource = createSource(collectionId, apiBaseUrl, olMapRef, newCrs);
+        const newSource = createSource(collectionId, baseUrl, olMapRef, newCrs);
         unwireRef.current?.();
         imageLayer.setSource(newSource);
         unwireRef.current = wireLoadingEvents(newSource);
@@ -219,11 +220,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, apiBa
                     <span className={styles.url}>{decodeURIComponent(mapUrl)}</span>
                     <button
                         type="button"
-                        onClick={() => {
-                            navigator.clipboard.writeText(decodeURIComponent(mapUrl)).catch(() => {});
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }}
+                        onClick={() => copy(decodeURIComponent(mapUrl))}
                         aria-label="Kopier URL"
                         className={`${styles.iconButton} ${copied ? styles.iconButtonCopied : ''}`}
                     >

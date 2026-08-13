@@ -1,33 +1,23 @@
 "use client";
 
-import { useMemo } from 'react';
+import {useMemo} from 'react';
 import useSWRImmutable from 'swr/immutable'
-import { fetchItems } from '@/utils/api/client';
+import {fetchItems} from '@/utils/api/client';
 import ItemsProvider from '@/context/ItemsProvider';
 import ItemsMapProvider from '@/context/ItemsMapProvider';
-import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
-import { joinApiUrl } from '@/config/apiConfig';
-import { Heading, Paragraph, Spinner } from '@digdir/designsystemet-react';
-import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/components';
+import {Heading, Paragraph, Spinner} from '@digdir/designsystemet-react';
+import {Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable} from '@/components';
 import styles from './ItemsPage.module.css';
 
-
 export default function Items({ srvData, collection, searchParams }) {
-    const { apiBaseUrl } = useApiBaseUrlSWR();
     const searchKey = new URLSearchParams(searchParams).toString();
 
     const apiUrl = useMemo(
         () => {
-            if (!apiBaseUrl) {
-                return null;
-            }
-
             const base = `/collections/${collection}/items?f=json`;
-            const path = searchKey ? `${base}&${searchKey}` : base;
-
-            return joinApiUrl(apiBaseUrl, path);
+            return searchKey ? `${base}&${searchKey}` : base;
         },
-        [apiBaseUrl, collection, searchKey]
+        [collection, searchKey]
     );
 
     const { data: _data = null, error = null, isLoading } =

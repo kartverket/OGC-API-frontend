@@ -29,6 +29,9 @@ COPY templates/ /pygeoapi/custom_templates/
 COPY mapserver/fonts.txt /pygeoapi/fonts.txt
 COPY mapserver/styles/ /pygeoapi/styles/
 
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 # TEMPORARY: Patch pip inside the base image's venv for CVE-2026-8643 (fixed in pip 26.1.2).
 # Remove once upstream base image ships a patched pip, hopefully any version after 0.24.0
 RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade "pip>=26.1.2"
@@ -64,5 +67,4 @@ ENV WSGI_WORKER_CLASS=gevent
 
 USER ${USER_NAME}
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD [ "python3", "-c", "import urllib.request, sys; sys.exit(0) if urllib.request.urlopen('http://localhost:5000/').getcode() == 200 else sys.exit(1)" ]
+ENTRYPOINT ["/docker-entrypoint.sh"]
