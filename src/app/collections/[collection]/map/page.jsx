@@ -1,11 +1,11 @@
 import { fetchCollectionPageData } from '@/services/pageData';
 import { Breadcrumbs } from '@/components';
 import { Heading } from '@digdir/designsystemet-react';
-import { getApiBaseUrlPublic } from '@/utils/api/baseUrl';
 import { collectionHasMapCapability } from '@/utils/api/capabilities';
 import { notFound } from 'next/navigation';
 import MapViewer from '@/components/MapViewer';
 import styles from './page.module.css';
+import { getBaseUrlPublic } from "@/utils/api/baseUrl";
 
 export const dynamic = 'force-dynamic';
 
@@ -35,8 +35,8 @@ export default async function CollectionMap({ params }) {
     if (!Array.isArray(bbox) || bbox.length !== 4) notFound();
     if (!Array.isArray(crsOptions) || crsOptions.length === 0) notFound();
 
-    const apiBaseUrl = getApiBaseUrlPublic();
-    if (!apiBaseUrl) notFound();
+    const baseUrl = getBaseUrlPublic();
+    if (!baseUrl) notFound();
 
     return (
         <>
@@ -54,7 +54,7 @@ export default async function CollectionMap({ params }) {
                     collectionId={data.id}
                     defaultBbox={bbox}
                     crsOptions={crsOptions}
-                    apiBaseUrl={apiBaseUrl}
+                    baseUrl={baseUrl}
                 />
             </div>
         </>

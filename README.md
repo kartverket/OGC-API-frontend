@@ -61,7 +61,7 @@ Frontenden leser per nå metadata fra pygeoapi sin YAML-konfigurasjonsfil for å
   ```
   PYGEOAPI_CONFIG_PATH_FRONTEND=./pygeoapi/pygeoapi-config.yml
   API_BASE_URL=http://localhost:5001
-  API_BASE_URL_PUBLIC=http://localhost:5001
+  BASE_URL_PUBLIC=http://localhost:3000
   ```
 - Om man kjører lokalt med Colima må man starte med `colima start --arch x86_64`
 

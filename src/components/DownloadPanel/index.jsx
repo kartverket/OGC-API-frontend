@@ -3,11 +3,9 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, CardBlock, Field, Heading, Label, Select } from '@digdir/designsystemet-react';
 import { DownloadIcon } from '@navikt/aksel-icons';
-import { useApiBaseUrlSWR } from '@/config/apiConfig.swr';
 import styles from './DownloadPanel.module.css';
 
 export default function DownloadPanel({ collectionId, downloadConfig }) {
-    const { apiBaseUrl } = useApiBaseUrlSWR();
     const areaFilters = downloadConfig?.area_filters ?? [];
 
     const formatOptions = [
@@ -33,7 +31,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
         : null;
 
     useEffect(() => {
-        if (!activeFilter || !apiBaseUrl) {
+        if (!activeFilter) {
             setAreaNames([]);
             setAreaName('');
             return;
@@ -44,7 +42,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
         setAreaNames([]);
         setAreaName('');
 
-        fetch(`${apiBaseUrl}/collections/${activeFilter.collection}/items?limit=500&f=json`)
+        fetch(`/collections/${activeFilter.collection}/items?limit=500&f=json`)
             .then(r => r.json())
             .then(data => {
                 if (cancelled) return;
@@ -60,7 +58,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
             .finally(() => { if (!cancelled) setAreaLoading(false); });
 
         return () => { cancelled = true; };
-    }, [activeFilter?.type, apiBaseUrl]);
+    }, [activeFilter?.type, activeFilter?.collection, activeFilter?.name_field]);
 
     function handleFormatChange(e) {
         setFormat(e.target.value);
@@ -69,7 +67,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
     }
 
     async function handleDownload() {
-        if (!apiBaseUrl || busy) return;
+        if (busy) return;
         if (activeFilter && !areaName) return;
 
         setBusy(true);
@@ -89,7 +87,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
 
             setStatus({ type: 'info', message: 'Sender eksportjobb…' });
 
-            const execResp = await fetch(`${apiBaseUrl}/processes/${processId}/execution`, {
+            const execResp = await fetch(`/processes/${processId}/execution`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Prefer': 'respond-async' },
                 body: JSON.stringify({ inputs }),
@@ -103,8 +101,8 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
             } else {
                 const body = await execResp.json().catch(() => null);
                 if (!body?.jobID) throw new Error(`Uventet svar ${execResp.status}`);
-                const jobUrl = `${apiBaseUrl}/jobs/${body.jobID}`;
-                const resultUrl = `${apiBaseUrl}/jobs/${body.jobID}/results`;
+                const jobUrl = `/jobs/${body.jobID}`;
+                const resultUrl = `/jobs/${body.jobID}/results`;
                 setStatus({ type: 'info', message: 'Eksport kjører – vennligst vent…' });
                 fileResp = await pollJob(jobUrl, resultUrl, p => setProgress(10 + p * 0.85));
             }
@@ -173,7 +171,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
                     <Button
                         onClick={handleDownload}
                         data-size="sm"
-                        disabled={busy || !apiBaseUrl || (activeFilter && (areaLoading || !areaName))}
+                        disabled={busy || (activeFilter && (areaLoading || !areaName))}
                     >
                         <DownloadIcon aria-hidden fontSize="1.2rem" />
                         {busy ? 'Laster ned…' : 'Last ned'}

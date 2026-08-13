@@ -19,16 +19,15 @@ import Zoom from '@/components/Map/Zoom';
 import { useCopyToClipboard } from '@/hooks';
 import styles from './TilesViewer.module.css';
 
-function substitutePlaceholders(href, apiBaseUrl, tmsId) {
-    const resolved = new URL(href, apiBaseUrl);
+function substitutePlaceholders(href, tmsId) {
+    const resolved = new URL(href);
     const rawPath = decodeURIComponent(resolved.pathname + resolved.search);
-    const path = rawPath.replace('{tileMatrixSetId}', tmsId);
-    return `${apiBaseUrl}${path}`;
+    return rawPath.replace('{tileMatrixSetId}', tmsId);
 }
 
 // Synchronous part of parsing the /tiles response: URL templates and the
 // hrefs needed for enrichment, but not the enrichment itself (that's async).
-function buildTileMatrixSetSummaries(data, apiBaseUrl) {
+function buildTileMatrixSetSummaries(data, baseUrl) {
     const mvtTemplate = (data.links ?? []).find(
         l => l.rel === 'item' && l.href?.includes('{tileMatrixSetId}')
     );
@@ -45,7 +44,7 @@ function buildTileMatrixSetSummaries(data, apiBaseUrl) {
             const tmsId = tileset.tileMatrixSetURI?.split('/').pop();
             if (!tmsId) return null;
 
-            const urlTemplate = substitutePlaceholders(mvtTemplate.href, apiBaseUrl, tmsId)
+            const urlTemplate = baseUrl + substitutePlaceholders(mvtTemplate.href, tmsId)
                 .replace('{tileMatrix}', '{z}')
                 .replace('{tileRow}', '{y}')
                 .replace('{tileCol}', '{x}');
@@ -54,7 +53,7 @@ function buildTileMatrixSetSummaries(data, apiBaseUrl) {
                 .find(l => l.rel?.endsWith('/tiling-scheme'))?.href ?? null;
 
             const tileJsonHref = tileJsonTemplate
-                ? substitutePlaceholders(tileJsonTemplate.href, apiBaseUrl, tmsId)
+                ? substitutePlaceholders(tileJsonTemplate.href, tmsId)
                 : null;
 
             return { id: tmsId, urlTemplate, tilingSchemeHref, tileJsonHref };
@@ -105,8 +104,8 @@ async function enrichTileMatrixSet(summary) {
     return { ...summary, tileGrid, projectionCode, minzoom, maxzoom };
 }
 
-async function resolveTileMatrixSets(data, apiBaseUrl) {
-    const summaries = buildTileMatrixSetSummaries(data, apiBaseUrl);
+async function resolveTileMatrixSets(data, baseUrl) {
+    const summaries = buildTileMatrixSetSummaries(data, baseUrl);
     return Promise.all(summaries.map(enrichTileMatrixSet));
 }
 
@@ -117,7 +116,7 @@ function formatZoomRange(entry) {
     return `Flislag zoom range: ${entry.minzoom}–${entry.maxzoom}`;
 }
 
-export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
+export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
     const containerRef = useRef(null);
     const olMapRef = useRef(null);
     const [olMap, setOlMap] = useState(null);
@@ -164,10 +163,10 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
         async function loadTileMatrixSets() {
             setError(null);
             try {
-                const res = await fetch(`${apiBaseUrl}/collections/${collectionId}/tiles?f=json`);
+                const res = await fetch(`/collections/${collectionId}/tiles?f=json`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
-                const resolved = await resolveTileMatrixSets(data, apiBaseUrl);
+                const resolved = await resolveTileMatrixSets(data, baseUrl);
                 if (cancelled) return;
                 if (resolved.length === 0) {
                     setError('Ingen fliselag tilgjengelig for dette datasettet.');
@@ -185,7 +184,7 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
         return () => {
             cancelled = true;
         };
-    }, [apiBaseUrl, collectionId]);
+    }, [collectionId]);
 
     // Apply tile source whenever the map is ready or the active TMS entry changes.
     // activeEntry is referentially stable across renders that don't touch
@@ -270,7 +269,7 @@ export default function TilesViewer({ collectionId, defaultBbox, apiBaseUrl }) {
 
                 {activeEntry?.tileJsonHref && (
                     <Link
-                        href={activeEntry.tileJsonHref.replace('f=json', 'f=html')}
+                        href={activeEntry.tileJsonHref}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
