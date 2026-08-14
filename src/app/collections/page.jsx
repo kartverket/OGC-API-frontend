@@ -1,8 +1,8 @@
-import { fetchCollectionsPageData } from '@/services/pageData';
-import { createCollectionsMetadata } from '@/services/pageMetadata';
 import { Heading } from '@digdir/designsystemet-react';
 import { Breadcrumbs, CollectionCard, ErrorPage } from '@/components';
 import { getCollectionReferencedFileCount } from '@/config/readPygeoapiConfig';
+import { fetchCollectionsPageData } from '@/services/pageData';
+import { createCollectionsMetadata } from '@/services/pageMetadata';
 import {
   collectionHasCoverageCapability,
   collectionHasFeatureCapability,

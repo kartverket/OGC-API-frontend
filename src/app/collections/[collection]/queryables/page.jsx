@@ -1,7 +1,7 @@
-import { fetchQueryablesPageData } from '@/services/pageData';
-import { createQueryablesMetadata } from '@/services/pageMetadata';
 import { Card, Heading, ListItem, ListUnordered } from '@digdir/designsystemet-react';
 import { Breadcrumbs } from '@/components';
+import { fetchQueryablesPageData } from '@/services/pageData';
+import { createQueryablesMetadata } from '@/services/pageMetadata';
 import styles from './page.module.css';
 
 export async function generateMetadata({ params }) {

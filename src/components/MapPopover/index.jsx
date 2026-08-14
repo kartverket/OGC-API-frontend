@@ -1,15 +1,15 @@
 'use client';
 
+import { Button, Link } from '@digdir/designsystemet-react';
+import { ArrowRightIcon, ZoomPlusIcon } from '@navikt/aksel-icons';
+import NextLink from 'next/link';
+import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'next/navigation';
-import NextLink from 'next/link';
+import { Popover } from '@/components';
 import { useItemsMap } from '@/context/ItemsMapProvider';
 import { selectFeature } from '@/store/slices/mapSlice';
 import { zoomToFeature } from '@/utils/map/helpers';
-import { Button, Link } from '@digdir/designsystemet-react';
-import { Popover } from '@/components';
-import { ArrowRightIcon, ZoomPlusIcon } from '@navikt/aksel-icons';
 import styles from './MapPopover.module.css';
 
 export default function MapPopover() {

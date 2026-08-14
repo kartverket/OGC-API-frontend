@@ -1,14 +1,14 @@
+import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import { Map, View } from 'ol';
 import ImageLayer from 'ol/layer/Image';
-import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import proj4 from 'proj4';
-import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
-import { createBaseMap } from './baseMap';
-import { createVectorTileLayer } from './vectorTilesLayer';
-import { getLayer, transformExtent } from './helpers';
 import basemap from '@/config/basemap';
 import store from '@/store';
 import { selectFeature } from '@/store/slices/mapSlice';
+import { createBaseMap } from './baseMap';
+import { createBboxFeatureLayer, createEmptyFeaturesLayer, createFeaturesLayer, setFeatures } from './featuresLayer';
+import { getLayer, transformExtent } from './helpers';
+import { createVectorTileLayer } from './vectorTilesLayer';
 import './setup';
 
 export const MAP_PADDING = [50, 50, 50, 50];

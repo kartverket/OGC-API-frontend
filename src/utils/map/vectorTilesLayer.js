@@ -1,9 +1,9 @@
+import MVT from 'ol/format/MVT';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
-import MVT from 'ol/format/MVT';
 import TileGrid from 'ol/tilegrid/TileGrid';
-import { featureStyle } from './styles';
 import { getCrsCode } from './helpers';
+import { featureStyle } from './styles';
 
 /**
  * Create a vector tile source for the given URL template; tileGrid/projectionCode are optional and fall back to OL's default Web-Mercator grid.

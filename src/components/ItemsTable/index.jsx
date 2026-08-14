@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Pagination,
   Select,
@@ -13,10 +12,11 @@ import {
   TableRow,
   usePagination,
 } from '@digdir/designsystemet-react';
-import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
-import styles from './ItemsTable.module.css';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { isPlainObject } from '@/utils/helper';
+import { getCurrentPage, getItemsShowingText, getLimit, getLimits } from './helpers';
+import styles from './ItemsTable.module.css';
 
 const LIMITS = {
   20: '20 (standard)',

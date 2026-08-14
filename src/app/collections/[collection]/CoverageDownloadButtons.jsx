@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { Button, Card } from '@digdir/designsystemet-react';
-import { DownloadIcon, ChevronRightIcon } from '@navikt/aksel-icons';
+import { ChevronRightIcon, DownloadIcon } from '@navikt/aksel-icons';
+import { useState } from 'react';
 import styles from './page.module.css';
 
 function getDownloadFilename(link) {

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Button, Card, CardBlock, Field, Heading, Label, Select } from '@digdir/designsystemet-react';
 import { DownloadIcon } from '@navikt/aksel-icons';
+import { useEffect, useState } from 'react';
 import styles from './DownloadPanel.module.css';
 
 export default function DownloadPanel({ collectionId, downloadConfig }) {

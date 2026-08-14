@@ -1,12 +1,12 @@
 'use client';
 
+import { Heading, Paragraph, Spinner } from '@digdir/designsystemet-react';
 import { useMemo } from 'react';
 import useSWRImmutable from 'swr/immutable';
-import { fetchItems } from '@/utils/api/client';
-import ItemsProvider from '@/context/ItemsProvider';
-import ItemsMapProvider from '@/context/ItemsMapProvider';
-import { Heading, Paragraph, Spinner } from '@digdir/designsystemet-react';
 import { Breadcrumbs, ErrorPage, FilterCard, ItemsMap, ItemsTable } from '@/components';
+import ItemsMapProvider from '@/context/ItemsMapProvider';
+import ItemsProvider from '@/context/ItemsProvider';
+import { fetchItems } from '@/utils/api/client';
 import styles from './ItemsPage.module.css';
 
 export default function Items({ srvData, collection, searchParams }) {

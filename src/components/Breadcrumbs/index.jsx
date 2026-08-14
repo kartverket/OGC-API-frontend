@@ -1,5 +1,5 @@
+import { BreadcrumbsItem, BreadcrumbsLink, BreadcrumbsList, Breadcrumbs as Crumbs } from '@digdir/designsystemet-react';
 import Link from 'next/link';
-import { Breadcrumbs as Crumbs, BreadcrumbsItem, BreadcrumbsLink, BreadcrumbsList } from '@digdir/designsystemet-react';
 import styles from './Breadcrumbs.module.css';
 
 export default function Breadcrumbs({ breadcrumbs }) {

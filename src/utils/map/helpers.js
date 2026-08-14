@@ -1,6 +1,6 @@
-import { get as getProjectionByCode, transformExtent as _transformExtent } from 'ol/proj';
-import { roundDecimals } from '../helper';
+import { transformExtent as _transformExtent, get as getProjectionByCode } from 'ol/proj';
 import { MAX_BBOX } from '@/config/constants';
+import { roundDecimals } from '../helper';
 import './setup';
 
 const URI_REGEX = /^http:\/\/www\.opengis\.net\/def\/crs\/(?<auth>\w+)\/.*\/(?<code>\w+)$/m;

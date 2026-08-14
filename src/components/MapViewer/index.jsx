@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { Card, Field, Heading, Label, Select } from '@digdir/designsystemet-react';
 import { CheckmarkIcon, DownloadIcon, FilesIcon, LayersFillIcon } from '@navikt/aksel-icons';
 import { View } from 'ol';
-import { MAP_PADDING, createMapViewerMap } from '@/utils/map/map';
-import { OgcMapsImageSource, buildOgcMapsUrl, toOlProjection } from '@/utils/map/ogcImageSource';
+import { useEffect, useRef, useState } from 'react';
 import Zoom from '@/components/Map/Zoom';
-import { getCrsCode, getLayer, isGeographicCrs, transformExtent } from '@/utils/map/helpers';
-import { createBaseMapSource, isBasemapProjection } from '@/utils/map/baseMap';
 import basemapConfig from '@/config/basemap';
 import { useCopyToClipboard } from '@/hooks';
+import { createBaseMapSource, isBasemapProjection } from '@/utils/map/baseMap';
+import { getCrsCode, getLayer, isGeographicCrs, transformExtent } from '@/utils/map/helpers';
+import { createMapViewerMap, MAP_PADDING } from '@/utils/map/map';
+import { buildOgcMapsUrl, OgcMapsImageSource, toOlProjection } from '@/utils/map/ogcImageSource';
 import styles from './MapViewer.module.css';
 
 function createSource(collectionId, apiBaseUrl, olMapRef, crsUri) {

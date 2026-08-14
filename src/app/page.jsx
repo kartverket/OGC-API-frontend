@@ -1,11 +1,11 @@
-import Image from 'next/image';
-import NextLink from 'next/link';
-import { fetchHomePageData } from '@/services/pageData';
-import { createHomeMetadata } from '@/services/pageMetadata';
 import { Card, CardBlock, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { ChevronRightIcon, PackageFillIcon } from '@navikt/aksel-icons';
-import { ServiceInfoCard, DeveloperCard, ErrorPage } from '@/components';
+import Image from 'next/image';
+import NextLink from 'next/link';
 import ThumbnailImg from '@/assets/gfx/dataset-thumbnail.png';
+import { DeveloperCard, ErrorPage, ServiceInfoCard } from '@/components';
+import { fetchHomePageData } from '@/services/pageData';
+import { createHomeMetadata } from '@/services/pageMetadata';
 import styles from './page.module.css';
 
 // Force runtime reading (needed for config file access)

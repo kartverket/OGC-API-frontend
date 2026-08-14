@@ -1,11 +1,11 @@
-import { Vector as VectorSource } from 'ol/source';
-import { Vector as VectorLayer } from 'ol/layer';
-import GeoJSON from 'ol/format/GeoJSON';
-import { bboxStyle, featureStyle } from './styles';
-import { getLayer, getProjection } from './helpers';
-import { fromExtent } from 'ol/geom/Polygon';
 import { Feature } from 'ol';
+import GeoJSON from 'ol/format/GeoJSON';
+import { fromExtent } from 'ol/geom/Polygon';
+import { Vector as VectorLayer } from 'ol/layer';
 import { transformExtent } from 'ol/proj';
+import { Vector as VectorSource } from 'ol/source';
+import { getLayer, getProjection } from './helpers';
+import { bboxStyle, featureStyle } from './styles';
 
 export function createFeaturesLayer(featureCollection) {
   const vectorLayer = createEmptyFeaturesLayer();

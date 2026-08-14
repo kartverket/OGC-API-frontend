@@ -1,11 +1,11 @@
-import { fetchCollectionPageData } from '@/services/pageData';
-import { Breadcrumbs } from '@/components';
 import { Heading } from '@digdir/designsystemet-react';
-import { collectionHasMapCapability } from '@/utils/api/capabilities';
 import { notFound } from 'next/navigation';
+import { Breadcrumbs } from '@/components';
 import MapViewer from '@/components/MapViewer';
-import styles from './page.module.css';
+import { fetchCollectionPageData } from '@/services/pageData';
 import { getBaseUrlPublic } from '@/utils/api/baseUrl';
+import { collectionHasMapCapability } from '@/utils/api/capabilities';
+import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
 

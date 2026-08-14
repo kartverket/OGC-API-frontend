@@ -1,10 +1,10 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createItemsMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { setBboxFeature } from '@/utils/map/featuresLayer';
 import { isBboxValid, parseBboxStr } from '@/utils/map/helpers';
+import { createItemsMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
 
 const CRS84_URI = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
 

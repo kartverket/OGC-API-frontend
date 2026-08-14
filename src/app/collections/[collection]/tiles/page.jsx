@@ -1,9 +1,9 @@
-import { notFound } from 'next/navigation';
 import { Heading } from '@digdir/designsystemet-react';
+import { notFound } from 'next/navigation';
 import { Breadcrumbs, TilesViewer } from '@/components';
-import { collectionHasVectorTileCapability } from '@/utils/api/capabilities';
 import { fetchCollectionPageData } from '@/services/pageData';
 import { getBaseUrlPublic } from '@/utils/api/baseUrl';
+import { collectionHasVectorTileCapability } from '@/utils/api/capabilities';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';

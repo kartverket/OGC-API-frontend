@@ -1,23 +1,23 @@
 import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
 import { ChevronRightIcon, LayersFillIcon, PackageFillIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
+import bboxPolygon from '@turf/bbox-polygon';
+import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { featureCollection as createFeatureCollection } from '@turf/helpers';
-import bboxPolygon from '@turf/bbox-polygon';
 import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import { Breadcrumbs, CollectionMapImage, DatasetInfoCard, DownloadPanel, ErrorPage } from '@/components';
 import { hasExportProcessors } from '@/config/readPygeoapiConfig';
-import {
-  collectionHasFeatureCapability,
-  collectionHasMapCapability,
-  collectionHasCoverageCapability,
-  collectionHasVectorTileCapability,
-} from '@/utils/api/capabilities';
 import { fetchCollectionPageData } from '@/services/pageData';
 import { createCollectionMetadata } from '@/services/pageMetadata';
-import styles from './page.module.css';
+import {
+  collectionHasCoverageCapability,
+  collectionHasFeatureCapability,
+  collectionHasMapCapability,
+  collectionHasVectorTileCapability,
+} from '@/utils/api/capabilities';
 import { getBbox } from '@/utils/map/helpers';
 import CoverageDownloadButtons from './CoverageDownloadButtons';
+import styles from './page.module.css';
 
 // Force runtime reading (needed for config file access)
 export const dynamic = 'force-dynamic';

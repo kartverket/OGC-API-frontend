@@ -1,14 +1,14 @@
 'use client';
 
+import { unByKey } from 'ol/Observable';
 import { useEffect, useRef } from 'react';
 import { Rnd } from 'react-rnd';
-import { unByKey } from 'ol/Observable';
+import { MapComponent, MapPopover } from '@/components';
 import { useItemsMap } from '@/context/ItemsMapProvider';
 import { useItems } from '@/context/ItemsProvider';
 import { debounce } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
 import { getBboxFromSizeAndPosition, getMouseWheelZoomInteraction, getSizeAndPositionFromBbox } from './helpers';
-import { MapComponent, MapPopover } from '@/components';
 import styles from './ItemsMap.module.css';
 
 export default function ItemsMap({ width, height }) {

@@ -1,9 +1,9 @@
+import { Card, Heading, Link } from '@digdir/designsystemet-react';
+import { ArrowLeftIcon, ArrowRightIcon } from '@navikt/aksel-icons';
 import NextLink from 'next/link';
+import { Breadcrumbs, ErrorPage, ItemData, ItemMap } from '@/components';
 import { fetchItemPageData } from '@/services/pageData';
 import { createItemMetadata } from '@/services/pageMetadata';
-import { Card, Heading, Link } from '@digdir/designsystemet-react';
-import { Breadcrumbs, ErrorPage, ItemData, ItemMap } from '@/components';
-import { ArrowLeftIcon, ArrowRightIcon } from '@navikt/aksel-icons';
 import styles from './page.module.css';
 
 export async function generateMetadata({ params }) {

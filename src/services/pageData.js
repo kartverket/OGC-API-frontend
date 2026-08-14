@@ -1,11 +1,11 @@
-import { fetchHome, fetchCollections, fetchCollection, fetchItem, fetchQueryables } from '@/utils/api/server';
-import { createErrorResponse } from '@/utils/api/utils';
 import {
-  getMetadata,
   getCollectionDownloadConfig,
   getCollectionFeatureIdField,
   getCollectionFeatureTitleField,
+  getMetadata,
 } from '@/config/readPygeoapiConfig';
+import { fetchCollection, fetchCollections, fetchHome, fetchItem, fetchQueryables } from '@/utils/api/server';
+import { createErrorResponse } from '@/utils/api/utils';
 
 /**
  * Fetches data for the home page.

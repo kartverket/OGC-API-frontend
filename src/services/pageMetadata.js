@@ -1,4 +1,4 @@
-import { fetchHome, fetchCollection } from '@/utils/api/server';
+import { fetchCollection, fetchHome } from '@/utils/api/server';
 
 const SITE_SUFFIX = 'OGC API | Kartverket';
 

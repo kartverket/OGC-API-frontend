@@ -1,7 +1,7 @@
-import TileLayer from 'ol/layer/Tile';
-import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS';
 import { WMTSCapabilities } from 'ol/format';
+import TileLayer from 'ol/layer/Tile';
 import { get } from 'ol/proj';
+import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS';
 import basemap from '@/config/basemap';
 
 let _capabilities = null;

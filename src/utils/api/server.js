@@ -1,7 +1,7 @@
 import { SKIP_SSG } from '@/config/constants';
-import { getResponse } from './utils';
 import { getApiBaseUrlServer } from './baseUrl';
 import { collectionHasFeatureCapability } from './capabilities';
+import { getResponse } from './utils';
 
 function requireBaseUrl() {
   const baseUrl = getApiBaseUrlServer();

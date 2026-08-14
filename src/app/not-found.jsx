@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import NextLink from 'next/link';
 import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from '@/components/ErrorPage/ErrorPage.module.css';
 
 export default function NotFound() {

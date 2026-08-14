@@ -1,6 +1,6 @@
-import proj4 from 'proj4';
 import { get as getProjectionByCode } from 'ol/proj';
 import { register } from 'ol/proj/proj4';
+import proj4 from 'proj4';
 import projections from '@/config/projections.json';
 
 const GEOGRAPHIC_WORLD_EXTENT = [-180, -90, 180, 90];

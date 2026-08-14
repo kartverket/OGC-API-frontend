@@ -1,6 +1,6 @@
+import { Divider, Link } from '@digdir/designsystemet-react';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { Divider, Link } from '@digdir/designsystemet-react';
 import styles from './Footer.module.css';
 
 export default function Footer() {

@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import NextLink from 'next/link';
-import { getCrsCode } from '@/utils/map/helpers';
 import { Card, Heading, Link } from '@digdir/designsystemet-react';
 import { ArrowRightIcon, ChevronRightIcon } from '@navikt/aksel-icons';
-import styles from './CollectionCard.module.css';
+import Image from 'next/image';
+import NextLink from 'next/link';
 import { fetchCollection } from '@/utils/api/server';
+import { getCrsCode } from '@/utils/map/helpers';
+import styles from './CollectionCard.module.css';
 
 export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
   const mainLink = hasCoverage

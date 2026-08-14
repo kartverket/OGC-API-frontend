@@ -1,12 +1,13 @@
 'use client';
+
 // Needs to be a client component to use usePathname
 
-import { usePathname, useSearchParams } from 'next/navigation';
+import { Link } from '@digdir/designsystemet-react';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { Link } from '@digdir/designsystemet-react';
-import styles from './Header.module.css';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
+import styles from './Header.module.css';
 
 export default function Header() {
   const pathname = usePathname();
