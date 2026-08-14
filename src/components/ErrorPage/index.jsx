@@ -21,25 +21,23 @@ export default function ErrorPage({ status }) {
   const { code, text, title } = getErrorData(status);
 
   return (
-    <>
-      <div className={styles.page}>
-        <Heading level={1} data-size="sm" className={styles.heading}>
-          {code}: {title}
-        </Heading>
+    <div className={styles.page}>
+      <Heading level={1} data-size="sm" className={styles.heading}>
+        {code}: {title}
+      </Heading>
 
-        <Paragraph data-size="sm">
-          {text}
-          <br />
-          <Link href="#" onClick={goBack}>
-            Gå tilbake
-          </Link>{' '}
-          eller til{' '}
-          <Link asChild>
-            <NextLink href="/">forsiden</NextLink>
-          </Link>{' '}
-          for å komme bort fra denne siden.
-        </Paragraph>
-      </div>
-    </>
+      <Paragraph data-size="sm">
+        {text}
+        <br />
+        <Link href="#" onClick={goBack}>
+          Gå tilbake
+        </Link>{' '}
+        eller til{' '}
+        <Link asChild>
+          <NextLink href="/">forsiden</NextLink>
+        </Link>{' '}
+        for å komme bort fra denne siden.
+      </Paragraph>
+    </div>
   );
 }

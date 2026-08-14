@@ -4,14 +4,14 @@ export function getLimit(searchParams) {
   const limit = searchParams.get('limit');
   const parsed = parseInt(limit);
 
-  return !isNaN(parsed) && parsed > 0 ? parsed : 0;
+  return !Number.isNaN(parsed) && parsed > 0 ? parsed : 0;
 }
 
 export function getOffset(searchParams) {
   const offset = searchParams.get('offset');
   const parsed = parseInt(offset);
 
-  return !isNaN(parsed) && parsed > 0 ? parsed : 0;
+  return !Number.isNaN(parsed) && parsed > 0 ? parsed : 0;
 }
 
 export function getLimits(searchParams, defaultLimits) {

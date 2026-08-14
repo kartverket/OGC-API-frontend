@@ -1,3 +1,4 @@
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Map from OpenLayers is understandable in this context
 import { Map, View } from 'ol';
 import basemap from '@/config/basemap';
 import { createBaseMap } from './baseMap';

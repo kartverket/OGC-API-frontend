@@ -42,7 +42,7 @@
     border-radius: var(--ds-border-radius-md);
     background: var(--ds-color-surface-tinted);
     padding: 10px 8px;
-    font-family: RobotoMono;
+    font-family: RobotoMono, monospace;
     font-size: var(--ds-font-size-2);
   }
 
