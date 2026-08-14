@@ -1,28 +1,28 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { debounce, roundDecimals } from '@/utils/helper';
-import { useItemsMap } from '@/context/ItemsMapProvider';
-import { useItems } from '@/context/ItemsProvider';
-import { getSizeAndPositionFromBbox } from '../ItemsMap/helpers';
-import { extend } from 'ol/extent';
-import { unByKey } from 'ol/Observable';
+import { Button, Card, Chip, Field, Heading, Input, Label, Select } from '@digdir/designsystemet-react';
+import { EqualsIcon, FilterIcon, PencilIcon, XMarkIcon } from '@navikt/aksel-icons';
 import bboxPolygon from '@turf/bbox-polygon';
 import booleanWithin from '@turf/boolean-within';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { extend } from 'ol/extent';
+import { unByKey } from 'ol/Observable';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useItemsMap } from '@/context/ItemsMapProvider';
+import { useItems } from '@/context/ItemsProvider';
+import { debounce, roundDecimals } from '@/utils/helper';
 import { setBboxFeature, toggleBboxFeature } from '@/utils/map/featuresLayer';
 import { isBboxValid, parseBbox } from '@/utils/map/helpers';
+import { getSizeAndPositionFromBbox } from '../ItemsMap/helpers';
+import styles from './FilterCard.module.css';
 import {
+  getBboxExtent,
   getControlTypeFromField,
+  getFeaturesExtent,
   getFields,
   getMapViewBounds,
   isWithinBounds,
-  getFeaturesExtent,
-  getBboxExtent,
 } from './helpers';
-import { Card, Heading, Label, Select, Field, Button, Input, Chip } from '@digdir/designsystemet-react';
-import { EqualsIcon, FilterIcon, PencilIcon, XMarkIcon } from '@navikt/aksel-icons';
-import styles from './FilterCard.module.css';
 
 export default function FilterCard({ data }) {
   const router = useRouter();

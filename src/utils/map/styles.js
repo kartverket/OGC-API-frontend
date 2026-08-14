@@ -1,8 +1,8 @@
+import CircleStyle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
 import Icon from 'ol/style/Icon';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
-import CircleStyle from 'ol/style/Circle';
 
 export const polygonStyle = new Style({
   stroke: new Stroke({

@@ -1,10 +1,10 @@
 'use client';
 
+import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
 import NextLink from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
-import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import { getErrorData } from './helpers';
 import styles from './ErrorPage.module.css';
+import { getErrorData } from './helpers';
 
 export default function ErrorPage({ status }) {
   if (status === 404) {

@@ -1,13 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { Card, CardBlock, Divider, Heading, Link, Skeleton } from '@digdir/designsystemet-react';
-import { ArrowRightIcon, TerminalIcon, CheckmarkIcon } from '@navikt/aksel-icons';
-import CopyIcon from '@/assets/gfx/icon-copy.svg';
-import styles from './DeveloperCard.module.css';
+import { ArrowRightIcon, CheckmarkIcon, TerminalIcon } from '@navikt/aksel-icons';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
+import { useMemo, useState } from 'react';
+import CopyIcon from '@/assets/gfx/icon-copy.svg';
 import { useBaseUrlSWR } from '@/config/apiConfig.swr';
+import styles from './DeveloperCard.module.css';
 
 function DeveloperCardWrapper({ children }) {
   return (

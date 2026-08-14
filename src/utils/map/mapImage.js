@@ -1,8 +1,8 @@
 import { Map, View } from 'ol';
+import basemap from '@/config/basemap';
 import { createBaseMap } from './baseMap';
 import { createFeaturesLayer } from './featuresLayer';
 import { getProjection } from './helpers';
-import basemap from '@/config/basemap';
 import './setup';
 
 const MAP_PADDING = [50, 50, 50, 50];

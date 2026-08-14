@@ -1,5 +1,5 @@
-import IconPlus from '@/assets/gfx/icon-plus.svg';
 import IconMinus from '@/assets/gfx/icon-minus.svg';
+import IconPlus from '@/assets/gfx/icon-plus.svg';
 import styles from './Zoom.module.css';
 
 export default function Zoom({ map, className = '' }) {

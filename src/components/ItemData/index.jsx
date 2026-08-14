@@ -1,5 +1,5 @@
-import ItemDataProperty from './ItemDataProperty';
 import styles from './ItemData.module.css';
+import ItemDataProperty from './ItemDataProperty';
 
 export default function ItemData({ data }) {
   return (

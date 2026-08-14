@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { Alert, Card, Field, Heading, Label, Link, Select } from '@digdir/designsystemet-react';
 import { CheckmarkIcon, FilesIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
 import { get as getProjectionByCode } from 'ol/proj';
-import { createTilesMap } from '@/utils/map/map';
-import { createVectorTileSource, buildTileGridFromDefinition } from '@/utils/map/vectorTilesLayer';
-import { getLayer } from '@/utils/map/helpers';
+import { useEffect, useRef, useState } from 'react';
 import Zoom from '@/components/Map/Zoom';
 import { useCopyToClipboard } from '@/hooks';
+import { getLayer } from '@/utils/map/helpers';
+import { createTilesMap } from '@/utils/map/map';
+import { buildTileGridFromDefinition, createVectorTileSource } from '@/utils/map/vectorTilesLayer';
 import styles from './TilesViewer.module.css';
 
 function substitutePlaceholders(href, tmsId) {

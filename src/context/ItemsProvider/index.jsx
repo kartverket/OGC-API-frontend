@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getBbox, isBboxValid, parseBboxStr, transformExtent } from '@/utils/map/helpers';
 
 export default function ItemsProvider({ data, children }) {

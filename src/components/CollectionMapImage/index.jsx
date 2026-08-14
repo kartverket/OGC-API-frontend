@@ -1,8 +1,8 @@
 'use client';
 
+import { Skeleton } from '@digdir/designsystemet-react';
 import Image from 'next/image';
 import { useMapImage } from '@/hooks';
-import { Skeleton } from '@digdir/designsystemet-react';
 
 export default function CollectionMapImage({ featureCollection }) {
   const options = {

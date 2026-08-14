@@ -1,6 +1,6 @@
+import { ErrorPage, ItemsPage } from '@/components';
 import { fetchItemsPageData } from '@/services/pageData';
 import { createItemsMetadata } from '@/services/pageMetadata';
-import { ErrorPage, ItemsPage } from '@/components';
 
 export async function generateMetadata({ params }) {
   const { collection } = await params;

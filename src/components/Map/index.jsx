@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import styles from './Map.module.css';
 import Zoom from './Zoom';
 import ZoomToExtent from './ZoomToExtent';
-import styles from './Map.module.css';
 
 export default function MapComponent({ map, width, height }) {
   const mapElementRef = useRef(null);

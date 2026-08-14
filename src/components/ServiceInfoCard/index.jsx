@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardBlock, Heading, Link } from '@digdir/designsystemet-react';
-import { Details, DetailsContent, DetailsSummary } from '..';
 import { InformationSquareIcon } from '@navikt/aksel-icons';
+import { useState } from 'react';
+import { Details, DetailsContent, DetailsSummary } from '..';
 import styles from './ServiceInfoCard.module.css';
 
 const MAX_VISIBLE_KEYWORDS = 4;

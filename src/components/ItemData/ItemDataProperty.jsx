@@ -1,5 +1,5 @@
-import ItemDataValue from './ItemDataValue';
 import styles from './ItemData.module.css';
+import ItemDataValue from './ItemDataValue';
 
 const INDENT_PX = 16;
 

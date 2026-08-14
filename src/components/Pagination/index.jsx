@@ -1,4 +1,4 @@
-import { usePagination, Pagination as DsPagination } from '@digdir/designsystemet-react';
+import { Pagination as DsPagination, usePagination } from '@digdir/designsystemet-react';
 import { useState } from 'react';
 
 export default function Pagination() {

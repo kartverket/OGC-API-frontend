@@ -1,6 +1,6 @@
+import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 import { roundDecimals } from '@/utils/helper';
 import { transformExtent } from '@/utils/map/helpers';
-import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 
 export function getSizeAndPositionFromBbox(map, bbox) {
   const minXminY = [bbox[0], bbox[1]];
