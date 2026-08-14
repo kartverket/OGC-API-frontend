@@ -3,53 +3,45 @@ import IconMinus from '@/assets/gfx/icon-minus.svg';
 import styles from './Zoom.module.css';
 
 export default function Zoom({ map, className = '' }) {
-    function zoomIn() {
-        const view = map.getView();
-        const maxZoom = view.getMaxZoom();
-        let zoom = view.getZoom() + 1;
+  function zoomIn() {
+    const view = map.getView();
+    const maxZoom = view.getMaxZoom();
+    let zoom = view.getZoom() + 1;
 
-        if (zoom > maxZoom) {
-            zoom = maxZoom;
-        }
-
-        view.animate({
-            zoom,
-            duration: 250
-        });
+    if (zoom > maxZoom) {
+      zoom = maxZoom;
     }
 
-    function zoomOut() {
-        const view = map.getView();
-        const minZoom = view.getMinZoom();
-        let zoom = view.getZoom() - 1;
+    view.animate({
+      zoom,
+      duration: 250,
+    });
+  }
 
-        if (zoom < minZoom) {
-            zoom = minZoom;
-        }
+  function zoomOut() {
+    const view = map.getView();
+    const minZoom = view.getMinZoom();
+    let zoom = view.getZoom() - 1;
 
-        view.animate({
-            zoom,
-            duration: 250
-        });
+    if (zoom < minZoom) {
+      zoom = minZoom;
     }
 
-    return (
-        <div className={`${styles.zoomControl} ${className}`}>
-            <button
-                className={styles.zoomIn}
-                onClick={zoomIn}
-                title="Zoom inn"
-            >
-                <IconPlus />
-            </button>
+    view.animate({
+      zoom,
+      duration: 250,
+    });
+  }
 
-            <button
-                className={styles.zoomOut}
-                onClick={zoomOut}
-                title="Zoom ut"
-            >
-                <IconMinus />
-            </button>
-        </div>
-    );
+  return (
+    <div className={`${styles.zoomControl} ${className}`}>
+      <button className={styles.zoomIn} onClick={zoomIn} title="Zoom inn">
+        <IconPlus />
+      </button>
+
+      <button className={styles.zoomOut} onClick={zoomOut} title="Zoom ut">
+        <IconMinus />
+      </button>
+    </div>
+  );
 }

@@ -9,95 +9,95 @@ const _wmtsOptionsCache = {};
 
 // Map OL projection codes to WMTS matrix set identifiers.
 const MATRIX_SETS = {
-    'EPSG:3857': 'webmercator',
-    'EPSG:25832': 'utm32n',
-    'EPSG:25833': 'utm33n',
-    'EPSG:25835': 'utm35n',
+  'EPSG:3857': 'webmercator',
+  'EPSG:25832': 'utm32n',
+  'EPSG:25833': 'utm33n',
+  'EPSG:25835': 'utm35n',
 };
 
 export async function createBaseMap() {
-    const options = await getWmtsOptions(basemap.projection);
+  const options = await getWmtsOptions(basemap.projection);
 
-    if (options === null) {
-        return null;
-    }
+  if (options === null) {
+    return null;
+  }
 
-    const tileLayer = new TileLayer({
-        source: new WMTS(options),
-        minZoom: basemap.minZoom,
-        maxZoom: basemap.maxZoom
-    });
+  const tileLayer = new TileLayer({
+    source: new WMTS(options),
+    minZoom: basemap.minZoom,
+    maxZoom: basemap.maxZoom,
+  });
 
-    tileLayer.set('id', 'basemap');
+  tileLayer.set('id', 'basemap');
 
-    return tileLayer;
+  return tileLayer;
 }
 
 /**
  * Create a WMTS source for the given projection, or null if unsupported.
  */
 export async function createBaseMapSource(projection) {
-    const options = await getWmtsOptions(projection);
-    return options ? new WMTS(options) : null;
+  const options = await getWmtsOptions(projection);
+  return options ? new WMTS(options) : null;
 }
 
 /**
  * Check whether the basemap WMTS has tiles for the given projection.
  */
 export function isBasemapProjection(projection) {
-    return projection in MATRIX_SETS;
+  return projection in MATRIX_SETS;
 }
 
 async function getWmtsOptions(projection) {
-    if (_wmtsOptionsCache[projection]) {
-        return _wmtsOptionsCache[projection];
-    }
-
-    const matrixSet = MATRIX_SETS[projection];
-    if (!matrixSet) {
-        return null;
-    }
-
-    const capabilities = await getCapabilities();
-    if (!capabilities) {
-        return null;
-    }
-
-    const options = optionsFromCapabilities(capabilities, {
-        layer: basemap.layer,
-        projection: get(projection),
-        matrixSet,
-    });
-
-    if (!options) {
-        return null;
-    }
-
-    _wmtsOptionsCache[projection] = {
-        ...options,
-        crossOrigin: 'anonymous'
-    };
-
+  if (_wmtsOptionsCache[projection]) {
     return _wmtsOptionsCache[projection];
+  }
+
+  const matrixSet = MATRIX_SETS[projection];
+  if (!matrixSet) {
+    return null;
+  }
+
+  const capabilities = await getCapabilities();
+  if (!capabilities) {
+    return null;
+  }
+
+  const options = optionsFromCapabilities(capabilities, {
+    layer: basemap.layer,
+    projection: get(projection),
+    matrixSet,
+  });
+
+  if (!options) {
+    return null;
+  }
+
+  _wmtsOptionsCache[projection] = {
+    ...options,
+    crossOrigin: 'anonymous',
+  };
+
+  return _wmtsOptionsCache[projection];
 }
 
 async function getCapabilities() {
-    if (_capabilities) {
-        return _capabilities;
-    }
-
-    let response;
-
-    try {
-        response = await fetch(basemap.url);
-    } catch {
-        return null;
-    }
-
-    if (!response.ok) return null;
-
-    const xml = await response.text();
-    _capabilities = new WMTSCapabilities().read(xml);
-
+  if (_capabilities) {
     return _capabilities;
+  }
+
+  let response;
+
+  try {
+    response = await fetch(basemap.url);
+  } catch {
+    return null;
+  }
+
+  if (!response.ok) return null;
+
+  const xml = await response.text();
+  _capabilities = new WMTSCapabilities().read(xml);
+
+  return _capabilities;
 }

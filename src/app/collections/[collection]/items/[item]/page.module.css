@@ -1,69 +1,69 @@
 .page {
-    max-width: var(--page-width);
-    width: 100%;
-    padding: var(--main-padding);
-    box-sizing: border-box;
+  max-width: var(--page-width);
+  width: 100%;
+  padding: var(--main-padding);
+  box-sizing: border-box;
 }
 
 .heading {
-    margin-bottom: var(--ds-size-2);
+  margin-bottom: var(--ds-size-2);
 }
 
 .content {
-    display: flex;
-    flex-direction: row;
-    gap: var(--ds-size-15);
+  display: flex;
+  flex-direction: row;
+  gap: var(--ds-size-15);
 }
 
 .infoCard {
-    flex: 1;
+  flex: 1;
 }
 
 .itemCard {
-    border: 0 none;
-    margin-bottom: var(--ds-size-3);
+  border: 0 none;
+  margin-bottom: var(--ds-size-3);
 
-    &>* {
-        margin: 0;
-    }
+  & > * {
+    margin: 0;
+  }
 }
 
 .nextPrevLinks {
+  display: flex;
+  justify-content: space-between;
+
+  a {
     display: flex;
     justify-content: space-between;
+    text-decoration: none;
 
-    a {
-        display: flex;
-        justify-content: space-between;
-        text-decoration: none;
-
-        &:visited {
-            color: var(--ds-color-text-subtle);
-        }
-
-        &:hover {
-            color: var(--ds-color-text-default);
-            text-decoration: underline;
-            text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
-            text-underline-offset: .27em;
-        }
-
-        &:active {
-            background: none;
-        }
-
-        &:first-child svg {
-            margin-right: var(--ds-size-1);
-        }
-
-        &:last-child svg {
-            margin-left: var(--ds-size-1);
-        }
+    &:visited {
+      color: var(--ds-color-text-subtle);
     }
+
+    &:hover {
+      color: var(--ds-color-text-default);
+      text-decoration: underline;
+      text-decoration-thickness: var(--dsc-link-text-decoration-thickness--hover);
+      text-underline-offset: 0.27em;
+    }
+
+    &:active {
+      background: none;
+    }
+
+    &:first-child svg {
+      margin-right: var(--ds-size-1);
+    }
+
+    &:last-child svg {
+      margin-left: var(--ds-size-1);
+    }
+  }
 }
 
-.detailsLinks>div {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ds-size-2);
+.detailsLinks > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-size-2);
 }

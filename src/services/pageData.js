@@ -1,12 +1,11 @@
-import {
-  fetchHome,
-  fetchCollections,
-  fetchCollection,
-  fetchItem,
-  fetchQueryables
-} from '@/utils/api/server';
+import { fetchHome, fetchCollections, fetchCollection, fetchItem, fetchQueryables } from '@/utils/api/server';
 import { createErrorResponse } from '@/utils/api/utils';
-import { getMetadata, getCollectionDownloadConfig, getCollectionFeatureIdField, getCollectionFeatureTitleField } from '@/config/readPygeoapiConfig';
+import {
+  getMetadata,
+  getCollectionDownloadConfig,
+  getCollectionFeatureIdField,
+  getCollectionFeatureTitleField,
+} from '@/config/readPygeoapiConfig';
 
 /**
  * Fetches data for the home page.
@@ -14,18 +13,15 @@ import { getMetadata, getCollectionDownloadConfig, getCollectionFeatureIdField, 
  */
 export async function fetchHomePageData() {
   try {
-    const [homeData, collectionsData] = await Promise.all([
-      fetchHome(),
-      fetchCollections()
-    ]);
+    const [homeData, collectionsData] = await Promise.all([fetchHome(), fetchCollections()]);
 
     return {
       data: {
         ...homeData,
         collectionCount: collectionsData.collections.length,
-        metadata: getMetadata()
+        metadata: getMetadata(),
       },
-      status: 200
+      status: 200,
     };
   } catch (error) {
     return createErrorResponse(error);
@@ -38,17 +34,14 @@ export async function fetchHomePageData() {
  */
 export async function fetchCollectionsPageData() {
   try {
-    const [collectionsData, homeData] = await Promise.all([
-      fetchCollections(),
-      fetchHome()
-    ]);
+    const [collectionsData, homeData] = await Promise.all([fetchCollections(), fetchHome()]);
 
     return {
       data: {
         ...collectionsData,
-        dataset: { title: homeData.title }
+        dataset: { title: homeData.title },
       },
-      status: 200
+      status: 200,
     };
   } catch (error) {
     return createErrorResponse(error);
@@ -62,19 +55,16 @@ export async function fetchCollectionsPageData() {
  */
 export async function fetchCollectionPageData(collection) {
   try {
-    const [collectionData, homeData] = await Promise.all([
-      fetchCollection(collection),
-      fetchHome()
-    ]);
+    const [collectionData, homeData] = await Promise.all([fetchCollection(collection), fetchHome()]);
 
     return {
       data: {
         ...collectionData,
         dataset: { title: homeData.title },
         metadata: getMetadata(),
-        downloadConfig: getCollectionDownloadConfig(collection)
+        downloadConfig: getCollectionDownloadConfig(collection),
       },
-      status: 200
+      status: 200,
     };
   } catch (error) {
     return createErrorResponse(error);
@@ -91,7 +81,7 @@ export async function fetchItemsPageData(collection) {
     const [queryables, collectionData, homeData] = await Promise.all([
       fetchQueryables(collection),
       fetchCollection(collection),
-      fetchHome()
+      fetchHome(),
     ]);
 
     return {
@@ -101,13 +91,13 @@ export async function fetchItemsPageData(collection) {
           title: collectionData.title,
           extent: {
             bbox: collectionData.extent.spatial.bbox[0],
-            crs: collectionData.extent.spatial.crs
-          }
+            crs: collectionData.extent.spatial.crs,
+          },
         },
         dataset: { title: homeData.title },
-        idField: getCollectionFeatureIdField(collection)
+        idField: getCollectionFeatureIdField(collection),
       },
-      status: 200
+      status: 200,
     };
   } catch (error) {
     return createErrorResponse(error);
@@ -125,7 +115,7 @@ export async function fetchItemPageData(collection, itemId) {
     const [itemData, collectionData, homeData] = await Promise.all([
       fetchItem(collection, itemId),
       fetchCollection(collection),
-      fetchHome()
+      fetchHome(),
     ]);
 
     return {
@@ -134,9 +124,9 @@ export async function fetchItemPageData(collection, itemId) {
         collection: { title: collectionData.title },
         dataset: { title: homeData.title },
         idField: getCollectionFeatureIdField(collection),
-        titleField: getCollectionFeatureTitleField(collection)
+        titleField: getCollectionFeatureTitleField(collection),
       },
-      status: 200
+      status: 200,
     };
   } catch (error) {
     return createErrorResponse(error);
@@ -153,16 +143,16 @@ export async function fetchQueryablesPageData(collection) {
     const [queryablesData, collectionData, homeData] = await Promise.all([
       fetchQueryables(collection),
       fetchCollection(collection),
-      fetchHome()
+      fetchHome(),
     ]);
 
     return {
       data: {
         ...queryablesData,
         collection: { title: collectionData.title },
-        dataset: { title: homeData.title }
+        dataset: { title: homeData.title },
       },
-      status: 200
+      status: 200,
     };
   } catch (error) {
     return createErrorResponse(error);

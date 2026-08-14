@@ -1,8 +1,7 @@
 import { getResponse } from './utils';
 
-
 export async function fetchItems(url) {
-    const response = await fetch(url);
+  const response = await fetch(url);
 
-    return await getResponse(response);    
+  return await getResponse(response);
 }
