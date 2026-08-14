@@ -31,7 +31,7 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.7",
+    "@biomejs/biome": "^2.5.8",
     "@digdir/designsystemet": "^1.18.0",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^26.2.0"
