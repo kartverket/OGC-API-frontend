@@ -1,12 +1,12 @@
-"use client";
+'use client';
 // Needs to be a client component to use usePathname
 
-import { usePathname, useSearchParams } from "next/navigation";
-import Image from "next/image";
-import NextLink from "next/link";
-import { Link } from "@digdir/designsystemet-react";
-import styles from "./Header.module.css";
-import { useMemo } from "react";
+import { usePathname, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { Link } from '@digdir/designsystemet-react';
+import styles from './Header.module.css';
+import { useMemo } from 'react';
 
 export default function Header() {
   const pathname = usePathname();
@@ -14,7 +14,7 @@ export default function Header() {
 
   const jsonLink = useMemo(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("f", "json");
+    params.set('f', 'json');
     return `${pathname}?${params.toString()}`;
   }, [pathname, searchParams]);
 
@@ -32,7 +32,7 @@ export default function Header() {
       <div className={styles.links}>
         <Link asChild data-size="sm">
           <NextLink
-            href={jsonLink || "#"}
+            href={jsonLink || '#'}
             target="_blank"
             aria-disabled={!jsonLink}
             // optional: make it actually non-clickable when disabled

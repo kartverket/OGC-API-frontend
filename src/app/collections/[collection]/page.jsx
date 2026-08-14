@@ -1,32 +1,26 @@
-import { Card, Heading, Paragraph } from "@digdir/designsystemet-react";
+import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
+import { ChevronRightIcon, LayersFillIcon, PackageFillIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { featureCollection as createFeatureCollection } from '@turf/helpers';
+import bboxPolygon from '@turf/bbox-polygon';
+import thumbnail from '@/assets/gfx/collection-thumbnail.png';
+import { Breadcrumbs, CollectionMapImage, DatasetInfoCard, DownloadPanel, ErrorPage } from '@/components';
+import { hasExportProcessors } from '@/config/readPygeoapiConfig';
 import {
-  ChevronRightIcon,
-  LayersFillIcon,
-  PackageFillIcon,
-  SquareGridFillIcon,
-} from "@navikt/aksel-icons";
-import Image from "next/image";
-import NextLink from "next/link";
-import { featureCollection as createFeatureCollection } from "@turf/helpers";
-import bboxPolygon from "@turf/bbox-polygon";
-import thumbnail from "@/assets/gfx/collection-thumbnail.png";
-import {
-  Breadcrumbs,
-  CollectionMapImage,
-  DatasetInfoCard,
-  DownloadPanel,
-  ErrorPage,
-} from "@/components";
-import { hasExportProcessors } from "@/config/readPygeoapiConfig";
-import { collectionHasFeatureCapability, collectionHasMapCapability, collectionHasCoverageCapability, collectionHasVectorTileCapability } from "@/utils/api/capabilities";
-import { fetchCollectionPageData } from "@/services/pageData";
-import { createCollectionMetadata } from "@/services/pageMetadata";
-import styles from "./page.module.css";
-import { getBbox } from "@/utils/map/helpers";
-import CoverageDownloadButtons from "./CoverageDownloadButtons";
+  collectionHasFeatureCapability,
+  collectionHasMapCapability,
+  collectionHasCoverageCapability,
+  collectionHasVectorTileCapability,
+} from '@/utils/api/capabilities';
+import { fetchCollectionPageData } from '@/services/pageData';
+import { createCollectionMetadata } from '@/services/pageMetadata';
+import styles from './page.module.css';
+import { getBbox } from '@/utils/map/helpers';
+import CoverageDownloadButtons from './CoverageDownloadButtons';
 
 // Force runtime reading (needed for config file access)
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
   const { collection } = await params;
@@ -34,15 +28,15 @@ export async function generateMetadata({ params }) {
 }
 
 function getCoverageLinkLabel(link) {
-  if (link.type === "application/prs.coverage+json") {
-    return "Coverage as covjson";
+  if (link.type === 'application/prs.coverage+json') {
+    return 'Coverage as covjson';
   }
 
-  if ((link.type ?? "").toLowerCase().includes("image/tiff")) {
-    return "Coverage data as GTiff";
+  if ((link.type ?? '').toLowerCase().includes('image/tiff')) {
+    return 'Coverage data as GTiff';
   }
 
-  return link.title || link.type || "Coverage";
+  return link.title || link.type || 'Coverage';
 }
 
 export default async function Collection({ params }) {
@@ -60,27 +54,25 @@ export default async function Collection({ params }) {
   const hasDownload = hasExportProcessors();
   const coverageLinks = hasCoverage
     ? (data.links ?? []).filter((link) => {
-        return link.rel?.endsWith("/coverage") && link.type !== "text/html";
+        return link.rel?.endsWith('/coverage') && link.type !== 'text/html';
       })
     : [];
 
   const coverageDownloads = coverageLinks.map((link) => ({
     href: link.href,
     label: getCoverageLinkLabel(link),
-    filename: (link.type ?? '').toLowerCase().includes('image/tiff')
-      ? `${data.id}.tif`
-      : `${data.id}.json`,
+    filename: (link.type ?? '').toLowerCase().includes('image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
 
   const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
-  const featureCollection = createFeatureCollection([bboxPolygon(bbox)])
+  const featureCollection = createFeatureCollection([bboxPolygon(bbox)]);
 
   return (
     <>
       <Breadcrumbs
         breadcrumbs={{
-          "/": data.dataset.title,
-          "/collections": "Collections",
+          '/': data.dataset.title,
+          '/collections': 'Collections',
           [`/collections/${data.id}`]: data.title,
         }}
       />
@@ -88,12 +80,7 @@ export default async function Collection({ params }) {
         <div className={styles.top}>
           <div className={styles.left}>
             <div className={styles.topLeftTop}>
-              <Image
-                src={thumbnail}
-                alt="Thumbnail"
-                width={160}
-                className={styles.thumbnail}
-              />
+              <Image src={thumbnail} alt="Thumbnail" width={160} className={styles.thumbnail} />
               <div>
                 <Heading level={1} data-size="sm" className={styles.heading}>
                   {data.title}
@@ -104,33 +91,22 @@ export default async function Collection({ params }) {
 
             <div className={styles.topLeftBottom}>
               <div className={styles.actionCards}>
-                {hasCoverage
-                  ? <CoverageDownloadButtons
-                      links={coverageDownloads}
-                    />
-                  : hasFeature && (
-                      <Card
-                        asChild
-                        data-variant="tinted"
-                        data-color="accent"
-                        className={styles.objectCard}
-                      >
-                        <NextLink href={`/collections/${data.id}/items`}>
-                          <PackageFillIcon title="a11y-title" fontSize="36px" />
-                          <span>Vis objekter i datasettet</span>
-                          <ChevronRightIcon title="a11y-title" fontSize="36px" />
-                        </NextLink>
-                      </Card>
-                    )
-                }
+                {hasCoverage ? (
+                  <CoverageDownloadButtons links={coverageDownloads} />
+                ) : (
+                  hasFeature && (
+                    <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                      <NextLink href={`/collections/${data.id}/items`}>
+                        <PackageFillIcon title="a11y-title" fontSize="36px" />
+                        <span>Vis objekter i datasettet</span>
+                        <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                      </NextLink>
+                    </Card>
+                  )
+                )}
 
                 {hasTiles && (
-                  <Card
-                    asChild
-                    data-variant="tinted"
-                    data-color="accent"
-                    className={styles.objectCard}
-                  >
+                  <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
                     <NextLink href={`/collections/${data.id}/tiles`}>
                       <SquareGridFillIcon title="a11y-title" fontSize="36px" />
                       <span>Vis fliser</span>
@@ -140,12 +116,7 @@ export default async function Collection({ params }) {
                 )}
 
                 {hasMap && (
-                  <Card
-                    asChild
-                    data-variant="tinted"
-                    data-color="accent"
-                    className={styles.objectCard}
-                  >
+                  <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
                     <NextLink href={`/collections/${data.id}/map`}>
                       <LayersFillIcon title="a11y-title" fontSize="36px" />
                       <span>Vis kart</span>
@@ -156,14 +127,14 @@ export default async function Collection({ params }) {
               </div>
 
               {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
-              
-              { hasDownload && <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} /> }
+
+              {hasDownload && <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />}
             </div>
           </div>
           <div className={styles.right}>
             <div className={styles.map}>
               <Heading data-size="2xs">Geografisk utstrekning av datasettet</Heading>
-          
+
               <div className={styles.wrapper}>
                 <CollectionMapImage featureCollection={featureCollection} />
               </div>

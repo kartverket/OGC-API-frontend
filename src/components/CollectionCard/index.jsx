@@ -1,10 +1,10 @@
-import Image from "next/image";
-import NextLink from "next/link";
-import { getCrsCode } from "@/utils/map/helpers";
-import { Card, Heading, Link } from "@digdir/designsystemet-react";
-import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
-import styles from "./CollectionCard.module.css";
-import { fetchCollection } from "@/utils/api/server";
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { getCrsCode } from '@/utils/map/helpers';
+import { Card, Heading, Link } from '@digdir/designsystemet-react';
+import { ArrowRightIcon, ChevronRightIcon } from '@navikt/aksel-icons';
+import styles from './CollectionCard.module.css';
+import { fetchCollection } from '@/utils/api/server';
 
 export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
   const mainLink = hasCoverage
@@ -20,44 +20,33 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
       const itemsData = await fetchCollection(collection.id);
       geometryType = itemsData.geometryType || null;
     } catch (error) {
-      console.error(
-        `[CollectionCard] Failed to fetch items for collection ${collection.id}:`,
-        error,
-      );
+      console.error(`[CollectionCard] Failed to fetch items for collection ${collection.id}:`, error);
     }
   }
 
   // Determine which icon to use based on geometry type (default to polygon)
-  let geometryIconPath = hasCoverage ? "/gfx/raster.svg" : "/gfx/polygon.svg";
+  let geometryIconPath = hasCoverage ? '/gfx/raster.svg' : '/gfx/polygon.svg';
   const countValue = hasCoverage ? collection.fileCount : collection.itemCount;
-  const countLabel = hasCoverage ? "files" : "features";
+  const countLabel = hasCoverage ? 'files' : 'features';
 
   if (geometryType) {
     if (/polygon/i.test(geometryType)) {
-      geometryIconPath = "/gfx/polygon.svg";
+      geometryIconPath = '/gfx/polygon.svg';
     } else if (/line/i.test(geometryType)) {
-      geometryIconPath = "/gfx/line.svg";
+      geometryIconPath = '/gfx/line.svg';
     } else if (/point/i.test(geometryType)) {
-      geometryIconPath = "/gfx/points.svg";
+      geometryIconPath = '/gfx/points.svg';
     } else {
       // Fallback to polygon for unrecognized geometry types
-      geometryIconPath = "/gfx/polygon.svg";
+      geometryIconPath = '/gfx/polygon.svg';
     }
   }
 
   return (
     <Card className={styles.card}>
       <div className={styles.cardContent}>
-        <NextLink
-          href={mainLink}
-          className={styles.thumbnail}
-        >
-          <Image
-            src={geometryIconPath}
-            alt="Thumbnail"
-            width={150}
-            height={150}
-          />
+        <NextLink href={mainLink} className={styles.thumbnail}>
+          <Image src={geometryIconPath} alt="Thumbnail" width={150} height={150} />
         </NextLink>
 
         <div className={styles.content}>
@@ -92,9 +81,7 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
             <div className={styles.metadata}>
               <div>
                 <div className={styles.label}>Koordinatsystem</div>
-                <div className={styles.value}>
-                  {getCrsCode(collection.storageCrs)}
-                </div>
+                <div className={styles.value}>{getCrsCode(collection.storageCrs)}</div>
               </div>
             </div>
           </div>
@@ -102,23 +89,17 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
           <div className={styles.bottom}>
             <div className={styles.left}>
               {hasFeature && (
-                <span className={`${styles.itemType} ${styles.tag}`}>{collection.itemType || "Feature"}</span>
+                <span className={`${styles.itemType} ${styles.tag}`}>{collection.itemType || 'Feature'}</span>
               )}
 
-              {hasMap && (
-                <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>
-              )}
+              {hasMap && <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>}
 
-              {hasCoverage && (
-                <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>
-              )}
+              {hasCoverage && <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>}
 
-              {hasTiles && (
-                <span className={`${styles.itemType} ${styles.tag}`}>Tiles</span>
-              )}
+              {hasTiles && <span className={`${styles.itemType} ${styles.tag}`}>Tiles</span>}
 
               <div className={styles.keywords}>
-                {((Array.isArray(collection.keywords) ? collection.keywords : [])).map((keyword) => (
+                {(Array.isArray(collection.keywords) ? collection.keywords : []).map((keyword) => (
                   <span key={keyword} className={styles.tag}>
                     {keyword}
                   </span>

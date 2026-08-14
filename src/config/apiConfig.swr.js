@@ -1,23 +1,23 @@
 // src/config/apiConfig.swr.js
-"use client";
+'use client';
 
-import useSWRImmutable from "swr/immutable";
+import useSWRImmutable from 'swr/immutable';
 
 let _cachedBaseUrl = null;
 
 async function fetchRuntimeConfigBaseUrl() {
-  const response = await fetch("/api/config", { cache: "no-store" });
+  const response = await fetch('/api/config', { cache: 'no-store' });
 
   if (!response.ok) {
-    console.warn("Failed to load config:", response.status, response.statusText);
+    console.warn('Failed to load config:', response.status, response.statusText);
     return undefined;
   }
 
   const data = await response.json();
   const url = data?.baseUrl;
 
-  if (url && typeof url === "string" && url.trim().length > 0) {
-    return url.replace(/\/+$/, "");
+  if (url && typeof url === 'string' && url.trim().length > 0) {
+    return url.replace(/\/+$/, '');
   }
 
   return undefined;
@@ -25,7 +25,7 @@ async function fetchRuntimeConfigBaseUrl() {
 
 export function useBaseUrlSWR() {
   const { data, error, isLoading } = useSWRImmutable(
-    "config:baseUrl",
+    'config:baseUrl',
     async () => {
       if (_cachedBaseUrl) return _cachedBaseUrl;
       const url = await fetchRuntimeConfigBaseUrl();
@@ -35,7 +35,7 @@ export function useBaseUrlSWR() {
     {
       revalidateOnFocus: false,
       shouldRetryOnError: false,
-    }
+    },
   );
 
   return { baseUrl: data, error, isLoading };
