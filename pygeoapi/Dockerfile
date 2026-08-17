@@ -43,7 +43,8 @@ RUN /venv/bin/python3 -m pip install \
         fiona \
         SQLAlchemy \
         psycopg2-binary \
-        GeoAlchemy2
+        GeoAlchemy2 \
+        google-cloud-storage
 
 ENV USER_ID=150 \
     USER_NAME=apprunner \
