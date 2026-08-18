@@ -36,14 +36,15 @@ RUN chmod +x /docker-entrypoint.sh
 # Remove once upstream base image ships a patched pip, hopefully any version after 0.24.0
 RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade "pip>=26.1.2"
 
-RUN /venv/bin/python3 -m pip install \
+RUN /venv/bin/python3 -m pip install --no-cache-dir \
         prometheus_client \
         prometheus_flask_exporter \
         geopandas \
         fiona \
         SQLAlchemy \
         psycopg2-binary \
-        GeoAlchemy2
+        GeoAlchemy2 \
+        google-cloud-storage
 
 ENV USER_ID=150 \
     USER_NAME=apprunner \
