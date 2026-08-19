@@ -1,5 +1,5 @@
 import 'server-only';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import { parse } from 'yaml';
 
 const CONFIG_PATH = process.env.PYGEOAPI_CONFIG_PATH_FRONTEND || '/volumes/pygeoapi-config.yml';
@@ -61,7 +61,7 @@ export function getCollection(collectionId) {
   if (!resources) return null;
 
   const resource = resources[collectionId];
-  if (!resource || resource.type !== 'collection') return null;
+  if (resource?.type !== 'collection') return null;
 
   return {
     id: collectionId,
@@ -86,7 +86,7 @@ export function getCollectionDownloadConfig(collectionId) {
   const resources = getResources();
   if (!resources) return null;
   const resource = resources[collectionId];
-  if (!resource || resource.type !== 'collection') return null;
+  if (resource?.type !== 'collection') return null;
   return resource.download ?? null;
 }
 
@@ -102,16 +102,10 @@ export function isFileReference(value) {
 export function collectFileReferences(value, output) {
   if (typeof value === 'string') {
     if (isFileReference(value)) output.add(value);
-    return;
-  }
-
-  if (Array.isArray(value)) {
-    value.forEach((entry) => collectFileReferences(entry, output));
-    return;
-  }
-
-  if (value && typeof value === 'object') {
-    Object.values(value).forEach((entry) => collectFileReferences(entry, output));
+  } else if (Array.isArray(value)) {
+    for (const entry of value) collectFileReferences(entry, output);
+  } else if (value && typeof value === 'object') {
+    for (const entry of Object.values(value)) collectFileReferences(entry, output);
   }
 }
 
@@ -120,7 +114,7 @@ export function getCollectionReferencedFileCount(collectionId) {
   if (!resources) return 0;
 
   const resource = resources[collectionId];
-  if (!resource || resource.type !== 'collection') return 0;
+  if (resource?.type !== 'collection') return 0;
 
   const refs = new Set();
   for (const provider of resource.providers ?? []) {
@@ -158,7 +152,7 @@ export function getCollectionFeatureIdField(collectionId) {
   if (!resources) return null;
 
   const resource = resources[collectionId];
-  if (!resource || resource.type !== 'collection') return null;
+  if (resource?.type !== 'collection') return null;
 
   const provider = (resource.providers ?? []).find((p) => p.type === 'feature');
 
@@ -170,7 +164,7 @@ export function getCollectionFeatureTitleField(collectionId) {
   if (!resources) return null;
 
   const resource = resources[collectionId];
-  if (!resource || resource.type !== 'collection') return null;
+  if (resource?.type !== 'collection') return null;
 
   const provider = (resource.providers ?? []).find((p) => p.type === 'feature');
 

@@ -20,7 +20,10 @@
     "enabled": true,
     "rules": {
       "preset": "recommended",
-      "a11y": "off"
+      "a11y": "off",
+      "correctness": {
+        "useParseIntRadix": "off"
+      }
     },
     "domains": {
       "next": "recommended",

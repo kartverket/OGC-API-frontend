@@ -29,6 +29,7 @@ export default function ItemDataProperty({ data, level = 0, label = null, classN
         )}
 
         {data.map((item, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: Har ingen naturlig fix, hvis vi ikke vet noe mer om det finnes en naturlig id i data
           <ItemDataProperty key={index} data={item} level={level + 1} label={`[${index}]`} classNames={classNames} />
         ))}
       </div>

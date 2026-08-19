@@ -118,6 +118,7 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
   const activeEntry = tileMatrixSets.find((t) => t.id === activeTms) ?? null;
 
   // Mount OL map
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only effect
   useEffect(() => {
     let cancelled = false;
 
@@ -153,7 +154,7 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
       setError(null);
       try {
         const res = await fetch(`/collections/${collectionId}/tiles?f=json`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) setError(`HTTP ${res.status}`);
         const data = await res.json();
         const resolved = await resolveTileMatrixSets(data, baseUrl);
         if (cancelled) return;
@@ -173,7 +174,7 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
     return () => {
       cancelled = true;
     };
-  }, [collectionId]);
+  }, [collectionId, baseUrl]);
 
   // Apply tile source whenever the map is ready or the active TMS entry changes.
   // activeEntry is referentially stable across renders that don't touch

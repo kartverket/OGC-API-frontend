@@ -60,7 +60,7 @@ export default function DownloadPanel({ collectionId, downloadConfig }) {
     return () => {
       cancelled = true;
     };
-  }, [activeFilter?.type, activeFilter?.collection, activeFilter?.name_field]);
+  }, [activeFilter?.type, activeFilter?.collection, activeFilter?.name_field, activeFilter]);
 
   function handleFormatChange(e) {
     setFormat(e.target.value);
