@@ -45,7 +45,7 @@ export default function ItemsMap({ width, height }) {
     } else {
       unByKey(eventListenerKeyRef.current);
     }
-  }, [map, bboxEdit, setBbox, sizeAndPositionRef.current]);
+  }, [map, bboxEdit, setBbox, sizeAndPositionRef]);
 
   useEffect(() => {
     if (!bboxEdit || boxElRef.current === null) {
@@ -80,7 +80,7 @@ export default function ItemsMap({ width, height }) {
     return () => {
       boxEl.removeEventListener('wheel', onWheel);
     };
-  }, [map, bboxEdit, sizeAndPositionRef.current]);
+  }, [map, bboxEdit, sizeAndPositionRef]);
 
   return (
     <div ref={containerElRef} className={styles.container}>

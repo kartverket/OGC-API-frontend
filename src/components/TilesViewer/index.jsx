@@ -154,7 +154,7 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
       setError(null);
       try {
         const res = await fetch(`/collections/${collectionId}/tiles?f=json`);
-        if (!res.ok) setError(`HTTP ${res.status}`);
+        if (!res.ok) throw Error(`HTTP ${res.status}`);
         const data = await res.json();
         const resolved = await resolveTileMatrixSets(data, baseUrl);
         if (cancelled) return;
