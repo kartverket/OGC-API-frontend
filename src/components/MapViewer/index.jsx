@@ -45,7 +45,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseU
   const [mapUrl, setMapUrl] = useState('');
   const { copied, copy } = useCopyToClipboard();
 
-  // Mount OL map
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only effect
   useEffect(() => {
     let cancelled = false;
 
@@ -77,7 +77,6 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseU
       olMapRef.current?.dispose();
       olMapRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function wireLoadingEvents(source) {

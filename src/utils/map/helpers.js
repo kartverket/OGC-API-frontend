@@ -66,7 +66,7 @@ export function getCrsCode(crsName) {
 
   const match = crsName.match(URI_REGEX) || crsName.match(URN_REGEX);
 
-  return match !== null ? `${match.groups['auth'].toUpperCase()}:${match.groups['code'].toUpperCase()}` : 'OGC:CRS84';
+  return match !== null ? `${match.groups.auth.toUpperCase()}:${match.groups.code.toUpperCase()}` : 'OGC:CRS84';
 }
 
 export function isGeographicCrs(crsName) {
@@ -182,11 +182,7 @@ export function isBboxValid(bbox) {
     return false;
   }
 
-  if (minLon === maxLon || minLat === maxLat) {
-    return false;
-  }
-
-  return true;
+  return !(minLon === maxLon || minLat === maxLat);
 }
 
 function getCrsName(geoJson) {

@@ -28,7 +28,7 @@ export default function ItemsMap({ width, height }) {
 
     sizeAndPositionRef.current = sizeAndPosition;
     setSizeAndPosition(sizeAndPosition);
-  }, [map, bbox, bboxEdit]);
+  }, [map, bbox, bboxEdit, setSizeAndPosition, sizeAndPositionRef]);
 
   useEffect(() => {
     if (map === null) {
@@ -45,7 +45,7 @@ export default function ItemsMap({ width, height }) {
     } else {
       unByKey(eventListenerKeyRef.current);
     }
-  }, [map, bboxEdit]);
+  }, [map, bboxEdit, setBbox, sizeAndPositionRef]);
 
   useEffect(() => {
     if (!bboxEdit || boxElRef.current === null) {
@@ -80,7 +80,7 @@ export default function ItemsMap({ width, height }) {
     return () => {
       boxEl.removeEventListener('wheel', onWheel);
     };
-  }, [map, bboxEdit]);
+  }, [map, bboxEdit, sizeAndPositionRef]);
 
   return (
     <div ref={containerElRef} className={styles.container}>
@@ -97,7 +97,7 @@ export default function ItemsMap({ width, height }) {
             bottomLeft: styles.resizeBottomLeft,
             bottomRight: styles.resizeBottomRight,
           }}
-          onDragStop={(event, data) => {
+          onDragStop={(_event, data) => {
             const sizeAndPosition = {
               width: data.node.offsetWidth,
               height: data.node.offsetHeight,
@@ -111,7 +111,7 @@ export default function ItemsMap({ width, height }) {
             const bbox = getBboxFromSizeAndPosition(map, sizeAndPosition);
             setBbox(bbox);
           }}
-          onResizeStop={(event, direction, ref, delta, position) => {
+          onResizeStop={(_event, _direction, ref, _delta, position) => {
             const sizeAndPosition = {
               width: ref.offsetWidth,
               height: ref.offsetHeight,

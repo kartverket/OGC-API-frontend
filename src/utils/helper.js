@@ -41,7 +41,7 @@ export function roundDecimals(number, precision) {
     return number;
   }
 
-  const factor = Math.pow(10, precision);
+  const factor = 10 ** precision;
 
   return Math.round(number * factor) / factor;
 }

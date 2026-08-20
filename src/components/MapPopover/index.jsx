@@ -18,18 +18,6 @@ export default function MapPopover() {
   const feature = useSelector((state) => state.map.selectedFeature);
   const dispatch = useDispatch();
 
-  function getItemUrl(id) {
-    return `/collections/${collection}/items/${id}`;
-  }
-
-  function unselectFeature() {
-    dispatch(selectFeature(null));
-  }
-
-  function zoomToItem(id) {
-    zoomToFeature(map, id);
-  }
-
   const { style, content } = useMemo(() => {
     if (feature === null) {
       return {
@@ -37,6 +25,8 @@ export default function MapPopover() {
         content: null,
       };
     }
+
+    const itemUrl = `/collections/${collection}/items/${feature.id}`;
 
     return {
       style: {
@@ -49,14 +39,14 @@ export default function MapPopover() {
       content: (
         <div className={styles.popoverContent}>
           <Link asChild className={styles.link}>
-            <NextLink href={getItemUrl(feature.id)} onClick={unselectFeature}>
+            <NextLink href={itemUrl} onClick={() => dispatch(selectFeature(null))}>
               Item {feature.id}
               <ArrowRightIcon fontSize="1.5rem" />
             </NextLink>
           </Link>
 
           <Button
-            onClick={() => zoomToItem(feature.id)}
+            onClick={() => zoomToFeature(map, feature.id)}
             icon
             variant="tertiary"
             title={`Zoom til item ${feature.id}`}
@@ -68,7 +58,7 @@ export default function MapPopover() {
         </div>
       ),
     };
-  }, [feature]);
+  }, [feature, collection, dispatch, map]);
 
   return <Popover style={style}>{content}</Popover>;
 }

@@ -1,4 +1,5 @@
 import { featureCollection as createFeatureCollection } from '@turf/helpers';
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Map from OpenLayers is understandable in this context
 import { Map, View } from 'ol';
 import ImageLayer from 'ol/layer/Image';
 import proj4 from 'proj4';
