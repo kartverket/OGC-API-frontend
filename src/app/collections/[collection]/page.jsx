@@ -39,6 +39,21 @@ function getCoverageLinkLabel(link) {
   return link.title || link.type || 'Coverage';
 }
 
+function addBboxToCoverageHref(href, bbox) {
+  if (!href || !Array.isArray(bbox) || bbox.length !== 4) {
+    return href;
+  }
+
+  try {
+    const url = new URL(href);
+    url.searchParams.set('bbox', bbox.join(','));
+
+    return url.toString();
+  } catch {
+    return href;
+  }
+}
+
 export default async function Collection({ params }) {
   const { collection } = await params;
   const { data, status } = await fetchCollectionPageData(collection);
@@ -54,12 +69,14 @@ export default async function Collection({ params }) {
   const hasDownload = hasExportProcessors();
   const coverageLinks = hasCoverage
     ? (data.links ?? []).filter((link) => {
-        return link.rel?.endsWith('/coverage') && link.type !== 'text/html';
+        return (
+          link.rel?.endsWith('/coverage') && link.type !== 'text/html' && link.type !== 'application/prs.coverage+json'
+        );
       })
     : [];
 
   const coverageDownloads = coverageLinks.map((link) => ({
-    href: link.href,
+    href: addBboxToCoverageHref(link.href, data.extent?.spatial?.bbox?.[0]),
     label: getCoverageLinkLabel(link),
     filename: (link.type ?? '').toLowerCase().includes('image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
