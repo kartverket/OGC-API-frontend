@@ -36,32 +36,32 @@ async function downloadLink(href, filename) {
 }
 
 export default function CoverageDownloadButtons({ links }) {
-  const [busyHref, setBusyHref] = useState('');
-  const [errorHref, setErrorHref] = useState('');
+  const [busyKey, setBusyKey] = useState('');
+  const [errorKey, setErrorKey] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   return links.map((link, index) => {
     const filename = getDownloadFilename(link);
     const label = link.label;
-    const busy = busyHref === link.href;
-    const hasError = errorHref === link.href;
     const key = link.href || `${label}-${index}`;
+    const busy = busyKey === key;
+    const hasError = errorKey === key;
 
     return (
       <Card key={key} className={styles.objectCard} data-variant="tinted" data-color="accent">
         <Button
           onClick={async () => {
-            setBusyHref(link.href);
-            setErrorHref('');
+            setBusyKey(key);
+            setErrorKey('');
             setErrorMessage('');
             try {
               await downloadLink(link.href, filename);
             } catch (err) {
               console.error('Nedlasting feilet:', err);
-              setErrorHref(link.href);
+              setErrorKey(key);
               setErrorMessage(err instanceof Error ? err.message : 'Nedlasting feilet. Prøv igjen.');
             } finally {
-              setBusyHref('');
+              setBusyKey('');
             }
           }}
           disabled={busy}
