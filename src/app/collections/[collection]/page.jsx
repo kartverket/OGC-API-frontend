@@ -6,7 +6,6 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import thumbnail from '@/assets/gfx/collection-thumbnail.png';
 import { Breadcrumbs, CollectionMapImage, DatasetInfoCard, DownloadPanel, ErrorPage } from '@/components';
-import { hasExportProcessors } from '@/config/readPygeoapiConfig';
 import { fetchCollectionPageData } from '@/services/pageData';
 import { createCollectionMetadata } from '@/services/pageMetadata';
 import {
@@ -36,10 +35,6 @@ function normalizeMediaType(type) {
 
 function isMediaType(type, expected) {
   return normalizeMediaType(type) === expected;
-}
-
-function hasValidHref(href) {
-  return typeof href === 'string' && href.trim().length > 0;
 }
 
 function getCoverageLinkLabel(link) {
@@ -89,23 +84,22 @@ export default async function Collection({ params }) {
   const hasMap = collectionHasMapCapability(data.links);
   const hasCoverage = collectionHasCoverageCapability(data.links);
   const hasTiles = collectionHasVectorTileCapability(data.links);
-  const hasDownload = hasExportProcessors();
   const coverageLinks = hasCoverage
     ? (data.links ?? []).filter((link) => {
         return (
           link.rel?.endsWith('/coverage') &&
           !isMediaType(link.type, 'text/html') &&
-          !isMediaType(link.type, 'application/prs.coverage+json') &&
-          hasValidHref(link.href)
+          !isMediaType(link.type, 'application/prs.coverage+json')
         );
       })
     : [];
 
   const coverageDownloads = coverageLinks.map((link) => ({
-    href: addBboxToCoverageHref(link.href.trim(), data.extent?.spatial?.bbox?.[0]),
+    href: addBboxToCoverageHref(typeof link.href === 'string' ? link.href.trim() : '', data.extent?.spatial?.bbox?.[0]),
     label: getCoverageLinkLabel(link),
     filename: isMediaType(link.type, 'image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
+  const hasCoverageDownloads = coverageDownloads.length > 0;
 
   const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)]);
@@ -134,7 +128,7 @@ export default async function Collection({ params }) {
 
             <div className={styles.topLeftBottom}>
               <div className={styles.actionCards}>
-                {hasCoverage ? (
+                {hasCoverageDownloads ? (
                   <CoverageDownloadButtons links={coverageDownloads} />
                 ) : (
                   hasFeature && (
@@ -171,7 +165,9 @@ export default async function Collection({ params }) {
 
               {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
-              {hasDownload && <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />}
+              {!hasCoverageDownloads && (
+                <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />
+              )}
             </div>
           </div>
           <div className={styles.right}>
