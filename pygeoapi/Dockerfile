@@ -17,7 +17,7 @@ COPY maps.py /pygeoapi/pygeoapi/api/maps.py
 # pygeoapi configuration
 COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml
 COPY schemas/ /pygeoapi/schemas/
-COPY resources/definitions/tiles/EPSG3575Quad.json /pygeoapi/resources/definitions/tiles/EPSG3575Quad.json
+COPY resources/definitions/tiles/EPSG3575Quad.json /pygeoapi/pygeoapi/resources/definitions/tiles/EPSG3575Quad.json
 
 # Process plugins
 COPY processes/ /pygeoapi/processes/
