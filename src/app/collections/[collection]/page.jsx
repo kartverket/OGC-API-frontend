@@ -27,16 +27,54 @@ export async function generateMetadata({ params }) {
   return createCollectionMetadata(collection);
 }
 
+function normalizeMediaType(type) {
+  return String(type ?? '')
+    .split(';')[0]
+    .trim()
+    .toLowerCase();
+}
+
+function isMediaType(type, expected) {
+  return normalizeMediaType(type) === expected;
+}
+
+function hasValidHref(href) {
+  return typeof href === 'string' && href.trim().length > 0;
+}
+
 function getCoverageLinkLabel(link) {
-  if (link.type === 'application/prs.coverage+json') {
+  if (isMediaType(link.type, 'application/prs.coverage+json')) {
     return 'Coverage as covjson';
   }
 
-  if ((link.type ?? '').toLowerCase().includes('image/tiff')) {
+  if (isMediaType(link.type, 'image/tiff')) {
     return 'Coverage data as GTiff';
   }
 
   return link.title || link.type || 'Coverage';
+}
+
+function addBboxToCoverageHref(href, bbox) {
+  if (typeof href !== 'string' || href.length === 0 || !Array.isArray(bbox) || bbox.length !== 4) {
+    return href;
+  }
+
+  const isAbsoluteUrl = /^[a-zA-Z][a-zA-Z\d+-.]*:/.test(href);
+  const isRootRelative = href.startsWith('/');
+
+  // Avoid changing the meaning of other relative URLs (e.g. "coverage" without a leading slash)
+  if (!isAbsoluteUrl && !isRootRelative) {
+    return href;
+  }
+
+  try {
+    const url = isAbsoluteUrl ? new URL(href) : new URL(href, 'http://localhost');
+    url.searchParams.set('bbox', bbox.join(','));
+
+    return isAbsoluteUrl ? url.toString() : `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return href;
+  }
 }
 
 export default async function Collection({ params }) {
@@ -54,14 +92,19 @@ export default async function Collection({ params }) {
   const hasDownload = hasExportProcessors();
   const coverageLinks = hasCoverage
     ? (data.links ?? []).filter((link) => {
-        return link.rel?.endsWith('/coverage') && link.type !== 'text/html';
+        return (
+          link.rel?.endsWith('/coverage') &&
+          !isMediaType(link.type, 'text/html') &&
+          !isMediaType(link.type, 'application/prs.coverage+json') &&
+          hasValidHref(link.href)
+        );
       })
     : [];
 
   const coverageDownloads = coverageLinks.map((link) => ({
-    href: link.href,
+    href: addBboxToCoverageHref(link.href.trim(), data.extent?.spatial?.bbox?.[0]),
     label: getCoverageLinkLabel(link),
-    filename: (link.type ?? '').toLowerCase().includes('image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
+    filename: isMediaType(link.type, 'image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
 
   const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
