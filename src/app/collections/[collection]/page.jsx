@@ -37,10 +37,6 @@ function isMediaType(type, expected) {
   return normalizeMediaType(type) === expected;
 }
 
-function hasValidHref(href) {
-  return typeof href === 'string' && href.trim().length > 0;
-}
-
 function getCoverageLinkLabel(link) {
   if (isMediaType(link.type, 'application/prs.coverage+json')) {
     return 'Coverage as covjson';
@@ -93,14 +89,13 @@ export default async function Collection({ params }) {
         return (
           link.rel?.endsWith('/coverage') &&
           !isMediaType(link.type, 'text/html') &&
-          !isMediaType(link.type, 'application/prs.coverage+json') &&
-          hasValidHref(link.href)
+          !isMediaType(link.type, 'application/prs.coverage+json')
         );
       })
     : [];
 
   const coverageDownloads = coverageLinks.map((link) => ({
-    href: addBboxToCoverageHref(link.href.trim(), data.extent?.spatial?.bbox?.[0]),
+    href: addBboxToCoverageHref(typeof link.href === 'string' ? link.href.trim() : '', data.extent?.spatial?.bbox?.[0]),
     label: getCoverageLinkLabel(link),
     filename: isMediaType(link.type, 'image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
