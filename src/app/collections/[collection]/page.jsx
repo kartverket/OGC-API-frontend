@@ -27,12 +27,27 @@ export async function generateMetadata({ params }) {
   return createCollectionMetadata(collection);
 }
 
+function normalizeMediaType(type) {
+  return String(type ?? '')
+    .split(';')[0]
+    .trim()
+    .toLowerCase();
+}
+
+function isMediaType(type, expected) {
+  return normalizeMediaType(type) === expected;
+}
+
+function hasValidHref(href) {
+  return typeof href === 'string' && href.trim().length > 0;
+}
+
 function getCoverageLinkLabel(link) {
-  if (link.type === 'application/prs.coverage+json') {
+  if (isMediaType(link.type, 'application/prs.coverage+json')) {
     return 'Coverage as covjson';
   }
 
-  if ((link.type ?? '').toLowerCase().includes('image/tiff')) {
+  if (isMediaType(link.type, 'image/tiff')) {
     return 'Coverage data as GTiff';
   }
 
@@ -78,15 +93,18 @@ export default async function Collection({ params }) {
   const coverageLinks = hasCoverage
     ? (data.links ?? []).filter((link) => {
         return (
-          link.rel?.endsWith('/coverage') && link.type !== 'text/html' && link.type !== 'application/prs.coverage+json'
+          link.rel?.endsWith('/coverage') &&
+          !isMediaType(link.type, 'text/html') &&
+          !isMediaType(link.type, 'application/prs.coverage+json') &&
+          hasValidHref(link.href)
         );
       })
     : [];
 
   const coverageDownloads = coverageLinks.map((link) => ({
-    href: addBboxToCoverageHref(link.href, data.extent?.spatial?.bbox?.[0]),
+    href: addBboxToCoverageHref(link.href.trim(), data.extent?.spatial?.bbox?.[0]),
     label: getCoverageLinkLabel(link),
-    filename: (link.type ?? '').toLowerCase().includes('image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
+    filename: isMediaType(link.type, 'image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
 
   const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
