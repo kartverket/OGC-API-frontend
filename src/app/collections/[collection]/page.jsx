@@ -40,15 +40,23 @@ function getCoverageLinkLabel(link) {
 }
 
 function addBboxToCoverageHref(href, bbox) {
-  if (!href || !Array.isArray(bbox) || bbox.length !== 4) {
+  if (typeof href !== 'string' || href.length === 0 || !Array.isArray(bbox) || bbox.length !== 4) {
+    return href;
+  }
+
+  const isAbsoluteUrl = /^[a-zA-Z][a-zA-Z\d+-.]*:/.test(href);
+  const isRootRelative = href.startsWith('/');
+
+  // Avoid changing the meaning of other relative URLs (e.g. "coverage" without a leading slash)
+  if (!isAbsoluteUrl && !isRootRelative) {
     return href;
   }
 
   try {
-    const url = new URL(href);
+    const url = isAbsoluteUrl ? new URL(href) : new URL(href, 'http://localhost');
     url.searchParams.set('bbox', bbox.join(','));
 
-    return url.toString();
+    return isAbsoluteUrl ? url.toString() : `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return href;
   }
