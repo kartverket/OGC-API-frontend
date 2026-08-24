@@ -225,7 +225,7 @@ def get_collection_map(api: API, request: APIRequest,
             err.http_status_code, headers, request.format,
             err.ogc_exception_code, err.message)
 
-    mt = provider_format
+    mt = collection_def['format']['name']
 
     if format_ == mt:
         headers['Content-Type'] = collection_def['format']['mimetype']
