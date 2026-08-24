@@ -60,8 +60,18 @@ function getPreviewImageHref(links) {
   const href = previewLink.href.trim();
   if (!href) return null;
 
-  if (/^[a-zA-Z][a-zA-Z\d+-.]*:/.test(href) || href.startsWith('/')) {
+  // Allow only http(s) absolute URLs or root-relative paths.
+  if (href.startsWith('/')) {
     return href;
+  }
+
+  if (/^https?:\/\//i.test(href)) {
+    return href;
+  }
+
+  // Disallow other schemes like data:, javascript:, file:, etc.
+  if (/^[a-zA-Z][a-zA-Z\d+-.]*:/.test(href)) {
+    return null;
   }
 
   return `/${href.replace(/^\/+/, '')}`;
