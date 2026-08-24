@@ -100,6 +100,25 @@ return <ServiceInfoCard metadata={data.metadata} />;
 - `getDatasetTitle()` - Henter datasettets tittel
 - `getDatasetDescription()` - Henter datasettets beskrivelse
 
+### Eget collection-bilde (venstre thumbnail)
+
+Du kan sette et eget bilde per collection i `pygeoapi/pygeoapi-config.yml`:
+
+```yaml
+resources:
+  kommuner:
+    type: collection
+    links:
+      - type: image/png
+        rel: preview
+        href: /assets/collection-images/kommuner.png
+```
+
+- Bruk standard `links` med `rel: preview` og `type: image/*`
+- Bildet må finnes inne i pygeoapi-containeren under `/pygeoapi/data` (eller path satt i `PYGEOAPI_ASSETS_ROOT`)
+- Frontenden bruker dette bildet på venstre side av collection-siden
+- Hvis preview-link mangler, brukes standard thumbnail som fallback
+
 ### OGC API - Maps (pygeoapi)
 
 Backend er satt opp med OGC API - Maps for `fylker` og `kommuner` via en custom provider:

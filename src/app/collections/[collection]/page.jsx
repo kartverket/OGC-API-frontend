@@ -37,6 +37,36 @@ function isMediaType(type, expected) {
   return normalizeMediaType(type) === expected;
 }
 
+function isImageMediaType(type) {
+  return normalizeMediaType(type).startsWith('image/');
+}
+
+function isPreviewRel(rel) {
+  if (typeof rel !== 'string') return false;
+
+  const normalizedRel = rel.trim().toLowerCase();
+  return normalizedRel === 'preview' || normalizedRel.endsWith('/preview');
+}
+
+function getPreviewImageHref(links) {
+  if (!Array.isArray(links)) return null;
+
+  const previewLink = links.find((link) => {
+    return isPreviewRel(link?.rel) && isImageMediaType(link?.type) && typeof link?.href === 'string';
+  });
+
+  if (!previewLink) return null;
+
+  const href = previewLink.href.trim();
+  if (!href) return null;
+
+  if (/^[a-zA-Z][a-zA-Z\d+-.]*:/.test(href) || href.startsWith('/')) {
+    return href;
+  }
+
+  return `/${href.replace(/^\/+/, '')}`;
+}
+
 function getCoverageLinkLabel(link) {
   if (isMediaType(link.type, 'application/prs.coverage+json')) {
     return 'Coverage as covjson';
@@ -100,6 +130,7 @@ export default async function Collection({ params }) {
     filename: isMediaType(link.type, 'image/tiff') ? `${data.id}.tif` : `${data.id}.json`,
   }));
   const hasCoverageDownloads = coverageDownloads.length > 0;
+  const thumbnailSrc = getPreviewImageHref(data.links) || thumbnail;
 
   const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)]);
@@ -117,7 +148,14 @@ export default async function Collection({ params }) {
         <div className={styles.top}>
           <div className={styles.left}>
             <div className={styles.topLeftTop}>
-              <Image src={thumbnail} alt="Thumbnail" width={160} className={styles.thumbnail} />
+              <Image
+                src={thumbnailSrc}
+                alt={`${data.title} thumbnail`}
+                width={160}
+                height={160}
+                className={styles.thumbnail}
+                unoptimized
+              />
               <div>
                 <Heading level={1} data-size="sm" className={styles.heading}>
                   {data.title}

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Paths that should always be proxied to the backend regardless of format
-const PROXY_PATHS = ['/openapi', '/processes', '/jobs'];
+const PROXY_PATHS = ['/openapi', '/processes', '/jobs', '/assets'];
 
 /**
  * Proxy that handles OGC API content negotiation.

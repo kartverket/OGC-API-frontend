@@ -121,6 +121,12 @@ resources:
         rel: related
         title: Geonorge link
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker/6093c8a8-fa80-11e6-bc64-92361f002671
+      - type: image/png
+        rel: preview
+        title:
+          nb-NO: Forhåndsvisning
+          en-US: Preview
+        href: /assets/collection-images/fylker.png
     providers:
       - type: feature
         name: PostgreSQL
@@ -213,6 +219,12 @@ resources:
         rel: related
         title: Geonorge link
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b
+      - type: image/png
+        rel: preview
+        title:
+          nb-NO: Forhåndsvisning
+          en-US: Preview
+        href: /assets/collection-images/kommuner.png
     providers:
       - type: feature
         name: PostgreSQL
@@ -303,6 +315,13 @@ resources:
       spatial:
         bbox: [4.626095, 57.977101, 31.125157, 71.188325]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - type: image/png
+        rel: preview
+        title:
+          nb-NO: Forhåndsvisning
+          en-US: Preview
+        href: /assets/collection-images/tellekretser.png
     providers:
       - type: feature
         name: schema_provider.SchemaPostgreSQLProvider
@@ -366,6 +385,13 @@ resources:
       spatial:
         bbox: [4.626095, 57.977101, 31.125157, 71.188325]
         crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    links:
+      - type: image/png
+        rel: preview
+        title:
+          nb-NO: Forhåndsvisning
+          en-US: Preview
+        href: /assets/collection-images/tellekretser_polar.png
     providers:
       - type: feature
         name: schema_provider.SchemaPostgreSQLProvider
@@ -439,6 +465,12 @@ resources:
         rel: related
         title: NCEI/NOAA
         href: https://www.ncei.noaa.gov/
+      - type: image/png
+        rel: preview
+        title:
+          nb-NO: Forhåndsvisning
+          en-US: Preview
+        href: /assets/collection-images/norge-raster.png
     providers:
       - type: coverage
         name: rasterio
