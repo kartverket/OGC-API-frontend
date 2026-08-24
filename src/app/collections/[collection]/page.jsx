@@ -164,7 +164,7 @@ export default async function Collection({ params }) {
                 width={160}
                 height={160}
                 className={styles.thumbnail}
-                unoptimized
+                unoptimized={typeof thumbnailSrc === 'string'}
               />
               <div>
                 <Heading level={1} data-size="sm" className={styles.heading}>
