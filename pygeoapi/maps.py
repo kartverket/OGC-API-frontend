@@ -102,7 +102,22 @@ def get_collection_map(api: API, request: APIRequest,
             err.http_status_code, headers, request.format,
             err.ogc_exception_code, err.message)
 
-    query_args['format_'] = request.params.get('f', 'png')
+    provider_format = collection_def['format']['name']
+    requested_format = request.params.get('f') or provider_format
+
+    # Map endpoints only support the configured provider image format.
+    # Reject invalid values early to avoid provider-level crashes.
+    if requested_format != provider_format:
+        exception = {
+            'code': 'InvalidParameterValue',
+            'description': f'unsupported format: {requested_format}'
+        }
+        headers['Content-Type'] = FORMAT_TYPES[F_JSON]
+        LOGGER.error(exception)
+        return headers, HTTPStatus.BAD_REQUEST, to_json(
+            exception, api.pretty_print)
+
+    query_args['format_'] = provider_format
     query_args['style'] = style
     query_args['crs'] = (
         request.params.get('crs')
@@ -225,7 +240,7 @@ def get_collection_map(api: API, request: APIRequest,
             err.http_status_code, headers, request.format,
             err.ogc_exception_code, err.message)
 
-    mt = collection_def['format']['name']
+    mt = provider_format
 
     if format_ == mt:
         headers['Content-Type'] = collection_def['format']['mimetype']
@@ -240,7 +255,7 @@ def get_collection_map(api: API, request: APIRequest,
         }
         LOGGER.error(exception)
         return headers, HTTPStatus.BAD_REQUEST, to_json(
-            data, api.pretty_print)
+            exception, api.pretty_print)
 
 
 def get_collection_map_legend(api: API, request: APIRequest,
