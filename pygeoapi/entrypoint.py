@@ -21,7 +21,7 @@ from pygeoapi.flask_app import APP as app
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
 # Restrict assets endpoint to known safe image types.
-_ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'}
+_ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
 # Base directory inside the container where frontend preview assets are served from.
 _ASSETS_ROOT = Path(os.environ.get('PYGEOAPI_ASSETS_ROOT', '/pygeoapi/data')).resolve()
 
