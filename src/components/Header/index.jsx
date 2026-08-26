@@ -12,6 +12,7 @@ import styles from './Header.module.css';
 export default function Header() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isCollectionMapPage = /^\/collections\/[^/]+\/map\/?$/.test(pathname);
 
   const jsonLink = useMemo(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -31,19 +32,21 @@ export default function Header() {
       </div>
 
       <div className={styles.links}>
-        <Link asChild data-size="sm">
-          <NextLink
-            href={jsonLink || '#'}
-            target="_blank"
-            aria-disabled={!jsonLink}
-            // optional: make it actually non-clickable when disabled
-            onClick={(e) => {
-              if (!jsonLink) e.preventDefault();
-            }}
-          >
-            JSON
-          </NextLink>
-        </Link>
+        {!isCollectionMapPage && (
+          <Link asChild data-size="sm">
+            <NextLink
+              href={jsonLink || '#'}
+              target="_blank"
+              aria-disabled={!jsonLink}
+              // optional: make it actually non-clickable when disabled
+              onClick={(e) => {
+                if (!jsonLink) e.preventDefault();
+              }}
+            >
+              JSON
+            </NextLink>
+          </Link>
+        )}
       </div>
     </div>
   );

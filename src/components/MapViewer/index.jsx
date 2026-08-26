@@ -8,29 +8,25 @@ import Zoom from '@/components/Map/Zoom';
 import basemapConfig from '@/config/basemap';
 import { useCopyToClipboard } from '@/hooks';
 import { createBaseMapSource, isBasemapProjection } from '@/utils/map/baseMap';
-import { getCrsCode, getLayer, isGeographicCrs, transformExtent } from '@/utils/map/helpers';
+import { getCrsCode, getLayer, transformExtent } from '@/utils/map/helpers';
 import { createMapViewerMap, MAP_PADDING } from '@/utils/map/map';
 import { buildOgcMapsUrl, OgcMapsImageSource, toOlProjection } from '@/utils/map/ogcImageSource';
 import styles from './MapViewer.module.css';
 
-function createSource(collectionId, apiBaseUrl, olMapRef, crsUri) {
+function createSource(collectionId, apiBaseUrl, crsUri) {
   return new OgcMapsImageSource({
     collectionId,
     apiBaseUrl,
     crsUri,
-    getMapSize: () => olMapRef.current?.getSize(),
   });
 }
 
 /**
  * Determine the OL view projection for a given CRS URI.
- * Geographic CRS (4326, 4258, CRS84) use EPSG:3857 so the basemap works;
- * projected CRS (UTM etc.) use their native projection.
+ * Always use the selected CRS natively to avoid client-side reprojection
+ * artifacts for rendered OGC map images.
  */
 function viewProjectionFor(crsUri) {
-  if (isGeographicCrs(crsUri)) {
-    return basemapConfig.projection;
-  }
   return toOlProjection(crsUri);
 }
 
@@ -50,7 +46,8 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseU
     let cancelled = false;
 
     async function init() {
-      const { map, initialExtent } = await createMapViewerMap(defaultBbox);
+      const initialViewProj = viewProjectionFor(crsOptions[0]);
+      const { map, initialExtent } = await createMapViewerMap(defaultBbox, initialViewProj);
       if (cancelled) {
         map.dispose();
         return;
@@ -60,7 +57,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseU
       map.setTarget(containerRef.current);
       map.getView().fit(initialExtent);
 
-      const source = createSource(collectionId, baseUrl, olMapRef, crsOptions[0]);
+      const source = createSource(collectionId, baseUrl, crsOptions[0]);
       getLayer(map, 'ogc-image').setSource(source);
       unwireRef.current = wireLoadingEvents(source);
       updateMapUrl(map, crsOptions[0]);
@@ -136,22 +133,29 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseU
       const fitExtent = transformExtent(defaultBbox, 'OGC:CRS84', viewProj);
       newView.fit(fitExtent);
 
-      // Swap the basemap source to match the new projection, or hide if unsupported.
+      // Swap the basemap source to match the new projection.
+      // When unsupported, keep a EPSG:3857 fallback and let OL reproject.
       const basemapLayer = getLayer(map, 'basemap');
       if (basemapLayer) {
         if (isBasemapProjection(viewProj)) {
           const basemapSource = await createBaseMapSource(viewProj);
           basemapLayer.setSource(basemapSource);
-          basemapLayer.setVisible(true);
+          basemapLayer.setVisible(Boolean(basemapSource));
         } else {
-          basemapLayer.setVisible(false);
+          const basemapSource = await createBaseMapSource(basemapConfig.projection);
+          basemapLayer.setSource(basemapSource);
+          basemapLayer.setVisible(Boolean(basemapSource));
         }
       }
+    } else {
+      // Keep the map focused on the data extent when only source CRS changes.
+      const fitExtent = transformExtent(defaultBbox, 'OGC:CRS84', viewProj);
+      map.getView().fit(fitExtent);
     }
 
     // Recreate the source for the new CRS so it fetches in the correct projection.
     const imageLayer = getLayer(map, 'ogc-image');
-    const newSource = createSource(collectionId, baseUrl, olMapRef, newCrs);
+    const newSource = createSource(collectionId, baseUrl, newCrs);
     unwireRef.current?.();
     imageLayer.setSource(newSource);
     unwireRef.current = wireLoadingEvents(newSource);

@@ -89,9 +89,9 @@ export function getExtentFromBBox(bbox, crs) {
   return [minX, maxX, minY, maxY];
 }
 
-export async function createMapViewerMap(defaultBbox) {
-  // defaultBbox is in OGC:CRS84 (lon/lat) — transform to EPSG:3857 for OL
-  const initialExtent = transformExtent(defaultBbox, 'OGC:CRS84', 'EPSG:3857');
+export async function createMapViewerMap(defaultBbox, viewProjection = basemap.projection) {
+  // defaultBbox is in OGC:CRS84 (lon/lat)
+  const initialExtent = transformExtent(defaultBbox, 'OGC:CRS84', viewProjection);
 
   const imageLayer = new ImageLayer();
   imageLayer.set('id', 'ogc-image');
@@ -103,7 +103,7 @@ export async function createMapViewerMap(defaultBbox) {
   map.setView(
     new View({
       padding: MAP_PADDING,
-      projection: basemap.projection,
+      projection: viewProjection,
       maxZoom: basemap.maxZoom,
     }),
   );

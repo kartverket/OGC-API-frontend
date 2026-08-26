@@ -10,7 +10,7 @@ CLASS
     TEXT "[navn]"
     WRAP ","
     ANTIALIAS true
-    FONT "verdana"
+    #FONT "verdana"
     COLOR 40 40 40
     SIZE 10
     OUTLINECOLOR 254 254 254
