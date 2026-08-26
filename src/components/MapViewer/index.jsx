@@ -140,7 +140,7 @@ export default function MapViewer({ collectionId, defaultBbox, crsOptions, baseU
         if (isBasemapProjection(viewProj)) {
           const basemapSource = await createBaseMapSource(viewProj);
           basemapLayer.setSource(basemapSource);
-          basemapLayer.setVisible(true);
+          basemapLayer.setVisible(Boolean(basemapSource));
         } else {
           const basemapSource = await createBaseMapSource(basemapConfig.projection);
           basemapLayer.setSource(basemapSource);
