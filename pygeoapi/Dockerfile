@@ -3,16 +3,11 @@ FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a
 # Custom Python scripts
 COPY distinct_values.py /pygeoapi/distinct_values.py
 COPY modify_openapi.py /pygeoapi/modify_openapi.py
-COPY postgis_mapscript.py /pygeoapi/postgis_mapscript.py
 COPY schema_provider.py /pygeoapi/schema_provider.py
 
 # Custom entrypoint and gunicorn config
 COPY entrypoint.py /pygeoapi/pygeoapi/entrypoint_dnd.py
 COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
-
-# Patched maps module
-COPY maps.py /pygeoapi/pygeoapi/api/maps.py
-
 
 # pygeoapi configuration
 COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml

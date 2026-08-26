@@ -1,22 +1,25 @@
 import ImageSource from 'ol/source/Image';
-import { clampExtentToProjectionExtent, getCrsCode, reorderBboxForCrsAxisOrder } from './helpers';
+import { getCrsCode } from './helpers';
 import './setup';
 
 const CRS84 = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
 
 export function buildOgcMapsUrl(apiBaseUrl, collectionId, { bbox, bboxCrs, crs, width, height }) {
   const effectiveBboxCrs = bboxCrs ?? CRS84;
-  const normalizedBbox = reorderBboxForCrsAxisOrder(
-    clampExtentToProjectionExtent(bbox, toOlProjection(effectiveBboxCrs)),
-    effectiveBboxCrs,
-  );
+  // Use the exact OL extent for request bbox so the returned image aligns
+  // with how OL positions the image in the current view.
+  const normalizedBbox = bbox;
   const params = new URLSearchParams({
     f: 'png',
     width: String(Math.round(width)),
     height: String(Math.round(height)),
     bbox: normalizedBbox.join(','),
-    crs,
   });
+  // For CRS84, rely on server default CRS to avoid lowercased URI parsing
+  // differences in some pygeoapi/provider combinations.
+  if (crs && crs !== CRS84) {
+    params.set('crs', crs);
+  }
   if (effectiveBboxCrs !== CRS84) {
     params.set('bbox-crs', effectiveBboxCrs);
   }
@@ -34,17 +37,19 @@ export function toOlProjection(crsUri) {
  * Image source that fetches from the OGC Maps API in the given CRS.
  *
  * The source is created with the selected CRS as its native projection.
- * `buildOgcMapsUrl()` takes care of serializing bbox coordinates in the
- * axis order required by `bbox-crs` (e.g. lat/lon for EPSG:4326, lon/lat
- * for CRS84), so the backend receives a standards-compliant request.
+ * URL construction mirrors the current backend behavior used in this
+ * project to keep stock pygeoapi MapScript requests rendering correctly.
  */
 export class OgcMapsImageSource extends ImageSource {
-  constructor({ collectionId, apiBaseUrl, crsUri, getMapSize }) {
+  constructor({ collectionId, apiBaseUrl, crsUri }) {
     const olProjection = toOlProjection(crsUri);
-    const loader = (extent, _resolution, _pixelRatio) => {
-      const mapSize = getMapSize();
-      const [width, height] = mapSize ?? [];
-      if (!width || !height) {
+    const loader = (extent, resolution, pixelRatio) => {
+      const extentWidth = extent[2] - extent[0];
+      const extentHeight = extent[3] - extent[1];
+      const width = Math.max(1, Math.round((extentWidth / resolution) * (pixelRatio || 1)));
+      const height = Math.max(1, Math.round((extentHeight / resolution) * (pixelRatio || 1)));
+
+      if (!Number.isFinite(width) || !Number.isFinite(height)) {
         return Promise.reject(new Error('Map size not yet available'));
       }
       const url = buildOgcMapsUrl(apiBaseUrl, collectionId, {

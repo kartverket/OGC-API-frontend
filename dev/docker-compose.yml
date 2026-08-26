@@ -26,8 +26,6 @@ services:
       - ../pygeoapi/pygeoapi-config.yml:/pygeoapi/pygeoapi-config.yml
       - ../pygeoapi/processes:/pygeoapi/processes
       - ../pygeoapi/templates:/pygeoapi/custom_templates
-      - ../pygeoapi/postgis_mapscript.py:/pygeoapi/postgis_mapscript.py
-      - ../pygeoapi/maps.py:/pygeoapi/pygeoapi/api/maps.py
       - ../pygeoapi/mapserver/fonts.txt:/pygeoapi/fonts.txt
       - ../pygeoapi/mapserver/styles:/pygeoapi/styles
       - ../pygeoapi/schemas:/pygeoapi/schemas
