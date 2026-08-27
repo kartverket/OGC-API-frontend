@@ -36,7 +36,7 @@
     "@biomejs/biome": "2.5.10",
     "@digdir/designsystemet": "^1.20.1",
     "@svgr/webpack": "^8.1.0",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.3.0",
     "lefthook": "^2.1.10"
   },
   "overrides": {
