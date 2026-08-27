@@ -25,8 +25,11 @@ table_name = "tellekrets"
 
 [[tileset.postgis.layer.query]]
 sql = """
-SELECT *, ST_Transform(geometry, 3857) AS geom
+SELECT ogc_fid, id, navn, nr, valgdistriktsnummer, fylkesnummer, kommunenummer,
+       representasjonspunkt, valgdirnummer, valgdistriktsnummer_valgdirektoratet,
+       valgdistriktsnummer_ssb, ST_Transform(geometry, 3857) AS geom
 FROM public.tellekrets
+WHERE geometry && ST_Transform(!bbox!, 25833)
 """
 
 [[tileset]]
@@ -49,8 +52,11 @@ table_name = "tellekrets"
 
 [[tileset.postgis.layer.query]]
 sql = """
-SELECT *, ST_Transform(geometry, 3575) AS geom
+SELECT ogc_fid, id, navn, nr, valgdistriktsnummer, fylkesnummer, kommunenummer,
+       representasjonspunkt, valgdirnummer, valgdistriktsnummer_valgdirektoratet,
+       valgdistriktsnummer_ssb, ST_Transform(geometry, 3575) AS geom
 FROM public.tellekrets
+WHERE geometry && ST_Transform(!bbox!, 25833)
 """
 
 [[grid]]
