@@ -1,6 +1,6 @@
 # JSON-FG Support for pygeoapi (Branch: jsonfg)
 
-This branch adds [OGC Features and Geometries JSON (JSON-FG)](https://docs.ogc.org/is/21-045r1/21-045r1.html) as an output format for the OGC API Features service powered by pygeoapi 0.23.4.
+This branch adds [OGC Features and Geometries JSON (JSON-FG)](https://docs.ogc.org/is/21-045r1/21-045r1.html) as an output format for the OGC API Features service powered by pygeoapi 0.24.0.
 
 ## Summary of Changes
 
