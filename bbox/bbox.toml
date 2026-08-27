@@ -34,6 +34,7 @@ WHERE geometry && ST_Transform(!bbox!, 25833)
 
 [[tileset]]
 name = "tellekrets_polar"
+cache = "filecache"
 [tileset.postgis]
 datasource = "url"
 extent = [-329524.06482982653, -3547118.6003243104, 811520.9549221481, -1973647.0992851218]

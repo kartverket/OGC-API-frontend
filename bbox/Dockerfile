@@ -9,4 +9,4 @@ EXPOSE 8080
 
 USER 150:150
 
-CMD ["bbox-tile-server", "-c", "/bbox.toml", "serve"]
+CMD ["sh", "-c", "bbox-tile-server -c /bbox.toml seed --tileset=tellekretser --maxzoom=8 && bbox-tile-server -c /bbox.toml seed --tileset=tellekrets_polar --maxzoom=8 && exec bbox-tile-server -c /bbox.toml serve"]
