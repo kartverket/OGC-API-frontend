@@ -97,8 +97,13 @@ def allow_custom_format_on_single_item():
             if key.lower() not in ('content-type', 'content-length'):
                 result.headers[key] = value
         return result
-    except Exception:
-        return None
+    except Exception as err:
+        app.logger.exception(
+            'Failed to apply formatter "%s" for %s', f_param, request.path)
+        return make_response(
+            jsonify({'error': 'Internal Server Error', 'message': 'Failed to render response'}),
+            500
+        )
 
 
 # Blocking POST endpoints /collections/{id}/items, as they are not standard
