@@ -15,8 +15,9 @@ _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
 
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
-from flask import request, make_response, jsonify
-from pygeoapi.flask_app import APP as app, api_
+from flask import request, make_response, jsonify, send_file
+from pygeoapi.flask_app import APP as app, api_, execute_from_flask
+import pygeoapi.api.itemtypes as itemtypes_api
 
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
@@ -110,11 +111,6 @@ def allow_custom_format_on_single_item():
             jsonify({'error': 'Internal Server Error', 'message': 'Failed to render response'}),
             500
         )
-
-from flask import request, make_response, jsonify, send_file
-from pygeoapi.flask_app import APP as app
-
-metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
 # Restrict assets endpoint to known safe image types.
 _ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
