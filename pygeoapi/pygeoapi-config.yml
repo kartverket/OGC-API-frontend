@@ -183,6 +183,8 @@ resources:
         format:
           name: png
           mimetype: image/png
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
 
   kommuner:
@@ -278,6 +280,8 @@ resources:
         format:
           name: png
           mimetype: image/png
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
 
   tellekretser:
@@ -359,6 +363,8 @@ resources:
         format:
           name: pbf
           mimetype: application/x-protobuf; type=mapbox-vector-tile
+    formatters:
+      - name: formatter_jsonfg.JsonFgFormatter
 
   tellekretser_polar:
     type: collection

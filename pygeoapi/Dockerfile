@@ -4,6 +4,7 @@ FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a
 COPY distinct_values.py /pygeoapi/distinct_values.py
 COPY modify_openapi.py /pygeoapi/modify_openapi.py
 COPY schema_provider.py /pygeoapi/schema_provider.py
+COPY formatter_jsonfg.py /pygeoapi/formatter_jsonfg.py
 
 # Custom entrypoint and gunicorn config
 COPY entrypoint.py /pygeoapi/pygeoapi/entrypoint_dnd.py
