@@ -1,20 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    selectedFeature: null
+  selectedFeature: null,
 };
 
 export const mapSlice = createSlice({
-    name: 'map',
-    initialState,
-    reducers: {
-        selectFeature: (state, action) => {
-            return {
-                ...state,
-                selectedFeature: action.payload
-            };
-        }
-    }
+  name: 'map',
+  initialState,
+  reducers: {
+    selectFeature: (state, action) => {
+      return {
+        ...state,
+        selectedFeature: action.payload,
+      };
+    },
+  },
 });
 
 export const { selectFeature } = mapSlice.actions;

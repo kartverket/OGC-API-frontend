@@ -1,27 +1,36 @@
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation';
-import NextLink from 'next/link';
 import { Heading, Link, Paragraph } from '@digdir/designsystemet-react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from '@/components/ErrorPage/ErrorPage.module.css';
 
-
 export default function NotFound() {
-    const router = useRouter();
+  const router = useRouter();
 
-    function goBack(event) {
-        event.preventDefault();
-        router.back();
-    }
+  function goBack(event) {
+    event.preventDefault();
+    router.back();
+  }
 
-    return (
-            <div className={styles.page}>
-                <Heading level={1} data-size="sm" className={styles.heading}>404: Siden ble ikke funnet</Heading>
+  return (
+    <div className={styles.page}>
+      <Heading level={1} data-size="sm" className={styles.heading}>
+        404: Siden ble ikke funnet
+      </Heading>
 
-                <Paragraph data-size="sm">
-                    Vi kunne dessverre ikke finne siden du så etter.<br/>
-                    <Link href="#" onClick={goBack}>Gå tilbake</Link> eller til <Link asChild><NextLink href="/">forsiden</NextLink></Link> for å komme bort fra denne siden.
-                </Paragraph>
-            </div>
-    );
+      <Paragraph data-size="sm">
+        Vi kunne dessverre ikke finne siden du så etter.
+        <br />
+        <Link href="#" onClick={goBack}>
+          Gå tilbake
+        </Link>{' '}
+        eller til{' '}
+        <Link asChild>
+          <NextLink href="/">forsiden</NextLink>
+        </Link>{' '}
+        for å komme bort fra denne siden.
+      </Paragraph>
+    </div>
+  );
 }

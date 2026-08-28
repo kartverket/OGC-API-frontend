@@ -1,4 +1,4 @@
-import { fetchHome, fetchCollection } from '@/utils/api/server';
+import { fetchCollection, fetchHome } from '@/utils/api/server';
 
 const SITE_SUFFIX = 'OGC API | Kartverket';
 
@@ -35,12 +35,9 @@ export async function createCollectionsMetadata() {
  */
 export async function createCollectionMetadata(collection) {
   try {
-    const [collectionData, homeData] = await Promise.all([
-      fetchCollection(collection),
-      fetchHome()
-    ]);
+    const [collectionData, homeData] = await Promise.all([fetchCollection(collection), fetchHome()]);
     return {
-      title: `${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`
+      title: `${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`,
     };
   } catch {
     return null;
@@ -54,12 +51,9 @@ export async function createCollectionMetadata(collection) {
  */
 export async function createItemsMetadata(collection) {
   try {
-    const [collectionData, homeData] = await Promise.all([
-      fetchCollection(collection),
-      fetchHome()
-    ]);
+    const [collectionData, homeData] = await Promise.all([fetchCollection(collection), fetchHome()]);
     return {
-      title: `Items | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`
+      title: `Items | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`,
     };
   } catch {
     return null;
@@ -74,12 +68,9 @@ export async function createItemsMetadata(collection) {
  */
 export async function createItemMetadata(collection, itemId) {
   try {
-    const [collectionData, homeData] = await Promise.all([
-      fetchCollection(collection),
-      fetchHome()
-    ]);
+    const [collectionData, homeData] = await Promise.all([fetchCollection(collection), fetchHome()]);
     return {
-      title: `${itemId} | Items | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`
+      title: `${itemId} | Items | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`,
     };
   } catch {
     return null;
@@ -93,12 +84,9 @@ export async function createItemMetadata(collection, itemId) {
  */
 export async function createQueryablesMetadata(collection) {
   try {
-    const [collectionData, homeData] = await Promise.all([
-      fetchCollection(collection),
-      fetchHome()
-    ]);
+    const [collectionData, homeData] = await Promise.all([fetchCollection(collection), fetchHome()]);
     return {
-      title: `Queryables | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`
+      title: `Queryables | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`,
     };
   } catch {
     return null;

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Paths that should always be proxied to the backend regardless of format
-const PROXY_PATHS = ['/openapi'];
+const PROXY_PATHS = ['/openapi', '/processes', '/jobs', '/assets'];
 
 /**
  * Proxy that handles OGC API content negotiation.
@@ -10,6 +10,7 @@ const PROXY_PATHS = ['/openapi'];
  * as well as Accept-header based negotiation (e.g. QGIS, curl).
  *
  * A request is served by Next.js only when:
+ * - The request path is not one of the PROXY_PATHS
  * - No ?f= parameter is set (or ?f=html), AND
  * - The Accept header includes text/html (or is missing/wildcard)
  */
@@ -17,25 +18,21 @@ export function proxy(request) {
   const { searchParams, pathname } = request.nextUrl;
   const format = searchParams.get('f');
 
-  const isProxyPath = PROXY_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'));
+  const isProxyPath = PROXY_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const isNonHtmlFormat = format && format.toLowerCase() !== 'html';
   const acceptHeaderRaw = request.headers.get('accept');
   const acceptHeader = (acceptHeaderRaw || '').toLowerCase();
-  const wantsHtml =
-    !acceptHeaderRaw || acceptHeader.includes('text/html') || acceptHeader.trim() === '*/*';
-  const requestsNonHtmlAccept = !wantsHtml;
+  const wantsHtml = !acceptHeaderRaw || acceptHeader.includes('text/html') || acceptHeader.trim() === '*/*';
+  const acceptHeaderIsNonHtml = !wantsHtml;
 
-  if (!isProxyPath && !isNonHtmlFormat && !requestsNonHtmlAccept) {
+  if (!isProxyPath && !isNonHtmlFormat && !acceptHeaderIsNonHtml) {
     return NextResponse.next();
   }
 
   const apiBaseUrl = (process.env.API_BASE_URL || '').trim();
 
   if (!apiBaseUrl) {
-    return NextResponse.json(
-      { error: 'API_BASE_URL is not configured' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'API_BASE_URL is not configured' }, { status: 500 });
   }
 
   const backendUrl = new URL(pathname, apiBaseUrl.replace(/\/+$/, ''));

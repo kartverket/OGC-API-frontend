@@ -1,59 +1,59 @@
-import Image from "next/image";
-import NextLink from "next/link";
-import { getCrsCode } from "@/utils/map/helpers";
-import { Card, Heading, Link } from "@digdir/designsystemet-react";
-import { ArrowRightIcon, ChevronRightIcon } from "@navikt/aksel-icons";
-import styles from "./CollectionCard.module.css";
-import { fetchCollection } from "@/utils/api/server";
+import { Card, Heading, Link } from '@digdir/designsystemet-react';
+import { ArrowRightIcon, ChevronRightIcon } from '@navikt/aksel-icons';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { fetchCollection } from '@/utils/api/server';
+import { getCrsCode } from '@/utils/map/helpers';
+import styles from './CollectionCard.module.css';
 
-export default async function CollectionCard({ collection, hasMap }) {
+export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
+  const mainLink = hasCoverage
+    ? `/collections/${collection.id}`
+    : hasFeature
+      ? `/collections/${collection.id}/items`
+      : `/collections/${collection.id}`;
+
   // Fetch one item to check geometry type
   let geometryType = null;
-  try {
-    const itemsData = await fetchCollection(collection.id);
-    geometryType = itemsData.geometryType || null;
-  } catch (error) {
-    console.error(
-      `[CollectionCard] Failed to fetch items for collection ${collection.id}:`,
-      error,
-    );
+  if (hasFeature) {
+    try {
+      const itemsData = await fetchCollection(collection.id);
+      geometryType = itemsData.geometryType || null;
+    } catch (error) {
+      console.error(`[CollectionCard] Failed to fetch items for collection ${collection.id}:`, error);
+    }
   }
+
   // Determine which icon to use based on geometry type (default to polygon)
-  let geometryIconPath = "/gfx/polygon.svg";
+  let geometryIconPath = hasCoverage ? '/gfx/raster.svg' : '/gfx/polygon.svg';
+  const countValue = hasCoverage ? collection.fileCount : collection.itemCount;
+  const countLabel = hasCoverage ? 'files' : 'features';
 
   if (geometryType) {
     if (/polygon/i.test(geometryType)) {
-      geometryIconPath = "/gfx/polygon.svg";
+      geometryIconPath = '/gfx/polygon.svg';
     } else if (/line/i.test(geometryType)) {
-      geometryIconPath = "/gfx/line.svg";
+      geometryIconPath = '/gfx/line.svg';
     } else if (/point/i.test(geometryType)) {
-      geometryIconPath = "/gfx/points.svg";
+      geometryIconPath = '/gfx/points.svg';
     } else {
       // Fallback to polygon for unrecognized geometry types
-      geometryIconPath = "/gfx/polygon.svg";
+      geometryIconPath = '/gfx/polygon.svg';
     }
   }
 
   return (
     <Card className={styles.card}>
       <div className={styles.cardContent}>
-        <NextLink
-          href={`/collections/${collection.id}/items`}
-          className={styles.thumbnail}
-        >
-          <Image
-            src={geometryIconPath}
-            alt="Thumbnail"
-            width={150}
-            height={150}
-          />
+        <NextLink href={mainLink} className={styles.thumbnail}>
+          <Image src={geometryIconPath} alt="Thumbnail" width={150} height={150} />
         </NextLink>
 
         <div className={styles.content}>
           <div className={styles.top}>
             <div className={styles.left}>
               <Link asChild>
-                <NextLink href={`/collections/${collection.id}/items`}>
+                <NextLink href={mainLink}>
                   <Heading level={2} data-size="xs" className={styles.title}>
                     {collection.title}
                   </Heading>
@@ -61,9 +61,9 @@ export default async function CollectionCard({ collection, hasMap }) {
                   <ChevronRightIcon fontSize="24px" />
                 </NextLink>
               </Link>
-              {collection.itemCount && (
+              {countValue > 0 && (
                 <span className={`${styles.itemCount} ${styles.tag}`}>
-                  {collection.itemCount} features
+                  {countValue} {countLabel}
                 </span>
               )}
             </div>
@@ -81,25 +81,25 @@ export default async function CollectionCard({ collection, hasMap }) {
             <div className={styles.metadata}>
               <div>
                 <div className={styles.label}>Koordinatsystem</div>
-                <div className={styles.value}>
-                  {getCrsCode(collection.storageCrs)}
-                </div>
+                <div className={styles.value}>{getCrsCode(collection.storageCrs)}</div>
               </div>
             </div>
           </div>
 
           <div className={styles.bottom}>
             <div className={styles.left}>
-              <span className={`${styles.itemType} ${styles.tag}`}>
-                {collection.itemType}
-              </span>
-
-              {hasMap && (
-                <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>
+              {hasFeature && (
+                <span className={`${styles.itemType} ${styles.tag}`}>{collection.itemType || 'Feature'}</span>
               )}
 
+              {hasMap && <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>}
+
+              {hasCoverage && <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>}
+
+              {hasTiles && <span className={`${styles.itemType} ${styles.tag}`}>Tiles</span>}
+
               <div className={styles.keywords}>
-                {((Array.isArray(collection.keywords) ? collection.keywords : [])).map((keyword) => (
+                {(Array.isArray(collection.keywords) ? collection.keywords : []).map((keyword) => (
                   <span key={keyword} className={styles.tag}>
                     {keyword}
                   </span>

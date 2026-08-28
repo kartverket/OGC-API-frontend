@@ -3,7 +3,6 @@ FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a
 # Custom Python scripts
 COPY distinct_values.py /pygeoapi/distinct_values.py
 COPY modify_openapi.py /pygeoapi/modify_openapi.py
-COPY postgis_mapscript.py /pygeoapi/postgis_mapscript.py
 COPY schema_provider.py /pygeoapi/schema_provider.py
 COPY formatter_jsonfg.py /pygeoapi/formatter_jsonfg.py
 
@@ -11,13 +10,12 @@ COPY formatter_jsonfg.py /pygeoapi/formatter_jsonfg.py
 COPY entrypoint.py /pygeoapi/pygeoapi/entrypoint_dnd.py
 COPY gunicorn_conf.py /pygeoapi/gunicorn_conf_dnd.py
 
-# Patched maps module
-COPY maps.py /pygeoapi/pygeoapi/api/maps.py
-
 # pygeoapi configuration
 COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml
 COPY schemas/ /pygeoapi/schemas/
-COPY resources/definitions/tiles/EPSG3575Quad.json /pygeoapi/resources/definitions/tiles/EPSG3575Quad.json
+COPY resources/definitions/tiles/EPSG3575Quad.json /pygeoapi/pygeoapi/resources/definitions/tiles/EPSG3575Quad.json
+# Collection preview assets used by frontend via /assets/...
+COPY data/collection-images/ /pygeoapi/data/collection-images/
 
 # Process plugins
 COPY processes/ /pygeoapi/processes/
@@ -29,14 +27,22 @@ COPY templates/ /pygeoapi/custom_templates/
 COPY mapserver/fonts.txt /pygeoapi/fonts.txt
 COPY mapserver/styles/ /pygeoapi/styles/
 
-RUN /venv/bin/python3 -m pip install \
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# TEMPORARY: Patch pip inside the base image's venv for CVE-2026-8643 (fixed in pip 26.1.2).
+# Remove once upstream base image ships a patched pip, hopefully any version after 0.24.0
+RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade "pip>=26.1.2"
+
+RUN /venv/bin/python3 -m pip install --no-cache-dir \
         prometheus_client \
         prometheus_flask_exporter \
         geopandas \
         fiona \
         SQLAlchemy \
         psycopg2-binary \
-        GeoAlchemy2
+        GeoAlchemy2 \
+        google-cloud-storage
 
 ENV USER_ID=150 \
     USER_NAME=apprunner \
@@ -60,5 +66,4 @@ ENV WSGI_WORKER_CLASS=gevent
 
 USER ${USER_NAME}
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD [ "python3", "-c", "import urllib.request, sys; sys.exit(0) if urllib.request.urlopen('http://localhost:5000/').getcode() == 200 else sys.exit(1)" ]
+ENTRYPOINT ["/docker-entrypoint.sh"]

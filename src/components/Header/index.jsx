@@ -1,27 +1,24 @@
-"use client";
+'use client';
+
 // Needs to be a client component to use usePathname
 
-import { usePathname, useSearchParams } from "next/navigation";
-import Image from "next/image";
-import NextLink from "next/link";
-import { Link } from "@digdir/designsystemet-react";
-import styles from "./Header.module.css";
-import { useMemo } from "react";
-import { useApiBaseUrlSWR } from "@/config/apiConfig.swr";
-import { joinApiUrl } from "@/config/apiConfig";
-
+import { Link } from '@digdir/designsystemet-react';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
+import styles from './Header.module.css';
 
 export default function Header() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { apiBaseUrl } = useApiBaseUrlSWR();
+  const isCollectionMapPage = /^\/collections\/[^/]+\/map\/?$/.test(pathname);
 
   const jsonLink = useMemo(() => {
-    if (!apiBaseUrl) return "";
     const params = new URLSearchParams(searchParams.toString());
-    params.set("f", "json");
-    return `${joinApiUrl(apiBaseUrl, pathname)}?${params.toString()}`;
-  }, [apiBaseUrl, pathname, searchParams]);
+    params.set('f', 'json');
+    return `${pathname}?${params.toString()}`;
+  }, [pathname, searchParams]);
 
   return (
     <div className={styles.header}>
@@ -35,19 +32,21 @@ export default function Header() {
       </div>
 
       <div className={styles.links}>
-        <Link asChild data-size="sm">
-          <NextLink
-            href={jsonLink || "#"}
-            target="_blank"
-            aria-disabled={!jsonLink}
-            // optional: make it actually non-clickable when disabled
-            onClick={(e) => {
-              if (!jsonLink) e.preventDefault();
-            }}
-          >
-            JSON
-          </NextLink>
-        </Link>
+        {!isCollectionMapPage && (
+          <Link asChild data-size="sm">
+            <NextLink
+              href={jsonLink || '#'}
+              target="_blank"
+              aria-disabled={!jsonLink}
+              // optional: make it actually non-clickable when disabled
+              onClick={(e) => {
+                if (!jsonLink) e.preventDefault();
+              }}
+            >
+              JSON
+            </NextLink>
+          </Link>
+        )}
       </div>
     </div>
   );
