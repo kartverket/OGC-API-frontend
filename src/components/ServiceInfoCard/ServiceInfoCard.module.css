@@ -1,97 +1,97 @@
 .serviceInfoCard {
-    border: 0 none;
+  border: 0 none;
 
-    & .cardBlock {
-        & > * {
-            margin: 0;
-        }
-
-        & .heading {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            margin-bottom: var(--ds-size-3);
-
-            & h2 {
-                font-size: var(--ds-font-size-3);
-            }
-        }
-
-        & .info {
-            display: flex;
-            flex-direction: column;
-            font-size: var(--ds-font-size-2);
-
-            & > div {
-                display: flex;
-                align-items: center;
-                padding: 8px 0;
-            }
-
-            & .label {
-                width: 160px;
-                font-weight: 500;
-            }
-
-            & .value {
-                font-weight: 400;
-            }
-
-            & .keywordsRow {
-                display: flex;
-                padding: 8px 0;
-                align-items: flex-start;
-            }
-
-            & .keywords {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-                flex: 1;
-
-                & span {
-                    background: var(--ds-color-surface-tinted);
-                    border-radius: var(--ds-border-radius-sm);
-                    padding: 4px 8px;
-                    font-size: var(--ds-font-size-1);
-                }
-            }
-
-            & .moreButton {
-                background: var(--ds-color-accent-surface-default);
-                color: var(--ds-color-accent-text-default);
-                border: none;
-                border-radius: var(--ds-border-radius-sm);
-                padding: 4px 8px;
-                font-size: var(--ds-font-size-1);
-                cursor: pointer;
-                white-space: nowrap;
-
-                &:hover {
-                    background: var(--ds-color-accent-surface-hover);
-                }
-            }
-        }
-
-        & .contactInfo {
-            display: flex;
-            flex-direction: column;
-            font-size: var(--ds-font-size-2);
-
-            & .details {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin: 0;
-
-                & .label {
-                    font-weight: 500;
-                }
-
-                & .value {
-                    font-weight: 400;
-                }
-            }
-        }
+  & .cardBlock {
+    & > * {
+      margin: 0;
     }
+
+    & .heading {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: var(--ds-size-3);
+
+      & h2 {
+        font-size: var(--ds-font-size-3);
+      }
+    }
+
+    & .info {
+      display: flex;
+      flex-direction: column;
+      font-size: var(--ds-font-size-2);
+
+      & > div {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+      }
+
+      & .label {
+        width: 160px;
+        font-weight: 500;
+      }
+
+      & .value {
+        font-weight: 400;
+      }
+
+      & .keywordsRow {
+        display: flex;
+        padding: 8px 0;
+        align-items: flex-start;
+      }
+
+      & .keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        flex: 1;
+
+        & span {
+          background: var(--ds-color-surface-tinted);
+          border-radius: var(--ds-border-radius-sm);
+          padding: 4px 8px;
+          font-size: var(--ds-font-size-1);
+        }
+      }
+
+      & .moreButton {
+        background: var(--ds-color-accent-surface-default);
+        color: var(--ds-color-accent-text-default);
+        border: none;
+        border-radius: var(--ds-border-radius-sm);
+        padding: 4px 8px;
+        font-size: var(--ds-font-size-1);
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+          background: var(--ds-color-accent-surface-hover);
+        }
+      }
+    }
+
+    & .contactInfo {
+      display: flex;
+      flex-direction: column;
+      font-size: var(--ds-font-size-2);
+
+      & .details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 0;
+
+        & .label {
+          font-weight: 500;
+        }
+
+        & .value {
+          font-weight: 400;
+        }
+      }
+    }
+  }
 }

@@ -1,66 +1,66 @@
 export function debounce(func, delay) {
-    let timeoutId;
+  let timeoutId;
 
-    return function (...args) {
-        clearTimeout(timeoutId);
+  return function (...args) {
+    clearTimeout(timeoutId);
 
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
 }
 
 export function throttle(func, delay) {
-    let inThrottle;
-    let lastArgs;
-    let lastThis;
+  let inThrottle;
+  let lastArgs;
+  let lastThis;
 
-    return function (...args) {
-        lastArgs = args;
-        lastThis = this;
+  return function (...args) {
+    lastArgs = args;
+    lastThis = this;
 
-        if (!inThrottle) {
-            func.apply(lastThis, lastArgs);
-            inThrottle = true;
+    if (!inThrottle) {
+      func.apply(lastThis, lastArgs);
+      inThrottle = true;
 
-            setTimeout(() => {
-                inThrottle = false;
+      setTimeout(() => {
+        inThrottle = false;
 
-                if (lastArgs) {
-                    func.apply(lastThis, lastArgs);
-                    lastArgs = null;
-                    lastThis = null;
-                }
-            }, delay);
+        if (lastArgs) {
+          func.apply(lastThis, lastArgs);
+          lastArgs = null;
+          lastThis = null;
         }
-    };
+      }, delay);
+    }
+  };
 }
 
 export function roundDecimals(number, precision) {
-    if (countDecimalPlaces(number) <= precision) {
-        return number;
-    }
+  if (countDecimalPlaces(number) <= precision) {
+    return number;
+  }
 
-    const factor = Math.pow(10, precision);
+  const factor = 10 ** precision;
 
-    return Math.round(number * factor) / factor;
+  return Math.round(number * factor) / factor;
 }
 
 export function isPlainObject(value) {
-    if (typeof value !== 'object' || value === null) {
-        return false;
-    }
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
 
-    const prototype = Object.getPrototypeOf(value);
-    return prototype === null || prototype === Object.prototype;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype === Object.prototype;
 }
 
 function countDecimalPlaces(number) {
-    const numberAsString = number.toString();
+  const numberAsString = number.toString();
 
-    if (numberAsString.includes('.')) {
-        return numberAsString.split('.')[1].length;
-    }
+  if (numberAsString.includes('.')) {
+    return numberAsString.split('.')[1].length;
+  }
 
-    return 0;
+  return 0;
 }

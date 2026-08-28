@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { createItemMap, zoomToExtent } from "@/utils/map/map";
-import { MapComponent } from "@/components";
-import { Skeleton } from "@digdir/designsystemet-react";
+import { Skeleton } from '@digdir/designsystemet-react';
+import { useEffect, useRef, useState } from 'react';
+import { MapComponent } from '@/components';
+import { createItemMap, zoomToExtent } from '@/utils/map/map';
 
 const MAP_WIDTH = 618;
 const MAP_HEIGHT = 735;

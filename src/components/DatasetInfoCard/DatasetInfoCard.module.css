@@ -1,78 +1,78 @@
 .datasetInfoCard {
-    border: 0 none;
+  border: 0 none;
 
-    & > * {
-        margin: 0;
+  & > * {
+    margin: 0;
+  }
+
+  & .heading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: var(--ds-size-3);
+
+    & h2 {
+      font-size: var(--ds-font-size-3);
+    }
+  }
+
+  & .info {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--ds-font-size-2);
+    margin-bottom: var(--ds-size-3);
+
+    & > div {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
     }
 
-    & .heading {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: var(--ds-size-3);
-
-        & h2 {
-            font-size: var(--ds-font-size-3);
-        }
+    & .label {
+      width: 160px;
+      font-weight: 500;
     }
 
-    & .info {
-        display: flex;
-        flex-direction: column;
-        font-size: var(--ds-font-size-2);
-        margin-bottom: var(--ds-size-3);
-
-        & > div {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        & .label {
-            width: 160px;
-            font-weight: 500;
-        }
-
-        & .value {
-            font-weight: 400;
-        }
-
-        & .keywords {
-            display: flex;
-            gap: 8px;
-
-            & span {
-                background: var(--ds-color-surface-tinted);
-                border-radius: var(--ds-border-radius-sm);
-                padding: 4px 8px;
-            }
-        }
+    & .value {
+      font-weight: 400;
     }
 
-    & .contactInfo {
-        display: flex;
-        flex-direction: column;
-        font-size: var(--ds-font-size-2);
-        gap: var(--ds-size-1);
+    & .keywords {
+      display: flex;
+      gap: 8px;
 
-        & .label {
-            font-weight: 500;
-        }
-
-        & .value {
-            font-weight: 400;
-        }
+      & span {
+        background: var(--ds-color-surface-tinted);
+        border-radius: var(--ds-border-radius-sm);
+        padding: 4px 8px;
+      }
     }
+  }
+
+  & .contactInfo {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--ds-font-size-2);
+    gap: var(--ds-size-1);
+
+    & .label {
+      font-weight: 500;
+    }
+
+    & .value {
+      font-weight: 400;
+    }
+  }
 }
 
 .detailsContent {
-    font-size: var(--ds-font-size-2);
+  font-size: var(--ds-font-size-2);
 }
 
 .detailsContent ul {
-    font-size: var(--ds-font-size-3);
+  font-size: var(--ds-font-size-3);
 
-    li {
-        margin-top: var(--ds-size-1);
-    }
+  li {
+    margin-top: var(--ds-size-1);
+  }
 }

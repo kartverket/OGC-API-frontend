@@ -1,25 +1,30 @@
 name-template: 'Pygeoapi v$RESOLVED_VERSION'
 tag-template: 'pygeoapi-v$RESOLVED_VERSION'
 tag-prefix: 'pygeoapi-'
-include-labels:
-  - 'pygeoapi'
-  - 'docker'
+
 categories:
-  - title: '🚀 Features'
-    labels: ['feature', 'enhancement']
+  - type: 'pre-include'
+    when:
+      paths:
+        - pygeoapi/**
   - title: '🐛 Bug Fixes'
-    labels: ['bug', 'fix']
+    semver-increment: patch
+    when:
+      labels:
+        - 'bug'
+        - 'fix'
   - title: '🔧 Maintenance'
-    labels: ['chore', 'dependencies', 'github_actions']
+    semver-increment: patch
+    when:
+      labels:
+        - 'chore'
+        - 'dependencies'
+        - 'github_actions'
+  - title: '🚀 Changes'
+    semver-increment: minor
+
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
-version-resolver:
-  major:
-    labels: ['breaking']
-  minor:
-    labels: ['feature', 'enhancement']
-  patch:
-    labels: ['bug', 'fix', 'chore', 'dependencies', 'github_actions']
-  default: patch
+
 template: |
   ## What's Changed
   $CHANGES

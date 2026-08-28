@@ -7,8 +7,8 @@ CLASS
   LABEL
     TEXT '[navn]'
     ANTIALIAS true
-    FONT "verdana"
-    COLOR 40 40 40
+    #FONT "verdana"
+    COLOR 250 0 0
     SIZE 10
     OUTLINECOLOR 254 254 254
     POSITION AUTO

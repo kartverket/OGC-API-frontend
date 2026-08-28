@@ -1,40 +1,40 @@
 .container {
-    position: relative;
+  position: relative;
 }
 
 .bbox {
-    background: #1A589F4D;
-    border: 2px solid #1A589F;
-    box-sizing: border-box;
-    position: relative;
+  background: #1a589f4d;
+  border: 2px solid #1a589f;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .resizeTopLeft,
 .resizeTopRight,
 .resizeBottomLeft,
 .resizeBottomRight {
-    background: #1A589F;
-    border-radius: 50%;
-    width: 12px !important;
-    height: 12px !important;
+  background: #1a589f;
+  border-radius: 50%;
+  width: 12px !important;
+  height: 12px !important;
 }
 
 .resizeTopLeft {
-    left: -6px !important;
-    top: -6px !important;
+  left: -6px !important;
+  top: -6px !important;
 }
 
 .resizeTopRight {
-    right: -6px !important;
-    top: -6px !important;
+  right: -6px !important;
+  top: -6px !important;
 }
 
 .resizeBottomLeft {
-    left: -6px !important;
-    bottom: -6px !important;
+  left: -6px !important;
+  bottom: -6px !important;
 }
 
 .resizeBottomRight {
-    right: -6px !important;
-    bottom: -6px !important;
+  right: -6px !important;
+  bottom: -6px !important;
 }
