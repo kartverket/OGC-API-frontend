@@ -22,6 +22,7 @@ geometry_type = "MULTIPOLYGON"
 buffer_size = 100
 simplify = true
 table_name = "tellekrets"
+minzoom = 5
 
 [[tileset.postgis.layer.query]]
 sql = """
@@ -50,6 +51,7 @@ geometry_type = "MULTIPOLYGON"
 buffer_size = 100
 simplify = true
 table_name = "tellekrets"
+minzoom = 5
 
 [[tileset.postgis.layer.query]]
 sql = """
