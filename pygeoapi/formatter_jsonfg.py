@@ -30,7 +30,7 @@ class JsonFgFormatter(BaseFormatter):
     per the OGC Features and Geometries JSON standard (OGC 21-045r1).
     """
 
-    def __init__(self, formatter_def):
+    def __init__(self, _formatter_def):
         """Initialize formatter."""
 
         super().__init__({'name': 'jsonfg', 'geom': None})
