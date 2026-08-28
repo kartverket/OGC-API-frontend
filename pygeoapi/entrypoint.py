@@ -83,7 +83,9 @@ def allow_custom_format_on_single_item():
     if status != 200:
         resp = make_response(content, status)
         if headers:
-            resp.headers = headers
+            for key, value in headers.items():
+                if key.lower() not in ('content-type', 'content-length'):
+                    resp.headers[key] = value
         return resp
 
     # Apply the formatter to transform GeoJSON to the requested format
