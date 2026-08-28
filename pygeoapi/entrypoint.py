@@ -22,8 +22,8 @@ import pygeoapi.api.itemtypes as itemtypes_api
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
 # Patch: allow custom formatters (e.g. JSON-FG) to work on single item endpoints.
-# pygeoapi 0.23.4 has a bug where:
-# 1. The Flask adapter rejects custom formats before the handler runs (no skip_valid_check)
+# Workaround for upstream limitations:
+# 1. The Flask adapter may reject custom formats before the handler runs (no skip_valid_check)
 # 2. get_collection_item doesn't support custom formatters (only get_collection_items does)
 # This hook intercepts such requests, gets GeoJSON, and applies the formatter.
 import json as json_mod
