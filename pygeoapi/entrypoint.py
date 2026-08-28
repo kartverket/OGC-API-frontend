@@ -16,7 +16,7 @@ remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
 
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 from flask import request, make_response, jsonify, send_file
-from pygeoapi.flask_app import APP as app, api_, execute_from_flask
+from pygeoapi.flask_app import APP as app, api_
 import pygeoapi.api.itemtypes as itemtypes_api
 
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
