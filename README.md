@@ -22,33 +22,24 @@ docker compose down -v
 docker compose up --build
 ```
 
-### Vector tiles med BBOX Tile Server
+### Vector tiles med Martin
 
-Prosjektet bruker `bbox-tile-server` med en native BBOX-konfig.
+Prosjektet bruker `martin` for vektorflisservering.
 
-- Compose-service: `bbox-tile-server` (port `8080`)
-- Konfigurasjon: `bbox/bbox.toml`
-- Tile-endepunkt brukt av pygeoapi: `http://bbox-tile-server:8080/xyz/tellekretser/{z}/{x}/{y}.mvt`
+- Compose-service: `martin` (port `3000`)
+- Konfigurasjon: `martin/martin.yaml`
+- Tile-endepunkt brukt av pygeoapi: `http://martin:3000/tellekretser/{z}/{x}/{y}`
 
 Enkel sjekk lokalt etter oppstart:
 
 ```shell
-curl -I http://localhost:8080/xyz/tellekretser/0/0/0.mvt
+curl -I http://localhost:3000/health
 ```
 
-Datasource URL for BBOX er definert i `dev/docker-compose.yml` via `BBOX_DATASOURCE_URL`.
-
-Start bbox-tile-server:
+Start martin:
 
 ```shell
-docker compose -f dev/docker-compose.yml up -d --build bbox-tile-server
-```
-
-Valgfritt: overstyr verdien midlertidig i PowerShell:
-
-```powershell
-$env:BBOX_DATASOURCE_URL = "postgres://postgres:qwer1234@postgis:5432/pygeoapi_test?sslmode=disable"
-docker compose -f dev/docker-compose.yml up -d --build bbox-tile-server
+docker compose -f dev/docker-compose.yml up -d martin
 ```
 
 ### Konfigurasjonsfil (pygeoapi-config.yml)

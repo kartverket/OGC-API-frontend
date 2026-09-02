@@ -1,0 +1,33 @@
+
+
+postgres:
+  connection_string: ${DATABASE_URL}
+  auto_publish: false
+  auto_bounds: calc
+  tables:
+    tellekretser:
+      schema: public
+      table: tellekrets
+      geometry_column: geometry
+      srid: 25833
+      id_column: ogc_fid
+      properties:
+        id: int4
+        navn: text
+        nr: text
+        fylkesnummer: text
+        kommunenummer: text
+        valgdistriktsnummer_valgdirektoratet: text
+        valgdistriktsnummer_ssb: text
+
+
+web_ui: enable-for-all
+
+cache:
+  expiry: 30d
+  minzoom: 0
+  maxzoom: 14
+  size_mb: 1024
+  tile_size_mb: 750
+
+worker_processes: 8

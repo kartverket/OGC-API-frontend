@@ -43,19 +43,20 @@ services:
     depends_on:
       postgis:
         condition: service_healthy
-      bbox-tile-server:
+      martin:
         condition: service_started
     networks:
       - pygeoapi-network
 
-  bbox-tile-server:
-    build:
-      context: ../bbox
-    platform: linux/amd64
+  martin:
+    image: ghcr.io/maplibre/martin
     ports:
-      - "8080:8080"
+      - "3001:3000"
+    volumes:
+      - ../martin/martin.yaml:/martin.yaml
     environment:
-      - BBOX_DATASOURCE_URL=postgres://postgres:qwer1234@postgis:5432/pygeoapi_test?sslmode=disable
+      - DATABASE_URL=postgres://postgres:qwer1234@postgis:5432/pygeoapi_test
+    command: --config /martin.yaml
     depends_on:
       postgis:
         condition: service_healthy
