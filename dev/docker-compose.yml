@@ -51,7 +51,7 @@ services:
   martin:
     image: ghcr.io/maplibre/martin
     ports:
-      - "3001:3000"
+      - "3030:3000"
     volumes:
       - ../martin/martin.yaml:/martin.yaml
       - ../martin/styles:/styles

@@ -26,14 +26,14 @@ docker compose up --build
 
 Prosjektet bruker `martin` for vektorflisservering.
 
-- Compose-service: `martin` (port `3000`)
+- Compose-service: `martin` (port `3030:3000`)
 - Konfigurasjon: `martin/martin.yaml`
 - Tile-endepunkt brukt av pygeoapi: `http://martin:3000/tellekretser/{z}/{x}/{y}`
 
 Enkel sjekk lokalt etter oppstart:
 
 ```shell
-curl -I http://localhost:3000/health
+curl -I http://localhost:3030/health
 ```
 
 Start martin:

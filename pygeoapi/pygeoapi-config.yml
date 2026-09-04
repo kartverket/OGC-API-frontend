@@ -158,11 +158,10 @@ resources:
         options:
           zoom:
             min: 0
-            max: 18
-
+            max: 14
         format:
           name: pbf
-          mimetype: application/x-protobuf; type=mapbox-vector-tile
+          mimetype: application/vnd.mapbox-vector-tile
 
       - type: map
         name: MapScript
@@ -354,76 +353,9 @@ resources:
             - WebMercatorQuad
         format:
           name: pbf
-          mimetype: application/x-protobuf; type=mapbox-vector-tile
+          mimetype: application/vnd.mapbox-vector-tile
     formatters:
       - name: formatter_jsonfg.JsonFgFormatter
-
-
-  tellekretser_polar:
-    type: collection
-    title:
-      nb-NO: Tellekretser i polar projeksjonen - test for tiles
-      en-US: Counting districts in polar projection - tile test
-    description:
-      nb-NO: >
-        Datasettet viser tellekretser i Norge
-      en-US: >
-        The dataset shows counting districts in Norway.
-    keywords:
-      nb-NO:
-        - Tellekrets
-        - Statistikk
-      en-US:
-        - Counting district
-        - Statistics
-    extents:
-      spatial:
-        bbox: [4.626095, 57.977101, 31.125157, 71.188325]
-        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    providers:
-      - type: feature
-        name: schema_provider.SchemaPostgreSQLProvider
-        schema_file: /pygeoapi/schemas/tellekrets.json
-        data:
-          host: ${db_host}
-          dbname: ${db_name}
-          user: ${db_user}
-          password: ${password}
-          search_path: [public]
-        id_field: id
-        properties:
-          - navn
-          - nr
-          - fylkesnummer
-          - kommunenummer
-          - valgdistriktsnummer_valgdirektoratet
-          - valgdistriktsnummer_ssb
-        table: tellekrets
-        geom_field: geometry
-        crs:
-          - http://www.opengis.net/def/crs/OGC/1.3/CRS84
-          - http://www.opengis.net/def/crs/EPSG/0/25832
-          - http://www.opengis.net/def/crs/EPSG/0/25833
-          - http://www.opengis.net/def/crs/EPSG/0/25835
-          - http://www.opengis.net/def/crs/EPSG/0/4258
-          - http://www.opengis.net/def/crs/EPSG/0/4326
-          - http://www.opengis.net/def/crs/EPSG/0/3857
-        storage_crs: http://www.opengis.net/def/crs/EPSG/0/25833
-
-      - type: tile
-        name: MVT-proxy
-        data: http://martin:3000/tellekrets_polar/{z}/{x}/{y}
-        options:
-          zoom:
-            min: 0
-            max: 12
-          schemes:
-            - EPSG3575Quad
-        format:
-          name: pbf
-          mimetype: application/x-protobuf; type=mapbox-vector-tile
-
-
 
   norge-raster:
     type: collection
