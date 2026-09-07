@@ -1,0 +1,32 @@
+{
+  "version": 8,
+  "name": "fylker",
+  "sources": {
+    "fylker": {
+      "type": "vector",
+      "url": "/fylker"
+    }
+  },
+  "layers": [
+    {
+      "id": "fylker-fill",
+      "type": "fill",
+      "source": "fylker",
+      "source-layer": "fylker",
+      "paint": {
+        "fill-color": "#ADD8E6",
+        "fill-opacity": 0.7
+      }
+    },
+    {
+      "id": "fylker-outline",
+      "type": "line",
+      "source": "fylker",
+      "source-layer": "fylker",
+      "paint": {
+        "line-color": "#008080",
+        "line-width": 2
+      }
+    }
+  ]
+}

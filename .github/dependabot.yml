@@ -14,8 +14,8 @@ updates:
     directories:
       - "/"
       - "/pygeoapi"
-      - "/bbox"
       - "/dev/postgis"
+      - "/martin"
     schedule:
       interval: "daily"
 
