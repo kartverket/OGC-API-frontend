@@ -49,7 +49,8 @@ services:
       - pygeoapi-network
 
   martin:
-    image: ghcr.io/maplibre/martin
+    build:
+      context: ../martin
     ports:
       - "3030:3000"
     volumes:

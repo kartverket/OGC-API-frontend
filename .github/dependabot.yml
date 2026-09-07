@@ -15,6 +15,7 @@ updates:
       - "/"
       - "/pygeoapi"
       - "/dev/postgis"
+      - "/martin"
     schedule:
       interval: "daily"
 
