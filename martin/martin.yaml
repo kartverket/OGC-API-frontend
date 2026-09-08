@@ -1,0 +1,48 @@
+on_invalid: warn
+
+postgres:
+  connection_string: ${DATABASE_URL}
+  auto_publish: false
+  auto_bounds: calc
+  tables:
+    tellekretser:
+      schema: public
+      table: tellekrets
+      geometry_column: geometry
+      geometry_type: MULTIPOLYGON
+      srid: 25833
+      id_column: ogc_fid
+      properties:
+        id: int4
+        navn: text
+        nr: text
+        fylkesnummer: text
+        kommunenummer: text
+        valgdistriktsnummer_valgdirektoratet: text
+        valgdistriktsnummer_ssb: text
+    fylker:
+      schema: public
+      table: fylker
+      geometry_column: geometry
+      geometry_type: MULTIPOLYGON
+      srid: 25833
+      id_column: ogc_fid
+      properties:
+        id: int4
+        navn: text
+        nr: text
+
+
+web_ui: enable-for-all
+
+styles:
+  paths:
+    - /styles
+
+cache:
+  expiry: 30d
+  minzoom: 0
+  maxzoom: 14
+  size_mb: 512
+
+worker_processes: 8

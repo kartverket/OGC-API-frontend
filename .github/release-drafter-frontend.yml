@@ -7,7 +7,7 @@ categories:
     when:
       paths:
         - pygeoapi/**
-        - bbox/**
+        - martin/**
         - public/**
         - dev/**
   - title: '🐛 Bug Fixes'
