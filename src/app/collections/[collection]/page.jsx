@@ -182,7 +182,6 @@ export default async function Collection({ params }) {
                   hasFeature && (
                     <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
                       <NextLink href={`/collections/${data.id}/items`}>
-                        {/* <PackageFillIcon title="a11y-title" fontSize="36px" /> */}
                         <TableFillIcon title="a11y-title" fontSize="36px" />
                         <span>Vis objekter</span>
                         <ChevronRightIcon title="a11y-title" fontSize="36px" />
