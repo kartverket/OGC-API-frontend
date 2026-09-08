@@ -1,7 +1,7 @@
 on_invalid: warn
 
 postgres:
-  connection_string: ${DATABASE_URL}
+  connection_string: ${MARTIN_DATABASE_URL}
   auto_publish: false
   auto_bounds: calc
   tables:
