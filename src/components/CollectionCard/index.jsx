@@ -1,18 +1,18 @@
-import { Card, Heading, Link } from '@digdir/designsystemet-react';
-import { ArrowRightIcon, ChevronRightIcon } from '@navikt/aksel-icons';
+import { Card, Heading } from '@digdir/designsystemet-react';
+import {
+  ArrowRightIcon,
+  ChevronRightIcon,
+  LayersFillIcon,
+  SquareGridFillIcon,
+  TableFillIcon,
+} from '@navikt/aksel-icons';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { fetchCollection } from '@/utils/api/server';
-import { getCrsCode } from '@/utils/map/helpers';
 import styles from './CollectionCard.module.css';
 
 export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
-  const mainLink = hasCoverage
-    ? `/collections/${collection.id}`
-    : hasFeature
-      ? `/collections/${collection.id}/items`
-      : `/collections/${collection.id}`;
-
+  const mainLink = `/collections/${collection.id}`;
   // Fetch one item to check geometry type
   let geometryType = null;
   if (hasFeature) {
@@ -27,7 +27,6 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
   // Determine which icon to use based on geometry type (default to polygon)
   let geometryIconPath = hasCoverage ? '/gfx/raster.svg' : '/gfx/polygon.svg';
   const countValue = hasCoverage ? collection.fileCount : collection.itemCount;
-  const countLabel = hasCoverage ? 'files' : 'features';
 
   if (geometryType) {
     if (/polygon/i.test(geometryType)) {
@@ -45,53 +44,26 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
   return (
     <Card className={styles.card}>
       <div className={styles.cardContent}>
-        <NextLink href={mainLink} className={styles.thumbnail}>
-          <Image src={geometryIconPath} alt="Thumbnail" width={150} height={150} />
-        </NextLink>
-
-        <div className={styles.content}>
-          <div className={styles.top}>
-            <div className={styles.left}>
-              <Link asChild>
-                <NextLink href={mainLink}>
-                  <Heading level={2} data-size="xs" className={styles.title}>
-                    {collection.title}
-                  </Heading>
-
-                  <ChevronRightIcon fontSize="24px" />
-                </NextLink>
-              </Link>
-              {countValue > 0 && (
-                <span className={`${styles.itemCount} ${styles.tag}`}>
-                  {countValue} {countLabel}
-                </span>
-              )}
-            </div>
-            {/* Commented out, as we don't have updated info yet */}
-            {/* <div className={styles.updated}>
-              <div className={styles.label}>Oppdatert</div>
-              <div className={styles.value}>21.10.2025</div>
-            </div> */}
+        <NextLink href={mainLink} className={styles.top}>
+          <div className={styles.left}>
+            <Heading level={2} data-size="xs" className={styles.title}>
+              {collection.title}
+            </Heading>
           </div>
-
+          <ArrowRightIcon title="a11y-title" fontSize="1.5rem" color="white" />
+        </NextLink>
+        <div className={styles.thumbnail}>
+          <Image src={geometryIconPath} alt="Thumbnail" width={150} height={150} />
+        </div>
+        <div className={styles.content}>
           <div className={styles.middle}>
             <div className={styles.description}>{collection.description}</div>
-
-            <div className={styles.divider}></div>
-            <div className={styles.metadata}>
-              <div>
-                <div className={styles.label}>Koordinatsystem</div>
-                <div className={styles.value}>{getCrsCode(collection.storageCrs)}</div>
-              </div>
-            </div>
           </div>
-
           <div className={styles.bottom}>
             <div className={styles.left}>
               {hasFeature && (
                 <span className={`${styles.itemType} ${styles.tag}`}>{collection.itemType || 'Feature'}</span>
               )}
-
               {hasMap && <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>}
 
               {hasCoverage && <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>}
@@ -105,15 +77,46 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
                   </span>
                 ))}
               </div>
+              <div>
+                {countValue > 0 && (
+                  <span className={`${styles.itemCount} ${styles.tag}`}>
+                    {countValue} objekter
+                  </span>
+                )}
+              </div>
             </div>
+          </div>
+          <div className={styles.right}>
+            <div className={styles.actionCards}>
+              {hasFeature && (
+                <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                  <NextLink href={`/collections/${collection.id}/items`}>
+                    <TableFillIcon title="a11y-title" fontSize="20px" />
+                    <span>Vis objekter</span>
+                    <ChevronRightIcon title="a11y-title" fontSize="20px" />
+                  </NextLink>
+                </Card>
+              )}
 
-            <div className={styles.detailsLink}>
-              <Link asChild>
-                <NextLink href={`/collections/${collection.id}`}>
-                  Vis detaljert info
-                  <ArrowRightIcon title="a11y-title" fontSize="28px" />
-                </NextLink>
-              </Link>
+              {hasTiles && (
+                <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                  <NextLink href={`/collections/${collection.id}/tiles`}>
+                    <SquareGridFillIcon title="a11y-title" fontSize="20px" />
+                    <span>Vis fliser</span>
+                    <ChevronRightIcon title="a11y-title" fontSize="20px" />
+                  </NextLink>
+                </Card>
+              )}
+
+              {hasMap && (
+                <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                  <NextLink href={`/collections/${collection.id}/map`}>
+                    <LayersFillIcon title="a11y-title" fontSize="20px" />
+                    <span>Vis kart</span>
+                    <ChevronRightIcon title="a11y-title" fontSize="20px" />
+                  </NextLink>
+                </Card>
+              )}
             </div>
           </div>
         </div>
