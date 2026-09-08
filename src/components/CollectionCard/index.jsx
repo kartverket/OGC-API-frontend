@@ -28,7 +28,6 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
   // Determine which icon to use based on geometry type (default to polygon)
   let geometryIconPath = hasCoverage ? '/gfx/raster.svg' : '/gfx/polygon.svg';
   const countValue = hasCoverage ? collection.fileCount : collection.itemCount;
-  /* const countLabel = hasCoverage ? 'files' : 'features'; */
 
   if (geometryType) {
     if (/polygon/i.test(geometryType)) {
@@ -82,7 +81,7 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
               <div>
                 {countValue > 0 && (
                   <span className={`${styles.itemCount} ${styles.tag}`}>
-                    {countValue} objekter {/* {countLabel} */}
+                    {countValue} objekter
                   </span>
                 )}
               </div>
