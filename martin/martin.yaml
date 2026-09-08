@@ -9,7 +9,6 @@ postgres:
       schema: public
       table: tellekrets
       geometry_column: geometry
-      geometry_type: MULTIPOLYGON
       srid: 25833
       id_column: ogc_fid
       properties:
@@ -24,7 +23,6 @@ postgres:
       schema: public
       table: fylker
       geometry_column: geometry
-      geometry_type: MULTIPOLYGON
       srid: 25833
       id_column: ogc_fid
       properties:
