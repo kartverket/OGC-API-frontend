@@ -20,7 +20,6 @@ jobs:
       contents: read
       packages: write
       actions: read
-      security-events: write
 
     outputs:
       image_url: ${{ steps.set_output.outputs.image_url }}
