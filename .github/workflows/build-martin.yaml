@@ -74,3 +74,4 @@ jobs:
         with:
           image_url: ${{ needs.build_martin.outputs.image_url }}
           trivy_category: 'Martin'
+          
