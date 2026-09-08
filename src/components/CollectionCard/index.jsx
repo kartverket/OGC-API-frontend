@@ -9,7 +9,6 @@ import {
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { fetchCollection } from '@/utils/api/server';
-/* import { getCrsCode } from '@/utils/map/helpers'; */
 import styles from './CollectionCard.module.css';
 
 export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
