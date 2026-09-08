@@ -57,8 +57,7 @@ services:
       - ../martin/martin.yaml:/martin.yaml
       - ../martin/styles:/styles
     environment:
-      - DATABASE_URL=postgres://postgres:qwer1234@postgis:5432/pygeoapi_test
-    command: --config /martin.yaml
+      - MARTIN_DATABASE_URL=postgres://postgres:qwer1234@postgis:5432/pygeoapi_test
     depends_on:
       postgis:
         condition: service_healthy
