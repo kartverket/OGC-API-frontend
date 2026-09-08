@@ -1,5 +1,5 @@
 import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
-import { ChevronRightIcon, LayersFillIcon, PackageFillIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
+import { ChevronRightIcon, LayersFillIcon, SquareGridFillIcon, TableFillIcon } from '@navikt/aksel-icons';
 import bboxPolygon from '@turf/bbox-polygon';
 import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import Image from 'next/image';
@@ -182,8 +182,9 @@ export default async function Collection({ params }) {
                   hasFeature && (
                     <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
                       <NextLink href={`/collections/${data.id}/items`}>
-                        <PackageFillIcon title="a11y-title" fontSize="36px" />
-                        <span>Vis objekter i datasettet</span>
+                        {/* <PackageFillIcon title="a11y-title" fontSize="36px" /> */}
+                        <TableFillIcon title="a11y-title" fontSize="36px" />
+                        <span>Vis objekter</span>
                         <ChevronRightIcon title="a11y-title" fontSize="36px" />
                       </NextLink>
                     </Card>
