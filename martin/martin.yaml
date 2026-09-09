@@ -10,7 +10,7 @@ postgres:
       table: tellekrets
       geometry_column: geometry
       srid: 25833
-      id_column: ogc_fid
+      id_column: id
       properties:
         id: int4
         navn: text
@@ -24,7 +24,7 @@ postgres:
       table: fylker
       geometry_column: geometry
       srid: 25833
-      id_column: ogc_fid
+      id_column: id
       properties:
         id: int4
         navn: text
