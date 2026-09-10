@@ -1,0 +1,42 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-size-8);
+  max-width: var(--page-width);
+  width: 100%;
+  padding: var(--main-padding);
+  box-sizing: border-box;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-size-4);
+}
+
+.details {
+  display: grid;
+  gap: var(--ds-size-4);
+}
+
+.details > div {
+  display: grid;
+  gap: var(--ds-size-1);
+}
+
+.details dt {
+  color: var(--ds-color-neutral-text-subtle);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 20px;
+  }
+}

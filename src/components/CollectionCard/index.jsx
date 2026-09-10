@@ -78,11 +78,7 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
                 ))}
               </div>
               <div>
-                {countValue > 0 && (
-                  <span className={`${styles.itemCount} ${styles.tag}`}>
-                    {countValue} objekter
-                  </span>
-                )}
+                {countValue > 0 && <span className={`${styles.itemCount} ${styles.tag}`}>{countValue} objekter</span>}
               </div>
             </div>
           </div>
