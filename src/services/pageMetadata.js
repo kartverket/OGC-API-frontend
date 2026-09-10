@@ -92,3 +92,16 @@ export async function createQueryablesMetadata(collection) {
     return null;
   }
 }
+
+/**
+ * Creates metadata for the Tile Matrix Sets page.
+ * @returns {Promise<{title: string}|null>}
+ */
+export async function createTileMatrixSetsMetadata() {
+  try {
+    const homeData = await fetchHome();
+    return { title: `Tile Matrix Sets | ${homeData.title} | ${SITE_SUFFIX}` };
+  } catch {
+    return null;
+  }
+}

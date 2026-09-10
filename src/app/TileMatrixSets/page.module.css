@@ -1,0 +1,42 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-size-8);
+  max-width: var(--page-width);
+  width: 100%;
+  padding: var(--main-padding);
+  box-sizing: border-box;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  background: #fff;
+}
+
+.table th,
+.table td {
+  padding: var(--ds-size-3);
+  border: 1px solid var(--ds-color-neutral-border-subtle);
+  text-align: left;
+  background: #fff;
+}
+
+.table thead th {
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 20px;
+  }
+
+  .table {
+    min-width: 500px;
+  }
+}
