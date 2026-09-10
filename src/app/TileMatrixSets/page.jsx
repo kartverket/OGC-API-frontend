@@ -42,8 +42,8 @@ export default async function TileMatrixSets() {
           <Table zebra data-size="sm" className={styles.table}>
             <TableHead>
               <TableRow>
+                <TableHeaderCell>ID</TableHeaderCell>
                 <TableHeaderCell>Tittel</TableHeaderCell>
-                <TableHeaderCell>Beskrivelse</TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>

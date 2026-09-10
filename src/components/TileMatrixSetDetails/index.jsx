@@ -35,6 +35,7 @@ export default async function TileMatrixSetDetails({ collection, tileMatrixSet, 
   const matrixSet = {
     id: tileMatrixSet,
     title: itemLink?.title || null,
+    description: metadata.description || null,
     dataType: metadata.dataType || null,
     crs: metadata.crs || null,
     tileMatrixSetURI: metadata.tileMatrixSetURI || null,
@@ -59,6 +60,11 @@ export default async function TileMatrixSetDetails({ collection, tileMatrixSet, 
         </Heading>
 
         <Card className={detailStyles.card}>
+          {matrixSet.description && (
+            <section>
+              <Paragraph data-size="sm">{matrixSet.description}</Paragraph>
+            </section>
+          )}
           {matrixSet.itemTemplate && (
             <section>
               <Heading level={2} data-size="xs">

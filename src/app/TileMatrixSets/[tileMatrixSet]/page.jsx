@@ -1,16 +1,17 @@
 import { Card, Heading, Link } from '@digdir/designsystemet-react';
 import { Breadcrumbs, ErrorPage } from '@/components';
-import { fetchTileMatrixSet } from '@/utils/api/server';
+import { fetchHome, fetchTileMatrixSet } from '@/utils/api/server';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
 
 export default async function TileMatrixSetPage({ params }) {
   const { tileMatrixSet } = await params;
+  let homeData;
   let matrixSet;
 
   try {
-    matrixSet = await fetchTileMatrixSet(tileMatrixSet);
+    [homeData, matrixSet] = await Promise.all([fetchHome(), fetchTileMatrixSet(tileMatrixSet)]);
   } catch (error) {
     return <ErrorPage status={error?.status ?? 500} />;
   }
@@ -19,7 +20,7 @@ export default async function TileMatrixSetPage({ params }) {
     <>
       <Breadcrumbs
         breadcrumbs={{
-          '/': 'Tile Matrix Sets',
+          '/': homeData.title,
           '/TileMatrixSets': 'Tile Matrix Sets',
           [`/TileMatrixSets/${tileMatrixSet}`]: matrixSet.title || matrixSet.id,
         }}
