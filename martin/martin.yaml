@@ -32,6 +32,11 @@ postgres:
         navn: text
         nr: text
 
+  functions:
+    tellekrets_laea:
+      schema: public
+      function: tellekrets_laea
+
 
 web_ui: enable-for-all
 

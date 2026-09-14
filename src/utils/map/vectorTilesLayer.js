@@ -48,7 +48,7 @@ export function buildTileGridFromDefinition(definition) {
   }
 
   const resolutions = sorted.map((m) => m.cellSize);
-  const origins = sorted.map((m) => m.pointOfOrigin);
+  const origins = sorted.map((m) => getOriginInXY(m.pointOfOrigin, definition.orderedAxes));
   const tileSizes = sorted.map((m) => [m.tileWidth, m.tileHeight]);
   const sizes = sorted.map((m) => [m.matrixWidth, m.matrixHeight]);
 
@@ -63,6 +63,14 @@ export function buildTileGridFromDefinition(definition) {
   const projectionCode = getCrsCode(definition.crs);
 
   return { tileGrid, projectionCode };
+}
+
+function getOriginInXY(origin, orderedAxes) {
+  if (orderedAxes?.[0] === 'Y' && orderedAxes?.[1] === 'X') {
+    return [origin[1], origin[0]];
+  }
+
+  return origin;
 }
 
 /**

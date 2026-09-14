@@ -1,6 +1,7 @@
 FROM postgis/postgis:18-3.6-alpine
 
 COPY ./dumps/* /tmp/dumps/
+COPY tellekrets_mvt.sql /tmp/tellekrets_mvt.sql
 COPY initdb.sh /docker-entrypoint-initdb.d/initdb.sh
 
 WORKDIR /tmp/dumps
@@ -10,7 +11,9 @@ RUN apk --update add --no-cache unzip \
     && unzip '*.zip' \
     && rm *.zip \
     && sed -i 's/\r$//' /docker-entrypoint-initdb.d/initdb.sh \
+    && sed -i 's/\r$//' /tmp/tellekrets_mvt.sql \
     && chown -R postgres:postgres /tmp/dumps \
+    && chown postgres:postgres /tmp/tellekrets_mvt.sql \
     && chmod +x /docker-entrypoint-initdb.d/initdb.sh
 
 USER postgres
