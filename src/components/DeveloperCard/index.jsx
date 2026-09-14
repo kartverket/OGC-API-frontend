@@ -43,7 +43,7 @@ function DeveloperCard() {
       swagger: `/openapi?f=html`,
       openapi: `/openapi?f=json`,
       conformance: `/conformance?f=json`,
-      tileMatrixSets: `/TileMatrixSets?f=json`,
+      tileMatrixSets: `/TileMatrixSets`,
     };
   }, [baseUrl]);
 
@@ -115,7 +115,7 @@ function DeveloperCard() {
           </NextLink>
         </Link>
         <Link asChild className={styles.link}>
-          <NextLink href={links.tileMatrixSets} target="_blank">
+          <NextLink href={links.tileMatrixSets}>
             Tile Matrix Sets
             <ArrowRightIcon title="a11y-title" fontSize="28px" />
           </NextLink>

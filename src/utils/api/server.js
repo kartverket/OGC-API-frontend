@@ -98,6 +98,24 @@ export async function fetchQueryables(collection) {
   return await getResponse(response);
 }
 
+export async function fetchTileMatrixSets() {
+  const API_BASE_URL = requireBaseUrl();
+  const response = await fetch(`${API_BASE_URL}/TileMatrixSets?f=json`, {
+    cache: SKIP_SSG ? 'no-store' : 'force-cache',
+  });
+
+  return await getResponse(response);
+}
+
+export async function fetchTileMatrixSet(name) {
+  const API_BASE_URL = requireBaseUrl();
+  const response = await fetch(`${API_BASE_URL}/TileMatrixSets/${name}?f=json`, {
+    cache: SKIP_SSG ? 'no-store' : 'force-cache',
+  });
+
+  return await getResponse(response);
+}
+
 async function _fetchCollection(name) {
   const API_BASE_URL = requireBaseUrl();
   const response = await fetch(`${API_BASE_URL}/collections/${name}?f=json`, {

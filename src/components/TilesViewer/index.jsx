@@ -254,11 +254,11 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
           </Field>
         )}
 
-        {activeEntry?.tileJsonHref && (
-          <Link href={activeEntry.tileJsonHref} target="_blank" rel="noopener noreferrer">
+        {activeEntry ? (
+          <Link href={`/collections/${collectionId}/tiles/${encodeURIComponent(activeEntry.id)}/metadata`}>
             Metadata
           </Link>
-        )}
+        ) : null}
       </Card>
 
       <div className={styles.mapContainer}>

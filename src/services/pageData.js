@@ -4,7 +4,14 @@ import {
   getCollectionFeatureTitleField,
   getMetadata,
 } from '@/config/readPygeoapiConfig';
-import { fetchCollection, fetchCollections, fetchHome, fetchItem, fetchQueryables } from '@/utils/api/server';
+import {
+  fetchCollection,
+  fetchCollections,
+  fetchHome,
+  fetchItem,
+  fetchQueryables,
+  fetchTileMatrixSets,
+} from '@/utils/api/server';
 import { createErrorResponse } from '@/utils/api/utils';
 
 /**
@@ -150,6 +157,26 @@ export async function fetchQueryablesPageData(collection) {
       data: {
         ...queryablesData,
         collection: { title: collectionData.title },
+        dataset: { title: homeData.title },
+      },
+      status: 200,
+    };
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+/**
+ * Fetches data for the Tile Matrix Sets page.
+ * @returns {Promise<{data: Object, status: number}>}
+ */
+export async function fetchTileMatrixSetsPageData() {
+  try {
+    const [tileMatrixSetsData, homeData] = await Promise.all([fetchTileMatrixSets(), fetchHome()]);
+
+    return {
+      data: {
+        ...tileMatrixSetsData,
         dataset: { title: homeData.title },
       },
       status: 200,
