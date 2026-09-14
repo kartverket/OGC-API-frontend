@@ -5,6 +5,11 @@ import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
 
+export async function generateMetadata({ params }) {
+  const { tileMatrixSet } = await params;
+  return { title: `${tileMatrixSet} | Tile Matrix Sets` };
+}
+
 export default async function TileMatrixSetPage({ params }) {
   const { tileMatrixSet } = await params;
   let homeData;
