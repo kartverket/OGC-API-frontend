@@ -13,7 +13,7 @@ export default async function TileMatrixSetPage({ params }) {
   try {
     [homeData, matrixSet] = await Promise.all([fetchHome(), fetchTileMatrixSet(tileMatrixSet)]);
   } catch (error) {
-    return <ErrorPage status={error?.status ?? 500} />;
+    return <ErrorPage status={error?.status?.code ?? 500} />;
   }
 
   return (

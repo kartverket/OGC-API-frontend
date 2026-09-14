@@ -1,6 +1,5 @@
 import { Card, Heading, Link, Paragraph } from '@digdir/designsystemet-react';
-import { notFound } from 'next/navigation';
-import { Breadcrumbs } from '@/components';
+import { Breadcrumbs, ErrorPage } from '@/components';
 import { fetchCollectionPageData } from '@/services/pageData';
 import { getApiBaseUrlServer } from '@/utils/api/baseUrl';
 import { getResponse } from '@/utils/api/utils';
@@ -22,19 +21,19 @@ async function fetchTileMetadata(collection, tileMatrixSet) {
 export default async function TileMatrixSetDetails({ collection, tileMatrixSet, styles }) {
   const { data, status } = await fetchCollectionPageData(collection);
 
-  if (status !== 200) notFound();
+  if (status !== 200) return <ErrorPage status={status} />;
 
   let metadata;
   try {
     metadata = await fetchTileMetadata(collection, tileMatrixSet);
-  } catch {
-    notFound();
+  } catch (error) {
+    return <ErrorPage status={error?.status?.code ?? 500} />;
   }
 
   const itemLink = (metadata.links ?? []).find((link) => link.rel === 'item');
   const matrixSet = {
     id: tileMatrixSet,
-    title: itemLink?.title || null,
+    title: itemLink?.title || tileMatrixSet,
     description: metadata.description || null,
     dataType: metadata.dataType || null,
     crs: metadata.crs || null,
