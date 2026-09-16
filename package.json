@@ -37,7 +37,7 @@
     "@digdir/designsystemet": "^1.21.1",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^26.5.1",
-    "lefthook": "^2.1.12"
+    "lefthook": "^2.1.14"
   },
   "overrides": {
     "postcss": "^8.5.18",
