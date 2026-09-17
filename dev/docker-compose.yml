@@ -32,6 +32,7 @@ services:
       - ../pygeoapi/data:/pygeoapi/data
       - ./volumes/logs:/logs
       - ../pygeoapi/resources/definitions/tiles/EPSG3575Quad.json:/pygeoapi/pygeoapi/resources/definitions/tiles/EPSG3575Quad.json:ro
+      - ../pygeoapi/resources/definitions/tiles/EuropeanETRS89_LAEAQuad.json:/pygeoapi/pygeoapi/resources/definitions/tiles/EuropeanETRS89_LAEAQuad.json:ro
     environment:
       - PYGEOAPI_URL=http://localhost:5001/
       - NORGE_EXAMPLE_RASTER_PATH=/pygeoapi/data/norway_wgs84_cog.tif

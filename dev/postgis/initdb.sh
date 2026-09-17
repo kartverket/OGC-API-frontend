@@ -13,4 +13,6 @@ for file in "$directory"/*.sql; do
     psql -U "$POSTGRES_USER" -d "$db" -f "$file"
 done
 
+psql -U "$POSTGRES_USER" -d "$db" -f /tmp/tellekrets_mvt.sql
+
 rm -r $directory
