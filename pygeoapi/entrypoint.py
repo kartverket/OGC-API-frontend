@@ -266,7 +266,7 @@ def get_collection_style(collection_id, style_id):
 
     requested_format = request.args.get('f', 'mbs')
 
-    if requested_format not in ('mbs', 'mapbox', 'json'):
+    if requested_format not in ('mbs', 'mapbox'):
         return jsonify({
             'code': 'InvalidParameterValue',
             'description': (
