@@ -318,7 +318,7 @@ _STYLES_CONFORMANCE_CLASSES = [
 def add_styles_conformance_classes(response):
     if request.path != '/conformance' or request.method != 'GET':
         return response
-    if response.content_type != 'application/json':
+    if response.mimetype != 'application/json':
         return response
     if response.status_code != 200:
         return response
