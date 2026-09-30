@@ -3,6 +3,7 @@ import {
   ArrowRightIcon,
   ChevronRightIcon,
   LayersFillIcon,
+  PaletteFillIcon,
   SquareGridFillIcon,
   TableFillIcon,
 } from '@navikt/aksel-icons';
@@ -11,7 +12,7 @@ import NextLink from 'next/link';
 import { fetchCollection } from '@/utils/api/server';
 import styles from './CollectionCard.module.css';
 
-export default async function CollectionCard({ collection, hasFeature, hasMap, hasCoverage, hasTiles }) {
+export default async function CollectionCard({ collection, hasFeature, hasMap, hasStyles, hasCoverage, hasTiles }) {
   const mainLink = `/collections/${collection.id}`;
   // Fetch one item to check geometry type
   let geometryType = null;
@@ -66,6 +67,8 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
               )}
               {hasMap && <span className={`${styles.itemType} ${styles.tag}`}>Maps</span>}
 
+              {hasStyles && <span className={`${styles.itemType} ${styles.tag}`}>Styles</span>}
+
               {hasCoverage && <span className={`${styles.itemType} ${styles.tag}`}>Coverage</span>}
 
               {hasTiles && <span className={`${styles.itemType} ${styles.tag}`}>Tiles</span>}
@@ -109,6 +112,16 @@ export default async function CollectionCard({ collection, hasFeature, hasMap, h
                   <NextLink href={`/collections/${collection.id}/map`}>
                     <LayersFillIcon title="a11y-title" fontSize="20px" />
                     <span>Vis kart</span>
+                    <ChevronRightIcon title="a11y-title" fontSize="20px" />
+                  </NextLink>
+                </Card>
+              )}
+
+              {hasStyles && (
+                <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                  <NextLink href={`/collections/${collection.id}/styles`}>
+                    <PaletteFillIcon title="a11y-title" fontSize="20px" />
+                    <span>Vis stiler</span>
                     <ChevronRightIcon title="a11y-title" fontSize="20px" />
                   </NextLink>
                 </Card>

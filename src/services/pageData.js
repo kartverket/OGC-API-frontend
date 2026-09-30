@@ -6,6 +6,8 @@ import {
 } from '@/config/readPygeoapiConfig';
 import {
   fetchCollection,
+  fetchCollectionDetails,
+  fetchCollectionStyles,
   fetchCollections,
   fetchHome,
   fetchItem,
@@ -42,10 +44,17 @@ export async function fetchHomePageData() {
 export async function fetchCollectionsPageData() {
   try {
     const [collectionsData, homeData] = await Promise.all([fetchCollections(), fetchHome()]);
+    const collectionDetails = await Promise.all(
+      collectionsData.collections.map((collection) => fetchCollectionDetails(collection.id)),
+    );
 
     return {
       data: {
         ...collectionsData,
+        collections: collectionsData.collections.map((collection) => ({
+          ...collection,
+          links: collectionDetails.find((detail) => detail.id === collection.id)?.links ?? collection.links,
+        })),
         dataset: { title: homeData.title },
       },
       status: 200,
@@ -70,6 +79,35 @@ export async function fetchCollectionPageData(collection) {
         dataset: { title: homeData.title },
         metadata: getMetadata(),
         downloadConfig: getCollectionDownloadConfig(collection),
+      },
+      status: 200,
+    };
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+/**
+ * Fetches data for the styles page.
+ * @param {string} collection - The collection name
+ * @returns {Promise<{data: Object, status: number}>}
+ */
+export async function fetchStylesPageData(collection) {
+  try {
+    const [stylesData, collectionData, homeData] = await Promise.all([
+      fetchCollectionStyles(collection),
+      fetchCollection(collection),
+      fetchHome(),
+    ]);
+
+    return {
+      data: {
+        ...stylesData,
+        collection: {
+          id: collectionData.id,
+          title: collectionData.title,
+        },
+        dataset: { title: homeData.title },
       },
       status: 200,
     };

@@ -1,5 +1,11 @@
 import { Card, Heading, Paragraph } from '@digdir/designsystemet-react';
-import { ChevronRightIcon, LayersFillIcon, SquareGridFillIcon, TableFillIcon } from '@navikt/aksel-icons';
+import {
+  ChevronRightIcon,
+  LayersFillIcon,
+  PaletteFillIcon,
+  SquareGridFillIcon,
+  TableFillIcon,
+} from '@navikt/aksel-icons';
 import bboxPolygon from '@turf/bbox-polygon';
 import { featureCollection as createFeatureCollection } from '@turf/helpers';
 import Image from 'next/image';
@@ -12,6 +18,7 @@ import {
   collectionHasCoverageCapability,
   collectionHasFeatureCapability,
   collectionHasMapCapability,
+  collectionHasStylesCapability,
   collectionHasVectorTileCapability,
 } from '@/utils/api/capabilities';
 import { getBbox } from '@/utils/map/helpers';
@@ -122,6 +129,7 @@ export default async function Collection({ params }) {
 
   const hasFeature = collectionHasFeatureCapability(data.links);
   const hasMap = collectionHasMapCapability(data.links);
+  const hasStyles = collectionHasStylesCapability(data.links);
   const hasCoverage = collectionHasCoverageCapability(data.links);
   const hasTiles = collectionHasVectorTileCapability(data.links);
   const coverageLinks = hasCoverage
@@ -205,6 +213,16 @@ export default async function Collection({ params }) {
                     <NextLink href={`/collections/${data.id}/map`}>
                       <LayersFillIcon title="a11y-title" fontSize="36px" />
                       <span>Vis kart</span>
+                      <ChevronRightIcon title="a11y-title" fontSize="36px" />
+                    </NextLink>
+                  </Card>
+                )}
+
+                {hasStyles && (
+                  <Card asChild data-variant="tinted" data-color="accent" className={styles.objectCard}>
+                    <NextLink href={`/collections/${data.id}/styles`}>
+                      <PaletteFillIcon title="a11y-title" fontSize="36px" />
+                      <span>Vis stiler</span>
                       <ChevronRightIcon title="a11y-title" fontSize="36px" />
                     </NextLink>
                   </Card>

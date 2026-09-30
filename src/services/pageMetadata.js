@@ -45,6 +45,22 @@ export async function createCollectionMetadata(collection) {
 }
 
 /**
+ * Creates metadata for the styles page.
+ * @param {string} collection - The collection name
+ * @returns {Promise<{title: string}|null>}
+ */
+export async function createStylesMetadata(collection) {
+  try {
+    const [collectionData, homeData] = await Promise.all([fetchCollection(collection), fetchHome()]);
+    return {
+      title: `Stiler | ${collectionData.title} | Collections | ${homeData.title} | ${SITE_SUFFIX}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Creates metadata for the items page.
  * @param {string} collection - The collection name
  * @returns {Promise<{title: string}|null>}
