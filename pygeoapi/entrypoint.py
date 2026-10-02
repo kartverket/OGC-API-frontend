@@ -15,7 +15,7 @@ _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
 
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
-from flask import request, make_response, jsonify, send_file
+from flask import Response, request, make_response, jsonify, send_file
 from pygeoapi.flask_app import APP as app, api_
 import pygeoapi.api.itemtypes as itemtypes_api
 
@@ -171,3 +171,213 @@ def block_post_to_collection_items():
             )
             response.headers['Allow'] = 'GET, HEAD, OPTIONS'
             return response
+
+
+
+STYLE_MEDIA_TYPE = 'application/vnd.mapbox.style+json'
+
+
+def collection_config(collection_id):
+    collections = filter_dict_by_key_value(
+        api_.config['resources'], 'type', 'collection')
+    return collections.get(collection_id)
+
+
+def configured_styles(collection_id):
+    collection = collection_config(collection_id)
+    if collection is None:
+        return None
+
+    return collection.get('styles', [])
+
+
+def find_style(collection_id, style_id):
+    styles = configured_styles(collection_id)
+    if styles is None:
+        return None
+
+    for style in styles:
+        if style.get('id') == style_id:
+            return style
+
+    return None
+
+
+def read_style_document(style):
+    style_path = Path(style['path'])
+
+    with style_path.open('r', encoding='utf-8') as style_file:
+        return json_mod.load(style_file)
+
+
+def style_links(collection_id, style):
+    style_id = style['id']
+
+    return [
+        {
+            'rel': 'stylesheet',
+            'href': f'/collections/{collection_id}/styles/{style_id}?f=mbs',
+            'type': STYLE_MEDIA_TYPE,
+        }
+    ]
+
+
+@app.get('/collections/<collection_id>/styles')
+def get_collection_styles(collection_id):
+    styles = configured_styles(collection_id)
+
+    if styles is None:
+        return jsonify({
+            'code': 'NotFound',
+            'description': f'Unknown collection: {collection_id}',
+        }), 404
+
+    response = {
+        'styles': [
+            {
+                'id': style['id'],
+                'title': style.get('title', {}),
+                'description': style.get('description', {}),
+                'links': style_links(collection_id, style),
+            }
+            for style in styles
+        ],
+    }
+
+    default_style = next(
+        (style['id'] for style in styles if style.get('default') is True),
+        None,
+    )
+
+    if default_style is not None:
+        response['default'] = default_style
+
+    return jsonify(response)
+
+@app.get('/collections/<collection_id>/styles/<style_id>')
+def get_collection_style(collection_id, style_id):
+    style = find_style(collection_id, style_id)
+
+    if style is None:
+        return jsonify({
+            'code': 'NotFound',
+            'description': f'Unknown style: {style_id}',
+        }), 404
+
+    requested_format = request.args.get('f', 'mbs')
+
+    if requested_format not in ('mbs', 'mapbox'):
+        return jsonify({
+            'code': 'InvalidParameterValue',
+            'description': (
+                f'Unsupported style format: {requested_format}'
+            ),
+        }), 400
+
+    try:
+        style_document = read_style_document(style)
+    except FileNotFoundError:
+        app.logger.exception(
+            'Style file not found: %s',
+            style.get('path'),
+        )
+
+        return jsonify({
+            'code': 'NotFound',
+            'description': f'Style file not found: {style_id}',
+        }), 404
+    except json_mod.JSONDecodeError:
+        app.logger.exception(
+            'Invalid style JSON: %s',
+            style.get('path'),
+        )
+
+        return jsonify({
+            'code': 'InternalServerError',
+            'description': 'Style document is not valid JSON',
+        }), 500
+
+    return Response(
+        json_mod.dumps(style_document, ensure_ascii=False),
+        status=200,
+        content_type=STYLE_MEDIA_TYPE,
+    )
+
+
+# The /styles endpoints above are implemented outside of pygeoapi's own
+# provider system, so pygeoapi has no way of knowing they exist and will
+# not advertise them on /conformance. Patch the JSON response here instead.
+_STYLES_CONFORMANCE_CLASSES = [
+    'http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/core',
+    'http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/resources',
+    'http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles',
+]
+
+
+@app.after_request
+def add_styles_conformance_classes(response):
+    if request.path != '/conformance' or request.method != 'GET':
+        return response
+    if response.mimetype != 'application/json':
+        return response
+    if response.status_code != 200:
+        return response
+
+    try:
+        payload = json_mod.loads(response.get_data(as_text=True))
+    except (ValueError, TypeError):
+        return response
+
+    conforms_to = set(payload.get('conformsTo', []))
+    conforms_to.update(_STYLES_CONFORMANCE_CLASSES)
+    payload['conformsTo'] = sorted(conforms_to)
+
+    response.set_data(json_mod.dumps(payload))
+    return response
+
+
+# Same rationale as above: pygeoapi's collection responses have no knowledge
+# of the custom /styles endpoints, so they won't link to them. Patch the
+# link in here for any collection that has styles configured.
+_STYLES_REL = 'http://www.opengis.net/def/rel/ogc/1.0/styles'
+_COLLECTION_PATTERN = re.compile(r'^/collections/([^/]+)/?$')
+
+
+@app.after_request
+def add_styles_link_to_collection(response):
+    if request.method != 'GET':
+        return response
+
+    match = _COLLECTION_PATTERN.match(request.path)
+    if match is None:
+        return response
+    if response.content_type != 'application/json':
+        return response
+    if response.status_code != 200:
+        return response
+
+    collection_id = match.group(1)
+    styles = configured_styles(collection_id)
+    if not styles:
+        return response
+
+    try:
+        payload = json_mod.loads(response.get_data(as_text=True))
+    except (ValueError, TypeError):
+        return response
+
+    links = payload.setdefault('links', [])
+    styles_href = (
+        f'{request.host_url.rstrip("/")}/collections/{collection_id}/styles'
+    )
+
+    if not any(link.get('rel') == _STYLES_REL for link in links):
+        links.append({
+            'rel': _STYLES_REL,
+            'type': 'application/json',
+            'title': 'Styles',
+            'href': styles_href,
+        })
+
+    response.set_data(json_mod.dumps(payload))
+    return response
