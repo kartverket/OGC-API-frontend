@@ -318,8 +318,12 @@ _STYLES_CONFORMANCE_CLASSES = [
 def add_styles_conformance_classes(response):
     if request.path != '/conformance' or request.method != 'GET':
         return response
-    if response.mimetype != 'application/json':
+
+    content_type = response.content_type or ''
+    media_type = content_type.partition(';')[0].strip().lower()
+    if media_type != 'application/json':
         return response
+
     if response.status_code != 200:
         return response
 
@@ -334,7 +338,6 @@ def add_styles_conformance_classes(response):
 
     response.set_data(json_mod.dumps(payload))
     return response
-
 
 # Same rationale as above: pygeoapi's collection responses have no knowledge
 # of the custom /styles endpoints, so they won't link to them. Patch the
@@ -351,8 +354,12 @@ def add_styles_link_to_collection(response):
     match = _COLLECTION_PATTERN.match(request.path)
     if match is None:
         return response
-    if response.content_type != 'application/json':
+
+    content_type = response.content_type or ''
+    media_type = content_type.partition(';')[0].strip().lower()
+    if media_type != 'application/json':
         return response
+
     if response.status_code != 200:
         return response
 
@@ -367,9 +374,8 @@ def add_styles_link_to_collection(response):
         return response
 
     links = payload.setdefault('links', [])
-    styles_href = (
-        f'{request.host_url.rstrip("/")}/collections/{collection_id}/styles'
-    )
+    base_url = api_.config['server']['url'].rstrip('/')
+    styles_href = f'{base_url}/collections/{collection_id}/styles'
 
     if not any(link.get('rel') == _STYLES_REL for link in links):
         links.append({
