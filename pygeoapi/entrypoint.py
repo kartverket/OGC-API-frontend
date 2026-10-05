@@ -17,6 +17,8 @@ remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 from flask import Response, request, make_response, jsonify, send_file
 from pygeoapi.flask_app import APP as app, api_
+from pygeoapi import l10n
+from pygeoapi.api import APIRequest
 import pygeoapi.api.itemtypes as itemtypes_api
 
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
@@ -74,7 +76,6 @@ def allow_custom_format_on_single_item():
     # Fetch the item as GeoJSON (skip format check, handler returns JSON)
     # Override the format to 'json' so get_collection_item doesn't choke
     # on the unknown 'jsonfg' format when building response links.
-    from pygeoapi.api import APIRequest
     api_request = APIRequest.from_flask(request, api_.locales)
     api_request._format = 'json'
     headers, status, content = itemtypes_api.get_collection_item(
@@ -232,12 +233,13 @@ def get_collection_styles(collection_id):
             'description': f'Unknown collection: {collection_id}',
         }), 404
 
+    locale = APIRequest.from_flask(request, api_.locales).locale
     response = {
         'styles': [
             {
                 'id': style['id'],
-                'title': style.get('title', {}),
-                'description': style.get('description', {}),
+                'title': l10n.translate(style.get('title') or style['id'], locale),
+                'description': l10n.translate(style.get('description') or '', locale),
                 'links': style_links(collection_id, style),
             }
             for style in styles
