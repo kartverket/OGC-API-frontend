@@ -12,17 +12,17 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@digdir/designsystemet-css": "^1.21.1",
-    "@digdir/designsystemet-react": "^1.21.1",
-    "@navikt/aksel-icons": "^8.16.2",
-    "@reduxjs/toolkit": "^2.12.0",
+    "@digdir/designsystemet-css": "^1.23.0",
+    "@digdir/designsystemet-react": "^1.23.0",
+    "@navikt/aksel-icons": "^8.17.2",
+    "@reduxjs/toolkit": "^2.13.0",
     "@turf/bbox": "^7.4.0",
     "@turf/bbox-polygon": "^7.4.0",
     "@turf/boolean-within": "^7.4.0",
     "@turf/helpers": "^7.3.1",
     "fast-sort": "^3.4.1",
     "http-status-codes": "^2.3.0",
-    "next": "^16.3.5",
+    "next": "^16.3.8",
     "ol": "^10.10.0",
     "proj4": "^2.22.0",
     "react": "^19.3.0",
@@ -33,11 +33,11 @@
     "yaml": "^2.9.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.13",
-    "@digdir/designsystemet": "^1.21.1",
+    "@biomejs/biome": "2.5.15",
+    "@digdir/designsystemet": "^1.23.0",
     "@svgr/webpack": "^8.1.0",
-    "@types/node": "^26.6.0",
-    "lefthook": "^2.1.14"
+    "@types/node": "^26.6.3",
+    "lefthook": "^2.1.15"
   },
   "overrides": {
     "postcss": "^8.5.18",
