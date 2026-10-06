@@ -211,6 +211,21 @@ def read_style_document(style):
         return json_mod.load(style_file)
 
 
+def absolute_style_tile_urls(style_document):
+    base_url = api_.config['server']['url'].rstrip('/')
+
+    for source in style_document.get('sources', {}).values():
+        if 'tiles' in source:
+            source['tiles'] = [
+                f'{base_url}{tile_url}'
+                if tile_url.startswith('/') and not tile_url.startswith('//')
+                else tile_url
+                for tile_url in source['tiles']
+            ]
+
+    return style_document
+
+
 def style_links(collection_id, style):
     style_id = style['id']
 
@@ -298,6 +313,8 @@ def get_collection_style(collection_id, style_id):
             'code': 'InternalServerError',
             'description': 'Style document is not valid JSON',
         }), 500
+
+    style_document = absolute_style_tile_urls(style_document)
 
     return Response(
         json_mod.dumps(style_document, ensure_ascii=False),
