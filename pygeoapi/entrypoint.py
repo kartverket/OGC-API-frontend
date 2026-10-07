@@ -17,6 +17,8 @@ remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 from flask import Response, request, make_response, jsonify, send_file
 from pygeoapi.flask_app import APP as app, api_
+from pygeoapi import l10n
+from pygeoapi.api import APIRequest
 import pygeoapi.api.itemtypes as itemtypes_api
 
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
@@ -74,7 +76,6 @@ def allow_custom_format_on_single_item():
     # Fetch the item as GeoJSON (skip format check, handler returns JSON)
     # Override the format to 'json' so get_collection_item doesn't choke
     # on the unknown 'jsonfg' format when building response links.
-    from pygeoapi.api import APIRequest
     api_request = APIRequest.from_flask(request, api_.locales)
     api_request._format = 'json'
     headers, status, content = itemtypes_api.get_collection_item(
@@ -210,6 +211,21 @@ def read_style_document(style):
         return json_mod.load(style_file)
 
 
+def absolute_style_tile_urls(style_document):
+    base_url = api_.config['server']['url'].rstrip('/')
+
+    for source in style_document.get('sources', {}).values():
+        if 'tiles' in source:
+            source['tiles'] = [
+                f'{base_url}{tile_url}'
+                if tile_url.startswith('/') and not tile_url.startswith('//')
+                else tile_url
+                for tile_url in source['tiles']
+            ]
+
+    return style_document
+
+
 def style_links(collection_id, style):
     style_id = style['id']
 
@@ -232,12 +248,13 @@ def get_collection_styles(collection_id):
             'description': f'Unknown collection: {collection_id}',
         }), 404
 
+    locale = APIRequest.from_flask(request, api_.locales).locale
     response = {
         'styles': [
             {
                 'id': style['id'],
-                'title': style.get('title', {}),
-                'description': style.get('description', {}),
+                'title': l10n.translate(style.get('title') or style['id'], locale),
+                'description': l10n.translate(style.get('description') or '', locale),
                 'links': style_links(collection_id, style),
             }
             for style in styles
@@ -266,7 +283,7 @@ def get_collection_style(collection_id, style_id):
 
     requested_format = request.args.get('f', 'mbs')
 
-    if requested_format not in ('mbs', 'mapbox', 'json'):
+    if requested_format not in ('mbs', 'mapbox'):
         return jsonify({
             'code': 'InvalidParameterValue',
             'description': (
@@ -297,6 +314,8 @@ def get_collection_style(collection_id, style_id):
             'description': 'Style document is not valid JSON',
         }), 500
 
+    style_document = absolute_style_tile_urls(style_document)
+
     return Response(
         json_mod.dumps(style_document, ensure_ascii=False),
         status=200,
@@ -318,8 +337,12 @@ _STYLES_CONFORMANCE_CLASSES = [
 def add_styles_conformance_classes(response):
     if request.path != '/conformance' or request.method != 'GET':
         return response
-    if response.content_type != 'application/json':
+
+    content_type = response.content_type or ''
+    media_type = content_type.partition(';')[0].strip().lower()
+    if media_type != 'application/json':
         return response
+
     if response.status_code != 200:
         return response
 
@@ -334,7 +357,6 @@ def add_styles_conformance_classes(response):
 
     response.set_data(json_mod.dumps(payload))
     return response
-
 
 # Same rationale as above: pygeoapi's collection responses have no knowledge
 # of the custom /styles endpoints, so they won't link to them. Patch the
@@ -351,8 +373,12 @@ def add_styles_link_to_collection(response):
     match = _COLLECTION_PATTERN.match(request.path)
     if match is None:
         return response
-    if response.content_type != 'application/json':
+
+    content_type = response.content_type or ''
+    media_type = content_type.partition(';')[0].strip().lower()
+    if media_type != 'application/json':
         return response
+
     if response.status_code != 200:
         return response
 
@@ -367,9 +393,8 @@ def add_styles_link_to_collection(response):
         return response
 
     links = payload.setdefault('links', [])
-    styles_href = (
-        f'{request.host_url.rstrip("/")}/collections/{collection_id}/styles'
-    )
+    base_url = api_.config['server']['url'].rstrip('/')
+    styles_href = f'{base_url}/collections/{collection_id}/styles'
 
     if not any(link.get('rel') == _STYLES_REL for link in links):
         links.append({

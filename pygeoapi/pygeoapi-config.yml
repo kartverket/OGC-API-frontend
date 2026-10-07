@@ -185,7 +185,6 @@ resources:
           nb-NO: Standardstil for fylker.
           en-US: Default style for counties.
         default: true
-        format: mapbox
         path: /pygeoapi/resources/definitions/styles/fylker-default.json
 
 
@@ -293,7 +292,6 @@ resources:
           nb-NO: Standardstil for kommuner.
           en-US: Default style for municipalities.
         default: true
-        format: mapbox
         path: /pygeoapi/resources/definitions/styles/kommuner-default.json
 
 

@@ -37,6 +37,7 @@ RUN chmod +x /docker-entrypoint.sh
 RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade "pip>=26.1.2"
 
 RUN /venv/bin/python3 -m pip install --no-cache-dir \
+        "numpy<2" \
         prometheus_client \
         prometheus_flask_exporter \
         geopandas \
