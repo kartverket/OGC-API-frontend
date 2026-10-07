@@ -15,6 +15,7 @@ COPY pygeoapi-config.yml /pygeoapi/pygeoapi-config.yml
 COPY schemas/ /pygeoapi/schemas/
 COPY resources/definitions/tiles/EPSG3575Quad.json /pygeoapi/pygeoapi/resources/definitions/tiles/EPSG3575Quad.json
 COPY resources/definitions/tiles/EuropeanETRS89_LAEAQuad.json /pygeoapi/pygeoapi/resources/definitions/tiles/EuropeanETRS89_LAEAQuad.json
+COPY resources/definitions/styles/ /pygeoapi/resources/definitions/styles/
 # Collection preview assets used by frontend via /assets/...
 COPY data/collection-images/ /pygeoapi/data/collection-images/
 

@@ -1,0 +1,34 @@
+{
+  "version": 8,
+  "name": "Fylker – standard",
+  "sources": {
+    "fylker": {
+      "type": "vector",
+      "tiles": [
+        "/collections/fylker/tiles/WebMercatorQuad/{z}/{y}/{x}?f=pbf"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "fylker-fill",
+      "type": "fill",
+      "source": "fylker",
+      "source-layer": "fylker",
+      "paint": {
+        "fill-color": "#2B6CB0",
+        "fill-opacity": 0.25
+      }
+    },
+    {
+      "id": "fylker-outline",
+      "type": "line",
+      "source": "fylker",
+      "source-layer": "fylker",
+      "paint": {
+        "line-color": "#2B6CB0",
+        "line-width": 2
+      }
+    }
+  ]
+}
