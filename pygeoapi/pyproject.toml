@@ -1,0 +1,17 @@
+[project]
+name = "kartverket-pygeoapi-overlay"
+version = "0.1.0"
+description = "Locked Python dependency overlay for the Kartverket pygeoapi image"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "GeoAlchemy2",
+  "geopandas",
+  "numpy<2",
+  "prometheus-flask-exporter",
+  "psycopg2-binary",
+  "shapely",
+  "SQLAlchemy",
+]
+
+[tool.uv]
+package = false
