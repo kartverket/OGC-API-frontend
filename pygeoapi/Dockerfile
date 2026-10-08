@@ -5,8 +5,8 @@ COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 COPY pyproject.toml uv.lock /tmp/pygeoapi-dependencies/
 
 RUN cd /tmp/pygeoapi-dependencies && \
-    uv export --locked --no-emit-project --format requirements-txt | \
-    uv pip install --python /venv/bin/python3 --no-deps --require-hashes -r -
+    uv export --locked --no-emit-project --format requirements-txt > requirements.txt && \
+    uv pip install --python /venv/bin/python3 --no-deps --require-hashes -r requirements.txt
 
 FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a622172a2c5c4d2145b8f0a
 
