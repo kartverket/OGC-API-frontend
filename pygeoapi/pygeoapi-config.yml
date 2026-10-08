@@ -293,6 +293,15 @@ resources:
           en-US: Default style for municipalities.
         default: true
         path: /pygeoapi/resources/definitions/styles/kommuner-default.json
+      - id: kommuner-style2
+        title:
+          nb-NO: Kommuner – stil2
+          en-US: Municipalities – style2
+        description:
+          nb-NO: Stil2 for kommuner.
+          en-US: Style2 for municipalities.
+        default: false
+        path: /pygeoapi/resources/definitions/styles/kommuner-style2.json
 
 
   tellekretser:
