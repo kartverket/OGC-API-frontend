@@ -1,4 +1,5 @@
-import { Card, Heading, Link, Paragraph } from '@digdir/designsystemet-react';
+import { Button, Card, Heading, Link, Paragraph } from '@digdir/designsystemet-react';
+import NextLink from 'next/link';
 import { Breadcrumbs, ErrorPage } from '@/components';
 import { fetchStylesPageData } from '@/services/pageData';
 import { createStylesMetadata } from '@/services/pageMetadata';
@@ -77,6 +78,14 @@ export default async function CollectionStyles({ params }) {
                   </dl>
 
                   {description && <Paragraph>{description}</Paragraph>}
+
+                  <Button asChild data-size="sm" className={styles.viewTiles}>
+                    <NextLink
+                      href={`/collections/${encodeURIComponent(collection)}/tiles?style=${encodeURIComponent(style.id)}`}
+                    >
+                      Vis i fliskart
+                    </NextLink>
+                  </Button>
 
                   <span className={styles.metadataLink} aria-disabled="true">
                     Vis metadata (kommer senere)

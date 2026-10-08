@@ -15,8 +15,9 @@ export async function generateMetadata({ params }) {
   return { title: `${data.title} — Fliser` };
 }
 
-export default async function CollectionTiles({ params }) {
+export default async function CollectionTiles({ params, searchParams }) {
   const { collection } = await params;
+  const { style: initialStyleId } = await searchParams;
   const { data, status } = await fetchCollectionPageData(collection);
 
   if (status !== 200) notFound();
@@ -44,7 +45,7 @@ export default async function CollectionTiles({ params }) {
         <Heading level={1} data-size="sm">
           {data.title} — fliser
         </Heading>
-        <TilesViewer collectionId={data.id} defaultBbox={bbox} baseUrl={baseUrl} />
+        <TilesViewer collectionId={data.id} defaultBbox={bbox} baseUrl={baseUrl} initialStyleId={initialStyleId} />
       </div>
     </>
   );

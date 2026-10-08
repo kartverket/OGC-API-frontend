@@ -2,6 +2,7 @@ import MVT from 'ol/format/MVT';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import TileGrid from 'ol/tilegrid/TileGrid';
+import { stylefunction } from 'ol-mapbox-style';
 import { getCrsCode } from './helpers';
 import { featureStyle } from './styles';
 
@@ -21,6 +22,18 @@ export function createVectorTileLayer() {
   const layer = new VectorTileLayer({ style: featureStyle });
   layer.set('id', 'vector-tiles');
   return layer;
+}
+
+export function applyVectorTileStyle(layer, styleDocument, collectionId) {
+  if (
+    styleDocument.version !== 8 ||
+    styleDocument.sources?.[collectionId]?.type !== 'vector' ||
+    !styleDocument.layers?.some((styleLayer) => styleLayer.source === collectionId)
+  ) {
+    throw new Error(`Ugyldig vektorstil for ${collectionId}.`);
+  }
+
+  stylefunction(layer, styleDocument, collectionId);
 }
 
 /**
