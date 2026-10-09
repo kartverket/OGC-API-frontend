@@ -45,7 +45,12 @@ export async function fetchCollectionsPageData() {
   try {
     const [collectionsData, homeData] = await Promise.all([fetchCollections(), fetchHome()]);
     const collectionDetails = await Promise.all(
-      collectionsData.collections.map((collection) => fetchCollectionDetails(collection.id)),
+      collectionsData.collections.map((collection) =>
+        fetchCollectionDetails(collection.id).catch((error) => {
+          console.error('[fetchCollectionsPageData] Failed to fetch collection details:', collection.id, error);
+          return collection;
+        }),
+      ),
     );
 
     return {

@@ -293,15 +293,15 @@ resources:
           en-US: Default style for municipalities.
         default: true
         path: /pygeoapi/resources/definitions/styles/kommuner-default.json
-      - id: kommuner-style2
+      - id: Med kommunenavn - rød
         title:
-          nb-NO: Kommuner – stil2
-          en-US: Municipalities – style2
+          nb-NO: Med kommunenavn - rød
+          en-US: With municipality names - red
         description:
-          nb-NO: Stil2 for kommuner.
-          en-US: Style2 for municipalities.
+          nb-NO: Med kommunenavn - rød.
+          en-US: With municipality names - red.
         default: false
-        path: /pygeoapi/resources/definitions/styles/kommuner-style2.json
+        path: /pygeoapi/resources/definitions/styles/Med-kommunenavn-rød.json
 
 
   tellekretser:
@@ -495,5 +495,3 @@ resources:
           name: png
           mimetype: image/png
         storage_crs: http://www.opengis.net/def/crs/EPSG/0/4326
-
-

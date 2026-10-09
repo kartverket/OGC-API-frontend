@@ -25,15 +25,35 @@ export function createVectorTileLayer() {
 }
 
 export function applyVectorTileStyle(layer, styleDocument, collectionId) {
-  if (
-    styleDocument.version !== 8 ||
-    styleDocument.sources?.[collectionId]?.type !== 'vector' ||
-    !styleDocument.layers?.some((styleLayer) => styleLayer.source === collectionId)
-  ) {
+  const sources = styleDocument.sources;
+  const styleLayers = styleDocument.layers;
+  const vectorSourceIds = Object.entries(sources ?? {})
+    .filter(
+      ([sourceId, source]) =>
+        source?.type === 'vector' && styleLayers?.some((styleLayer) => styleLayer.source === sourceId),
+    )
+    .map(([sourceId]) => sourceId);
+  const matchingSourceIds = [
+    ...new Set(
+      styleLayers
+        ?.filter((styleLayer) => styleLayer['source-layer'] === collectionId)
+        .map((styleLayer) => styleLayer.source)
+        .filter((sourceId) => vectorSourceIds.includes(sourceId)) ?? [],
+    ),
+  ];
+  const sourceId = vectorSourceIds.includes(collectionId)
+    ? collectionId
+    : matchingSourceIds.length === 1
+      ? matchingSourceIds[0]
+      : matchingSourceIds.length === 0 && vectorSourceIds.length === 1
+        ? vectorSourceIds[0]
+        : null;
+
+  if (styleDocument.version !== 8 || !sourceId) {
     throw new Error(`Ugyldig vektorstil for ${collectionId}.`);
   }
 
-  stylefunction(layer, styleDocument, collectionId);
+  stylefunction(layer, styleDocument, sourceId);
 }
 
 /**

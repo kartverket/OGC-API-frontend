@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Kommuner - style2",
+  "name": "Med kommunenavn - rød",
   "sources": {
     "kommuner": {
       "type": "vector",
