@@ -22,6 +22,20 @@ docker compose down -v
 docker compose up --build
 ```
 
+### Python-avhengigheter for pygeoapi
+
+Tilleggspakkene som dette prosjektet installerer i pygeoapi-imaget styres av
+`pygeoapi/pyproject.toml` og låses transitivt i `pygeoapi/uv.lock`.
+
+Når du legger til eller oppdaterer en tilleggspakke, installer en pinnet
+`uv`-versjon og kjør fra prosjektroten:
+
+```shell
+uv lock --directory pygeoapi
+```
+
+Bygg deretter pygeoapi-imaget for å kontrollere at låsfilen er oppdatert.
+
 ### PostGIS-funksjoner
 
 MVT-funksjonen `public.tellekrets_laea(z integer, x integer, y integer)` defineres
