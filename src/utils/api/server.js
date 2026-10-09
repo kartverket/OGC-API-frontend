@@ -63,7 +63,7 @@ export async function fetchCollections() {
 }
 
 export async function fetchCollection(name) {
-  const collection = await _fetchCollection(name);
+  const collection = await fetchCollectionDetails(name);
 
   const itemCountResult = collectionHasFeatureCapability(collection.links)
     ? await _fetchItemCount(name)
@@ -82,6 +82,17 @@ export async function fetchItem(collection, id) {
 
   const response = await fetch(url, {
     cache: 'no-store',
+  });
+
+  return await getResponse(response);
+}
+
+export async function fetchCollectionStyles(collection) {
+  const API_BASE_URL = requireBaseUrl();
+  const url = `${API_BASE_URL}/collections/${collection}/styles?f=json`;
+
+  const response = await fetch(url, {
+    cache: SKIP_SSG ? 'no-store' : 'force-cache',
   });
 
   return await getResponse(response);
@@ -116,7 +127,7 @@ export async function fetchTileMatrixSet(name) {
   return await getResponse(response);
 }
 
-async function _fetchCollection(name) {
+export async function fetchCollectionDetails(name) {
   const API_BASE_URL = requireBaseUrl();
   const response = await fetch(`${API_BASE_URL}/collections/${name}?f=json`, {
     cache: SKIP_SSG ? 'no-store' : 'force-cache',

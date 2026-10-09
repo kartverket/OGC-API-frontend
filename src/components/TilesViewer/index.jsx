@@ -1,14 +1,19 @@
 'use client';
 
 import { Alert, Card, Field, Heading, Label, Link, Select } from '@digdir/designsystemet-react';
-import { CheckmarkIcon, FilesIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
+import { CheckmarkIcon, FilesIcon, PaletteFillIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
 import { get as getProjectionByCode } from 'ol/proj';
 import { useEffect, useRef, useState } from 'react';
 import Zoom from '@/components/Map/Zoom';
 import { useCopyToClipboard } from '@/hooks';
 import { getLayer } from '@/utils/map/helpers';
 import { createTilesMap } from '@/utils/map/map';
-import { buildTileGridFromDefinition, createVectorTileSource } from '@/utils/map/vectorTilesLayer';
+import { featureStyle } from '@/utils/map/styles';
+import {
+  applyVectorTileStyle,
+  buildTileGridFromDefinition,
+  createVectorTileSource,
+} from '@/utils/map/vectorTilesLayer';
 import styles from './TilesViewer.module.css';
 
 function substitutePlaceholders(href, tmsId) {
@@ -105,7 +110,17 @@ function formatZoomRange(entry) {
   return `Flislag zoom range: ${entry.minzoom}–${entry.maxzoom}`;
 }
 
-export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
+function styleTitle(style) {
+  const title = style.title;
+  if (typeof title === 'string') return title;
+  if (!title || typeof title !== 'object' || Array.isArray(title)) return style.id;
+
+  return (
+    title['nb-NO'] ?? title['en-US'] ?? Object.values(title).find((value) => typeof value === 'string') ?? style.id
+  );
+}
+
+export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initialStyleId }) {
   const containerRef = useRef(null);
   const olMapRef = useRef(null);
   const [olMap, setOlMap] = useState(null);
@@ -113,9 +128,16 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
   const [activeTms, setActiveTms] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(null);
   const [error, setError] = useState(null);
+  const [styleError, setStyleError] = useState(null);
+  const [availableStyles, setAvailableStyles] = useState([]);
+  const [activeStyleId, setActiveStyleId] = useState(null);
   const { copied, copy } = useCopyToClipboard();
 
   const activeEntry = tileMatrixSets.find((t) => t.id === activeTms) ?? null;
+  const unknownStyle =
+    initialStyleId !== undefined &&
+    availableStyles.length > 0 &&
+    (typeof initialStyleId !== 'string' || !availableStyles.some((style) => style.id === initialStyleId));
 
   // Mount OL map
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only effect
@@ -175,6 +197,68 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
       cancelled = true;
     };
   }, [collectionId, baseUrl]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadStyles() {
+      setStyleError(null);
+      setAvailableStyles([]);
+      setActiveStyleId(null);
+      try {
+        const response = await fetch(`/collections/${encodeURIComponent(collectionId)}/styles?f=json`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (!Array.isArray(data.styles)) throw new Error('Ugyldig stilliste');
+        if (cancelled) return;
+        setAvailableStyles(data.styles);
+        const requestedStyle = data.styles.find((style) => style.id === initialStyleId);
+        setActiveStyleId(requestedStyle?.id ?? data.default ?? data.styles[0]?.id ?? null);
+      } catch (err) {
+        if (!cancelled) {
+          console.error('Kunne ikke laste stiler:', err);
+          setStyleError('Kunne ikke laste stiler for flislaget.');
+        }
+      }
+    }
+
+    loadStyles();
+    return () => {
+      cancelled = true;
+    };
+  }, [collectionId, initialStyleId]);
+
+  useEffect(() => {
+    if (!olMap || !activeStyleId) return;
+    const tileLayer = getLayer(olMap, 'vector-tiles');
+    if (!tileLayer) return;
+    let cancelled = false;
+    const selected = availableStyles.find((style) => style.id === activeStyleId);
+    const stylesheet = selected?.links?.find((link) => link.rel === 'stylesheet' && link.href);
+
+    async function loadStyle() {
+      setStyleError(null);
+      tileLayer.setStyle(featureStyle);
+      try {
+        if (!stylesheet) throw new Error(`Mangler stil-lenke for ${activeStyleId}`);
+        const response = await fetch(stylesheet.href);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const styleDocument = await response.json();
+        if (cancelled) return;
+        applyVectorTileStyle(tileLayer, styleDocument, collectionId);
+      } catch (err) {
+        if (!cancelled) {
+          console.error('Kunne ikke bruke flisstilen:', err);
+          setStyleError('Kunne ikke vise valgt stil for flislaget.');
+        }
+      }
+    }
+
+    loadStyle();
+    return () => {
+      cancelled = true;
+    };
+  }, [olMap, collectionId, availableStyles, activeStyleId]);
 
   // Apply tile source whenever the map is ready or the active TMS entry changes.
   // activeEntry is referentially stable across renders that don't touch
@@ -236,30 +320,57 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl }) {
 
   return (
     <div className={styles.container}>
-      <Card className={styles.controls}>
-        <div className={styles.heading}>
-          <SquareGridFillIcon aria-hidden fontSize="24px" />
-          <Heading data-size="2xs">Fliseparametre</Heading>
-        </div>
-        {tileMatrixSets.length > 0 && (
-          <Field id="tiles-tms-field">
-            <Label htmlFor="tiles-tms">Tile Matrix Set</Label>
-            <Select id="tiles-tms" value={activeTms ?? ''} onChange={(e) => handleTmsChange(e.target.value)}>
-              {tileMatrixSets.map((tms) => (
-                <Select.Option key={tms.id} value={tms.id}>
-                  {tms.id}
-                </Select.Option>
-              ))}
-            </Select>
-          </Field>
-        )}
+      <div className={styles.sidebar}>
+        <Card className={styles.controls}>
+          <div className={styles.heading}>
+            <SquareGridFillIcon aria-hidden fontSize="24px" />
+            <Heading data-size="2xs">Fliseparametre</Heading>
+          </div>
+          {tileMatrixSets.length > 0 && (
+            <Field id="tiles-tms-field">
+              <Label htmlFor="tiles-tms">Tile Matrix Set</Label>
+              <Select id="tiles-tms" value={activeTms ?? ''} onChange={(e) => handleTmsChange(e.target.value)}>
+                {tileMatrixSets.map((tms) => (
+                  <Select.Option key={tms.id} value={tms.id}>
+                    {tms.id}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Field>
+          )}
+          {activeEntry ? (
+            <Link href={`/collections/${collectionId}/tiles/${encodeURIComponent(activeEntry.id)}/metadata`}>
+              Metadata
+            </Link>
+          ) : null}
+        </Card>
 
-        {activeEntry ? (
-          <Link href={`/collections/${collectionId}/tiles/${encodeURIComponent(activeEntry.id)}/metadata`}>
-            Metadata
-          </Link>
-        ) : null}
-      </Card>
+        {(availableStyles.length > 0 || styleError) && (
+          <Card className={styles.controls}>
+            <div className={styles.heading}>
+              <PaletteFillIcon aria-hidden fontSize="24px" />
+              <Heading data-size="2xs">Stil</Heading>
+            </div>
+            {availableStyles.length > 1 && (
+              <Field id="tiles-style-field">
+                <Label htmlFor="tiles-style">Velg stil</Label>
+                <Select id="tiles-style" value={activeStyleId ?? ''} onChange={(e) => setActiveStyleId(e.target.value)}>
+                  {availableStyles.map((style) => (
+                    <Select.Option key={style.id} value={style.id}>
+                      {styleTitle(style)}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Field>
+            )}
+            {styleError && <Alert data-color="danger">{styleError}</Alert>}
+            {unknownStyle && <Alert data-color="warning">Ukjent stil. Viser standardstilen.</Alert>}
+            {availableStyles.length > 0 && (
+              <Link href={`/collections/${encodeURIComponent(collectionId)}/styles`}>Se stiler</Link>
+            )}
+          </Card>
+        )}
+      </div>
 
       <div className={styles.mapContainer}>
         <div className={styles.mapBox}>

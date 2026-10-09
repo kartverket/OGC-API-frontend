@@ -7,6 +7,7 @@ import {
   collectionHasCoverageCapability,
   collectionHasFeatureCapability,
   collectionHasMapCapability,
+  collectionHasStylesCapability,
   collectionHasVectorTileCapability,
 } from '@/utils/api/capabilities';
 // import CollectionCard from "@/components/CollectionCard";
@@ -43,6 +44,7 @@ export default async function Collections() {
             const hasFeature = collectionHasFeatureCapability(collection.links);
             const hasCoverage = collectionHasCoverageCapability(collection.links);
             const hasMap = collectionHasMapCapability(collection.links);
+            const hasStyles = collectionHasStylesCapability(collection.links);
             const hasTiles = collectionHasVectorTileCapability(collection.links);
             const collectionWithFileCount = hasCoverage
               ? {
@@ -57,6 +59,7 @@ export default async function Collections() {
                 collection={collectionWithFileCount}
                 hasFeature={hasFeature}
                 hasMap={hasMap}
+                hasStyles={hasStyles}
                 hasCoverage={hasCoverage}
                 hasTiles={hasTiles}
               />
