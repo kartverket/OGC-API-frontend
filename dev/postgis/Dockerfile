@@ -8,7 +8,7 @@ WORKDIR /tmp/dumps
 
 # Normalize line endings so init scripts run on Linux even from Windows checkouts.
 RUN apk --update add --no-cache unzip \
-    && unzip '*.zip' \
+    && for archive in ./*.zip; do unzip "$archive"; done \
     && rm *.zip \
     && sed -i 's/\r$//' /docker-entrypoint-initdb.d/initdb.sh \
     && sed -i 's/\r$//' /tmp/tellekrets_mvt.sql \
