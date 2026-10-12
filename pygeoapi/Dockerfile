@@ -10,6 +10,13 @@ RUN cd /tmp/pygeoapi-dependencies && \
 
 FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a622172a2c5c4d2145b8f0a
 
+# TEMPORARY: Fix for CVE-2026-84782, try removing on new pygeoapi-version (0.24.1+)
+RUN apt-get update \
+ && apt-get install -y --only-upgrade openssl libssl3t64 \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN /venv/bin/python -m pip uninstall -y fsspec # TEMPORARY: Fix for CVE-2026-104851, try removing on new pygeoapi-version (0.24.1+)
+
 COPY --from=dependencies /venv /venv
 
 # Custom Python scripts
