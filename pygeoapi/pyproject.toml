@@ -6,7 +6,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
   "GeoAlchemy2",
   "geopandas",
-  "numpy<2",
+  "numpy<3",
   "prometheus-flask-exporter",
   "psycopg2-binary",
   "shapely",
