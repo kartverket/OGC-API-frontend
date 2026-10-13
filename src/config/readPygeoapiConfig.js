@@ -36,6 +36,30 @@ export function getMetadata() {
   return config?.metadata || null;
 }
 
+export function getDatasetPreviewHref() {
+  const links = getMetadata()?.identification?.links;
+  if (!Array.isArray(links)) return null;
+
+  const preview = links.find((link) => {
+    const rel = typeof link?.rel === 'string' ? link.rel.trim().toLowerCase() : '';
+    const type = typeof link?.type === 'string' ? link.type.split(';')[0].trim().toLowerCase() : '';
+    return (rel === 'preview' || rel.endsWith('/preview')) && type.startsWith('image/');
+  });
+
+  if (!preview) return null;
+
+  const href = preview.href;
+  if (typeof href === 'string') {
+    const trimmed = href.trim();
+    if ((trimmed.startsWith('/') && !trimmed.startsWith('//')) || /^https?:\/\/[^/]+/i.test(trimmed)) {
+      return trimmed;
+    }
+  }
+
+  console.error('[getDatasetPreviewHref] Invalid preview image href in pygeoapi config:', href);
+  return null;
+}
+
 export function getResources() {
   const config = readConfigFile();
   return config?.resources || null;

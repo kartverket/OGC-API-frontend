@@ -61,7 +61,13 @@ metadata:
     keywords_type: theme
     terms_of_service: https://www.kartverket.no/geodataarbeid/norge-digitalt/partsinformasjon/avtaler-og-vilkar/norge-digitalt-lisens
     url: https://www.kartverket.no
-
+    links:
+      - type: image/png
+        rel: preview
+        title:
+          nb-NO: Forsidebilde
+          en-US: Frontpage image
+        href: /assets/dataset-images/dataset-thumbnail.png
   license:
     name: Norge digitalt-lisens
     url: https://www.kartverket.no/geodataarbeid/norge-digitalt/partsinformasjon/avtaler-og-vilkar/norge-digitalt-lisens
@@ -72,6 +78,7 @@ metadata:
     name: Kartverket
     email: post@kartverket.no
     url: https://www.kartverket.no
+  
 
 resources:
   get-distinct-values:
