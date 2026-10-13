@@ -4,11 +4,18 @@ COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 
 COPY pyproject.toml uv.lock /tmp/pygeoapi-dependencies/
 
-RUN cd /tmp/pygeoapi-dependencies && \
-    uv export --locked --no-emit-project --format requirements-txt > requirements.txt && \
+WORKDIR /tmp/pygeoapi-dependencies
+RUN uv export --locked --no-emit-project --format requirements-txt > requirements.txt && \
     uv pip install --python /venv/bin/python3 --no-deps --require-hashes -r requirements.txt
 
 FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a622172a2c5c4d2145b8f0a
+
+# TEMPORARY: Fix for CVE-2026-84782, try removing on new pygeoapi-version (0.24.1+)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends --only-upgrade openssl libssl3t64 \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN /venv/bin/python -m pip uninstall -y fsspec # TEMPORARY: Fix for CVE-2026-104851, try removing on new pygeoapi-version (0.24.1+)
 
 COPY --from=dependencies /venv /venv
 

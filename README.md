@@ -27,14 +27,14 @@ docker compose up --build
 Tilleggspakkene som dette prosjektet installerer i pygeoapi-imaget styres av
 `pygeoapi/pyproject.toml` og låses transitivt i `pygeoapi/uv.lock`.
 
-Når du legger til eller oppdaterer en tilleggspakke, installer en pinnet
-`uv`-versjon og kjør fra prosjektroten:
+For å legge til nye pakker, kjør `uv add` i pygeoapi-mappen, eller fra rot:
 
 ```shell
-uv lock --directory pygeoapi
+uv add 'pakkenavn>=versjon' --directory pygeoapi
+
 ```
 
-Bygg deretter pygeoapi-imaget for å kontrollere at låsfilen er oppdatert.
+Bygg deretter pygeoapi-imaget og kjør opp lokalt, både for å teste at lockingen fungerer og at applikasjonen fungerer som forventet.
 
 ### PostGIS-funksjoner
 
