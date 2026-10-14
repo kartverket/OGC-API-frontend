@@ -30,7 +30,18 @@ export default async function Home() {
           <Paragraph data-size="sm">{data.description}</Paragraph>
         </div>
 
-        <Image src={ThumbnailImg} height="136" alt="Thumbnail" />
+        {data.previewImageHref ? (
+          <Image
+            src={data.previewImageHref}
+            width={121}
+            height={136}
+            alt={`${data.title} thumbnail`}
+            unoptimized
+            style={{ objectFit: 'contain' }}
+          />
+        ) : (
+          <Image src={ThumbnailImg} height="136" alt="Thumbnail" />
+        )}
       </div>
 
       <div className={styles.main}>

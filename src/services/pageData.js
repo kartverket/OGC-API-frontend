@@ -2,6 +2,7 @@ import {
   getCollectionDownloadConfig,
   getCollectionFeatureIdField,
   getCollectionFeatureTitleField,
+  getDatasetPreviewHref,
   getMetadata,
 } from '@/config/readPygeoapiConfig';
 import {
@@ -29,6 +30,7 @@ export async function fetchHomePageData() {
         ...homeData,
         collectionCount: collectionsData.collections.length,
         metadata: getMetadata(),
+        previewImageHref: getDatasetPreviewHref(),
       },
       status: 200,
     };
