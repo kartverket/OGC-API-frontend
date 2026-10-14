@@ -51,8 +51,13 @@ export function getDatasetPreviewHref() {
   const href = preview.href;
   if (typeof href === 'string') {
     const trimmed = href.trim();
-    if ((trimmed.startsWith('/') && !trimmed.startsWith('//')) || /^https?:\/\/[^/]+/i.test(trimmed)) {
-      return trimmed;
+    if (trimmed.startsWith('/') && !trimmed.startsWith('//')) return trimmed;
+
+    try {
+      const url = new URL(trimmed);
+      if ((url.protocol === 'http:' || url.protocol === 'https:') && url.hostname) return trimmed;
+    } catch {
+      // Invalid URL; report it below.
     }
   }
 
