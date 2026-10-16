@@ -150,6 +150,7 @@ export default function Items({ srvData, collection, searchParams }) {
             <div className={styles.top}>
               <ItemsMapProvider
                 data={data}
+                featureCollection={_data}
                 styleDocument={selectedStyle?.document}
                 collectionId={collection}
                 onStyleError={setApplyStyleError}

@@ -9,9 +9,19 @@ import { featureStyle } from '@/utils/map/styles';
 
 const CRS84_URI = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
 
-export default function ItemsMapProvider({ data, styleDocument, collectionId, onStyleError, children }) {
+export default function ItemsMapProvider({
+  data,
+  featureCollection,
+  styleDocument,
+  collectionId,
+  onStyleError,
+  children,
+}) {
   const [map, setMap] = useState(null);
   const searchParams = useSearchParams();
+  const bboxStr = searchParams.get('bbox');
+  const { bbox: collectionBbox, crs: collectionCrs } = data.collection.extent;
+  const [minX, minY, maxX, maxY] = collectionBbox;
   const initRef = useRef(true);
 
   useEffect(() => {
@@ -38,10 +48,10 @@ export default function ItemsMapProvider({ data, styleDocument, collectionId, on
   }, [map]);
 
   useEffect(() => {
-    if (map !== null && data !== null) {
-      setFeatureCollection(map, data);
+    if (map !== null && featureCollection !== null) {
+      setFeatureCollection(map, featureCollection);
     }
-  }, [map, data]);
+  }, [map, featureCollection]);
 
   useEffect(() => {
     if (map === null) return;
@@ -61,20 +71,19 @@ export default function ItemsMapProvider({ data, styleDocument, collectionId, on
   }, [map, styleDocument, collectionId, onStyleError]);
 
   useEffect(() => {
-    if (map === null || data === null) {
+    if (map === null || featureCollection === null) {
       return;
     }
 
-    const bboxStr = searchParams.get('bbox');
     const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
     const bboxValid = isBboxValid(bbox);
-    let extent = data.collection.extent;
+    let extent = { bbox: [minX, minY, maxX, maxY], crs: collectionCrs };
 
     if (bboxValid || bbox === null) {
       setBboxFeature(map, bbox);
     }
 
-    if (bboxValid && data.features.length === 0) {
+    if (bboxValid && featureCollection.features.length === 0) {
       extent = {
         bbox,
         crs: CRS84_URI,
@@ -82,7 +91,7 @@ export default function ItemsMapProvider({ data, styleDocument, collectionId, on
     }
 
     zoomToExtent(map, extent);
-  }, [map, data, searchParams]);
+  }, [map, featureCollection, bboxStr, collectionCrs, minX, minY, maxX, maxY]);
 
   return <ItemsMapContext.Provider value={map}>{children}</ItemsMapContext.Provider>;
 }
