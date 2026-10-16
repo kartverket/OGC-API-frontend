@@ -4,6 +4,7 @@ import { fromExtent } from 'ol/geom/Polygon';
 import { Vector as VectorLayer } from 'ol/layer';
 import { transformExtent } from 'ol/proj';
 import { Vector as VectorSource } from 'ol/source';
+import { stylefunction } from 'ol-mapbox-style';
 import { getLayer, getProjection } from './helpers';
 import { bboxStyle, featureStyle } from './styles';
 
@@ -59,6 +60,32 @@ export function setFeatures(vectorLayer, featureCollection) {
   });
 
   vectorSource.addFeatures(features);
+}
+
+export function getGeoJsonStyleSourceId(styleDocument, collectionId) {
+  const sources = Object.entries(styleDocument.sources ?? {});
+  if (sources.length !== 1) return null;
+
+  const [sourceId, source] = sources[0];
+  if (source?.type !== 'geojson' || typeof source.data !== 'string') return null;
+
+  const itemsPath = `/collections/${encodeURIComponent(collectionId)}/items`;
+  const url = new URL(source.data, 'http://localhost');
+  const layers = styleDocument.layers?.filter((layer) => layer.source === sourceId);
+  return (url.pathname === itemsPath || url.pathname === `${itemsPath}/`) &&
+    layers?.length > 0 &&
+    layers.every((layer) => layer['source-layer'] === undefined)
+    ? sourceId
+    : null;
+}
+
+export function applyGeoJsonStyle(vectorLayer, styleDocument, collectionId) {
+  const sourceId = getGeoJsonStyleSourceId(styleDocument, collectionId);
+  if (styleDocument.version !== 8 || !sourceId) {
+    throw new Error(`Ugyldig GeoJSON-stil for ${collectionId}.`);
+  }
+
+  stylefunction(vectorLayer, styleDocument, sourceId);
 }
 
 export function setBboxFeature(map, bbox) {
