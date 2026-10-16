@@ -2,13 +2,14 @@
 
 import { useSearchParams } from 'next/navigation';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { setBboxFeature } from '@/utils/map/featuresLayer';
-import { isBboxValid, parseBboxStr } from '@/utils/map/helpers';
+import { applyGeoJsonStyle, setBboxFeature } from '@/utils/map/featuresLayer';
+import { getLayer, isBboxValid, parseBboxStr } from '@/utils/map/helpers';
 import { createItemsMap, setFeatureCollection, zoomToExtent } from '@/utils/map/map';
+import { featureStyle } from '@/utils/map/styles';
 
 const CRS84_URI = 'http://www.opengis.net/def/crs/OGC/1.3/CRS84';
 
-export default function ItemsMapProvider({ data, children }) {
+export default function ItemsMapProvider({ data, styleDocument, collectionId, onStyleError, children }) {
   const [map, setMap] = useState(null);
   const searchParams = useSearchParams();
   const initRef = useRef(true);
@@ -41,6 +42,23 @@ export default function ItemsMapProvider({ data, children }) {
       setFeatureCollection(map, data);
     }
   }, [map, data]);
+
+  useEffect(() => {
+    if (map === null) return;
+
+    const layer = getLayer(map, 'features');
+    layer.setStyle(featureStyle);
+    onStyleError(null);
+    if (styleDocument) {
+      try {
+        applyGeoJsonStyle(layer, styleDocument, collectionId);
+      } catch (error) {
+        layer.setStyle(featureStyle);
+        console.error('Kunne ikke bruke GeoJSON-stil:', error);
+        onStyleError(error.message);
+      }
+    }
+  }, [map, styleDocument, collectionId, onStyleError]);
 
   useEffect(() => {
     if (map === null || data === null) {
