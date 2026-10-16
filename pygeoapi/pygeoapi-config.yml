@@ -311,6 +311,33 @@ resources:
           en-US: With municipality names - red.
         default: false
         path: /pygeoapi/resources/definitions/styles/Med-kommunenavn-rød.json
+      - id: kommuner-items test
+        title:
+          nb-NO: Kommuner – items test
+          en-US: Municipalities – items test
+        description:
+          nb-NO: Standardstil for kommuner – items test.
+          en-US: Default style for municipalities – items test.
+        default: false
+        path: /pygeoapi/resources/definitions/styles/kommuner-items-test.json
+      - id: kommuner-items-oransje
+        title:
+          nb-NO: Kommuner – items oransje
+          en-US: Municipalities – orange items
+        description:
+          nb-NO: Oransje teststil for kommuner-items.
+          en-US: Orange test style for municipality items.
+        default: false
+        path: /pygeoapi/resources/definitions/styles/kommuner-items-oransje.json
+      - id: bopliktomraade-standard-test
+        title:
+          nb-NO: Bopliktsområde - standard - test
+          en-US: Residence obligation area – standard – test
+        description:
+          nb-NO: Tester bopliktsområde-stilen på kommuner-items.
+          en-US: Tests the residence obligation style on municipality items.
+        default: false
+        path: /pygeoapi/resources/definitions/styles/bopliktomraade-standard-test.json
 
 
   tellekretser:
