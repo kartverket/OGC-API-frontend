@@ -70,7 +70,14 @@ export function getGeoJsonStyleSourceId(styleDocument, collectionId) {
   if (source?.type !== 'geojson' || typeof source.data !== 'string') return null;
 
   const itemsPath = `/collections/${encodeURIComponent(collectionId)}/items`;
-  const url = new URL(source.data, 'http://localhost');
+  let url;
+  try {
+    url = new URL(source.data, 'http://localhost');
+  } catch (error) {
+    if (!(error instanceof TypeError)) throw error;
+    console.error('Ugyldig URL for GeoJSON-kilde:', error);
+    return null;
+  }
   const layers = styleDocument.layers?.filter((layer) => layer.source === sourceId);
   return (url.pathname === itemsPath || url.pathname === `${itemsPath}/`) &&
     layers?.length > 0 &&
