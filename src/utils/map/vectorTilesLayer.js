@@ -33,9 +33,16 @@ export function getVectorTileStyleSourceId(styleDocument, collectionId) {
 
   const tilesPath = `/collections/${encodeURIComponent(collectionId)}/tiles/`;
   const layers = styleDocument.layers?.filter((layer) => layer.source === sourceId);
-  return source.tiles.some(
-    (tileUrl) => typeof tileUrl === 'string' && new URL(tileUrl, 'http://localhost').pathname.startsWith(tilesPath),
-  ) &&
+  return source.tiles.some((tileUrl) => {
+    if (typeof tileUrl !== 'string') return false;
+    try {
+      return new URL(tileUrl, 'http://localhost').pathname.startsWith(tilesPath);
+    } catch (error) {
+      if (!(error instanceof TypeError)) throw error;
+      console.error('Ugyldig URL for vektorflis:', error);
+      return false;
+    }
+  }) &&
     layers?.length > 0 &&
     layers.every((layer) => layer['source-layer'] === collectionId)
     ? sourceId
