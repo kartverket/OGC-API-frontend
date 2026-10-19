@@ -45,7 +45,8 @@ def add_styles_paths(spec, config):
 
     styles_list = {
         'get': {
-            'summary': 'List styles for a collection',
+            'description': 'Lister opp stiler registrert for collectionen, med en enkel beskrivelse og lenke til hver stilfil.',
+            'operationId': None,
             'parameters': [{'$ref': '#/components/parameters/lang'}],
             'responses': {
                 '200': {
@@ -84,11 +85,13 @@ def add_styles_paths(spec, config):
                 },
                 '404': not_found,
             },
+            'summary': 'List styles for a collection',
         },
     }
     style_document = {
         'get': {
-            'summary': 'Get a Mapbox style document',
+            'description': 'Returnerer stilfilen som et Mapbox-stildokument i JSON-format.',
+            'operationId': None,
             'parameters': [{
                 'name': 'styleId',
                 'in': 'path',
@@ -130,6 +133,7 @@ def add_styles_paths(spec, config):
                     'content': {'application/json': {'schema': error_schema}},
                 },
             },
+            'summary': 'Get a Mapbox style document',
         },
     }
 
