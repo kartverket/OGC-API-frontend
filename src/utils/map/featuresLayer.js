@@ -69,6 +69,14 @@ export function getGeoJsonStyleSourceId(styleDocument, collectionId) {
   const [sourceId, source] = sources[0];
   if (source?.type !== 'geojson' || typeof source.data !== 'string') return null;
 
+  if (
+    !Array.isArray(styleDocument.layers) ||
+    !styleDocument.layers.every((layer) => layer !== null && typeof layer === 'object' && !Array.isArray(layer))
+  ) {
+    console.error('Ugyldige lag i GeoJSON-stil.');
+    return null;
+  }
+
   const itemsPath = `/collections/${encodeURIComponent(collectionId)}/items`;
   let url;
   try {
