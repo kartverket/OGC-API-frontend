@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Card, Field, Heading, Label, Link, Select } from '@digdir/designsystemet-react';
+import { Alert, Card, Field, Heading, Label, Link, Paragraph, Select } from '@digdir/designsystemet-react';
 import { CheckmarkIcon, FilesIcon, PaletteFillIcon, SquareGridFillIcon } from '@navikt/aksel-icons';
 import { get as getProjectionByCode } from 'ol/proj';
 import { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import {
   applyVectorTileStyle,
   buildTileGridFromDefinition,
   createVectorTileSource,
+  getVectorTileStyleSourceId,
 } from '@/utils/map/vectorTilesLayer';
 import styles from './TilesViewer.module.css';
 
@@ -128,7 +129,9 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
   const [activeTms, setActiveTms] = useState(null);
   const [currentZoom, setCurrentZoom] = useState(null);
   const [error, setError] = useState(null);
+  const [styleListError, setStyleListError] = useState(null);
   const [styleError, setStyleError] = useState(null);
+  const [stylesLoaded, setStylesLoaded] = useState(false);
   const [availableStyles, setAvailableStyles] = useState([]);
   const [activeStyleId, setActiveStyleId] = useState(null);
   const { copied, copy } = useCopyToClipboard();
@@ -136,8 +139,9 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
   const activeEntry = tileMatrixSets.find((t) => t.id === activeTms) ?? null;
   const unknownStyle =
     initialStyleId !== undefined &&
-    availableStyles.length > 0 &&
+    stylesLoaded &&
     (typeof initialStyleId !== 'string' || !availableStyles.some((style) => style.id === initialStyleId));
+  const noVectorStyles = stylesLoaded && availableStyles.length === 0;
 
   // Mount OL map
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only effect
@@ -202,6 +206,8 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
     let cancelled = false;
 
     async function loadStyles() {
+      setStylesLoaded(false);
+      setStyleListError(null);
       setStyleError(null);
       setAvailableStyles([]);
       setActiveStyleId(null);
@@ -210,14 +216,36 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (!Array.isArray(data.styles)) throw new Error('Ugyldig stilliste');
+        const results = await Promise.allSettled(
+          data.styles.map(async (style) => {
+            const stylesheet = style.links?.find((link) => link.rel === 'stylesheet' && link.href);
+            if (!stylesheet) throw new Error(`Mangler stil-lenke for ${style.id}`);
+            const styleResponse = await fetch(stylesheet.href);
+            if (!styleResponse.ok) throw new Error(`HTTP ${styleResponse.status} for ${style.id}`);
+            const document = await styleResponse.json();
+            if (document?.version !== 8 || !document.sources || !Array.isArray(document.layers)) {
+              throw new Error(`Ugyldig stildokument for ${style.id}`);
+            }
+            return { ...style, document };
+          }),
+        );
         if (cancelled) return;
-        setAvailableStyles(data.styles);
-        const requestedStyle = data.styles.find((style) => style.id === initialStyleId);
-        setActiveStyleId(requestedStyle?.id ?? data.default ?? data.styles[0]?.id ?? null);
+        const failed = results.filter((result) => result.status === 'rejected');
+        for (const result of failed) console.error('Kunne ikke laste stil:', result.reason);
+        if (failed.length > 0) setStyleListError('Enkelte stiler kunne ikke lastes.');
+        const vectorStyles = results
+          .filter((result) => result.status === 'fulfilled')
+          .map((result) => result.value)
+          .filter((style) => getVectorTileStyleSourceId(style.document, collectionId));
+        setAvailableStyles(vectorStyles);
+        setStylesLoaded(true);
+        const requestedStyle = vectorStyles.find((style) => style.id === initialStyleId);
+        const defaultStyle = vectorStyles.find((style) => style.id === data.default);
+        setActiveStyleId(requestedStyle?.id ?? defaultStyle?.id ?? vectorStyles[0]?.id ?? null);
       } catch (err) {
         if (!cancelled) {
           console.error('Kunne ikke laste stiler:', err);
-          setStyleError('Kunne ikke laste stiler for flislaget.');
+          setStyleListError('Kunne ikke laste stiler for flislaget.');
         }
       }
     }
@@ -234,18 +262,13 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
     if (!tileLayer) return;
     let cancelled = false;
     const selected = availableStyles.find((style) => style.id === activeStyleId);
-    const stylesheet = selected?.links?.find((link) => link.rel === 'stylesheet' && link.href);
 
     async function loadStyle() {
       setStyleError(null);
       tileLayer.setStyle(featureStyle);
       try {
-        if (!stylesheet) throw new Error(`Mangler stil-lenke for ${activeStyleId}`);
-        const response = await fetch(stylesheet.href);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const styleDocument = await response.json();
-        if (cancelled) return;
-        applyVectorTileStyle(tileLayer, styleDocument, collectionId);
+        if (!selected) throw new Error(`Ukjent stil: ${activeStyleId}`);
+        if (!cancelled) applyVectorTileStyle(tileLayer, selected.document, collectionId);
       } catch (err) {
         if (!cancelled) {
           console.error('Kunne ikke bruke flisstilen:', err);
@@ -345,13 +368,13 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
           ) : null}
         </Card>
 
-        {(availableStyles.length > 0 || styleError) && (
+        {(availableStyles.length > 0 || styleError || styleListError || unknownStyle || noVectorStyles) && (
           <Card className={styles.controls}>
             <div className={styles.heading}>
               <PaletteFillIcon aria-hidden fontSize="24px" />
               <Heading data-size="2xs">Stil</Heading>
             </div>
-            {availableStyles.length > 1 && (
+            {availableStyles.length > 0 && (
               <Field id="tiles-style-field">
                 <Label htmlFor="tiles-style">Velg stil</Label>
                 <Select id="tiles-style" value={activeStyleId ?? ''} onChange={(e) => setActiveStyleId(e.target.value)}>
@@ -363,8 +386,14 @@ export default function TilesViewer({ collectionId, defaultBbox, baseUrl, initia
                 </Select>
               </Field>
             )}
+            {styleListError && <Alert data-color="danger">{styleListError}</Alert>}
             {styleError && <Alert data-color="danger">{styleError}</Alert>}
-            {unknownStyle && <Alert data-color="warning">Ukjent stil. Viser standardstilen.</Alert>}
+            {noVectorStyles && <Paragraph>Ingen stiler for vektorfliser er tilgjengelige.</Paragraph>}
+            {unknownStyle && (
+              <Alert data-color="warning">
+                Stilen er ikke tilgjengelig som flisstil. Viser en tilgjengelig flisstil.
+              </Alert>
+            )}
             {availableStyles.length > 0 && (
               <Link href={`/collections/${encodeURIComponent(collectionId)}/styles`}>Se stiler</Link>
             )}

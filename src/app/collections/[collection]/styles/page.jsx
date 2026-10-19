@@ -61,6 +61,8 @@ export default async function CollectionStyles({ params }) {
               const title = localizedText(style.title) || style.id;
               const description = localizedText(style.description);
               const stylesheetLinks = (style.links ?? []).filter((link) => link.rel === 'stylesheet' && link.href);
+              const isItemsStyle = style.keywords?.includes('items');
+              const isTileStyle = style.keywords?.includes('vector-tiles');
 
               return (
                 <Card key={style.id} className={styles.styleCard}>
@@ -68,6 +70,8 @@ export default async function CollectionStyles({ params }) {
                     <Heading level={2} data-size="xs">
                       {title}
                     </Heading>
+                    {isItemsStyle && <span className={styles.styleTag}>GeoJSON style</span>}
+                    {isTileStyle && <span className={styles.styleTag}>Vectortiles style</span>}
                   </div>
 
                   <dl className={styles.metadata}>
@@ -79,13 +83,24 @@ export default async function CollectionStyles({ params }) {
 
                   {description && <Paragraph>{description}</Paragraph>}
 
-                  <Button asChild data-size="sm" className={styles.viewTiles}>
-                    <NextLink
-                      href={`/collections/${encodeURIComponent(collection)}/tiles?style=${encodeURIComponent(style.id)}`}
-                    >
-                      Vis i fliskart
-                    </NextLink>
-                  </Button>
+                  {isItemsStyle && (
+                    <Button asChild data-size="sm" className={styles.viewTiles}>
+                      <NextLink
+                        href={`/collections/${encodeURIComponent(collection)}/items?style=${encodeURIComponent(style.id)}`}
+                      >
+                        Vis i items-kart
+                      </NextLink>
+                    </Button>
+                  )}
+                  {isTileStyle && (
+                    <Button asChild data-size="sm" className={styles.viewTiles}>
+                      <NextLink
+                        href={`/collections/${encodeURIComponent(collection)}/tiles?style=${encodeURIComponent(style.id)}`}
+                      >
+                        Vis i fliskart
+                      </NextLink>
+                    </Button>
+                  )}
 
                   <span className={styles.metadataLink} aria-disabled="true">
                     Vis metadata (kommer senere)

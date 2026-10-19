@@ -29,7 +29,7 @@
   gap: var(--ds-size-2);
 }
 
-.defaultTag {
+.styleTag {
   border-radius: var(--ds-border-radius-sm);
   padding: var(--ds-size-1) var(--ds-size-2);
   background: var(--ds-color-success-surface-tinted);
