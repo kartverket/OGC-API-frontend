@@ -1,0 +1,30 @@
+{
+  "version": 8,
+  "name": "Kommuner – items test",
+  "sources": {
+    "kommuner": {
+      "type": "geojson",
+      "data": "/collections/kommuner/items?f=json"
+    }
+  },
+  "layers": [
+    {
+      "id": "kommuner-fill",
+      "type": "fill",
+      "source": "kommuner",
+      "paint": {
+        "fill-color": "#800080",
+        "fill-opacity": 0.31
+      }
+    },
+    {
+      "id": "kommuner-outline",
+      "type": "line",
+      "source": "kommuner",
+      "paint": {
+        "line-color": "#800080",
+        "line-width": 2
+      }
+    }
+  ]
+}

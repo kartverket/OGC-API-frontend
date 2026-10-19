@@ -4,6 +4,7 @@ import os
 import re
 from pathlib import Path
 from typing import Optional
+from urllib.parse import quote, urlsplit
 
 from modify_openapi import remove_post_endpoints
 
@@ -238,6 +239,54 @@ def style_links(collection_id, style):
     ]
 
 
+def style_keywords(style_document, collection_id):
+    if not isinstance(style_document, dict):
+        raise ValueError('Invalid style document')
+
+    collection_path = f'/collections/{quote(collection_id, safe="")}'
+    sources = style_document.get('sources', {})
+    layers = style_document.get('layers', [])
+    if not isinstance(sources, dict) or not isinstance(layers, list):
+        raise ValueError('Invalid style sources or layers')
+
+    if style_document.get('version') != 8 or len(sources) != 1:
+        return []
+
+    source_id, source = next(iter(sources.items()))
+    if not isinstance(source, dict) or not all(
+        isinstance(layer, dict) for layer in layers
+    ):
+        return []
+
+    source_layers = [
+        layer for layer in layers if layer.get('source') == source_id
+    ]
+    if not source_layers:
+        return []
+
+    if source.get('type') == 'geojson' and isinstance(source.get('data'), str):
+        if (
+            urlsplit(source['data']).path.rstrip('/') == f'{collection_path}/items'
+            and all('source-layer' not in layer for layer in source_layers)
+        ):
+            return ['items']
+    elif source.get('type') == 'vector' and isinstance(source.get('tiles'), list):
+        if (
+            any(
+                isinstance(tile_url, str)
+                and urlsplit(tile_url).path.startswith(f'{collection_path}/tiles/')
+                for tile_url in source['tiles']
+            )
+            and all(
+                layer.get('source-layer') == collection_id
+                for layer in source_layers
+            )
+        ):
+            return ['vector-tiles']
+
+    return []
+
+
 @app.get('/collections/<collection_id>/styles')
 def get_collection_styles(collection_id):
     styles = configured_styles(collection_id)
@@ -249,17 +298,24 @@ def get_collection_styles(collection_id):
         }), 404
 
     locale = APIRequest.from_flask(request, api_.locales).locale
-    response = {
-        'styles': [
-            {
-                'id': style['id'],
-                'title': l10n.translate(style.get('title') or style['id'], locale),
-                'description': l10n.translate(style.get('description') or '', locale),
-                'links': style_links(collection_id, style),
-            }
-            for style in styles
-        ],
-    }
+    descriptions = []
+    for style in styles:
+        try:
+            document = read_style_document(style)
+            keywords = style_keywords(document, collection_id)
+        except (OSError, json_mod.JSONDecodeError, ValueError, TypeError):
+            app.logger.exception('Could not classify style: %s', style.get('path'))
+            keywords = []
+
+        descriptions.append({
+            'id': style['id'],
+            'title': l10n.translate(style.get('title') or style['id'], locale),
+            'description': l10n.translate(style.get('description') or '', locale),
+            'links': style_links(collection_id, style),
+            **({'keywords': keywords} if keywords else {}),
+        })
+
+    response = {'styles': descriptions}
 
     default_style = next(
         (style['id'] for style in styles if style.get('default') is True),

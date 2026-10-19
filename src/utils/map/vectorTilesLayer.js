@@ -24,31 +24,41 @@ export function createVectorTileLayer() {
   return layer;
 }
 
-export function applyVectorTileStyle(layer, styleDocument, collectionId) {
-  const sources = styleDocument.sources;
-  const styleLayers = styleDocument.layers;
-  const vectorSourceIds = Object.entries(sources ?? {})
-    .filter(
-      ([sourceId, source]) =>
-        source?.type === 'vector' && styleLayers?.some((styleLayer) => styleLayer.source === sourceId),
-    )
-    .map(([sourceId]) => sourceId);
-  const matchingSourceIds = [
-    ...new Set(
-      styleLayers
-        ?.filter((styleLayer) => styleLayer['source-layer'] === collectionId)
-        .map((styleLayer) => styleLayer.source)
-        .filter((sourceId) => vectorSourceIds.includes(sourceId)) ?? [],
-    ),
-  ];
-  const sourceId = vectorSourceIds.includes(collectionId)
-    ? collectionId
-    : matchingSourceIds.length === 1
-      ? matchingSourceIds[0]
-      : matchingSourceIds.length === 0 && vectorSourceIds.length === 1
-        ? vectorSourceIds[0]
-        : null;
+export function getVectorTileStyleSourceId(styleDocument, collectionId) {
+  const sources = Object.entries(styleDocument.sources ?? {});
+  if (sources.length !== 1) return null;
 
+  const [sourceId, source] = sources[0];
+  if (source?.type !== 'vector' || !Array.isArray(source.tiles)) return null;
+
+  if (
+    !Array.isArray(styleDocument.layers) ||
+    !styleDocument.layers.every((layer) => layer !== null && typeof layer === 'object' && !Array.isArray(layer))
+  ) {
+    console.error('Ugyldige lag i vektorflisstil.');
+    return null;
+  }
+
+  const tilesPath = `/collections/${encodeURIComponent(collectionId)}/tiles/`;
+  const layers = styleDocument.layers?.filter((layer) => layer.source === sourceId);
+  return source.tiles.some((tileUrl) => {
+    if (typeof tileUrl !== 'string') return false;
+    try {
+      return new URL(tileUrl, 'http://localhost').pathname.startsWith(tilesPath);
+    } catch (error) {
+      if (!(error instanceof TypeError)) throw error;
+      console.error('Ugyldig URL for vektorflis:', error);
+      return false;
+    }
+  }) &&
+    layers?.length > 0 &&
+    layers.every((layer) => layer['source-layer'] === collectionId)
+    ? sourceId
+    : null;
+}
+
+export function applyVectorTileStyle(layer, styleDocument, collectionId) {
+  const sourceId = getVectorTileStyleSourceId(styleDocument, collectionId);
   if (styleDocument.version !== 8 || !sourceId) {
     throw new Error(`Ugyldig vektorstil for ${collectionId}.`);
   }
