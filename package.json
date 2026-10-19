@@ -14,7 +14,7 @@
   "dependencies": {
     "@digdir/designsystemet-css": "^1.23.0",
     "@digdir/designsystemet-react": "^1.23.0",
-    "@navikt/aksel-icons": "^8.19.1",
+    "@navikt/aksel-icons": "^8.19.2",
     "@reduxjs/toolkit": "^2.13.0",
     "@turf/bbox": "^7.4.0",
     "@turf/bbox-polygon": "^7.4.0",
