@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import quote, urlsplit
 
-from modify_openapi import remove_post_endpoints
+from modify_openapi import add_styles_to_openapi, remove_post_endpoints
 
 _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 
@@ -14,6 +14,7 @@ _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 # This MUST run before importing APP, because pygeoapi reads and caches openapi.yml
 # into memory at import time. Modifying the file afterwards has no effect.
 remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
+add_styles_to_openapi()
 
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 from flask import Response, request, make_response, jsonify, send_file
