@@ -231,7 +231,7 @@ export default async function Collection({ params }) {
 
               {/* <Link href={geonorgeLink.href} target="_blank" className={styles.geonorgeLink}>Vis datasettet på Geonorge</Link> */}
 
-              {!hasCoverageDownloads && (
+              {!hasCoverageDownloads && data.canDownload && (
                 <DownloadPanel collectionId={collection} downloadConfig={data.downloadConfig} />
               )}
             </div>

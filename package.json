@@ -45,6 +45,6 @@
     "sharp": "^0.35.0"
   },
   "allowScripts": {
-    "lefthook@2.1.17": true
+    "lefthook@2.2.2": true
   }
 }
