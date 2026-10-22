@@ -150,7 +150,7 @@ export default async function Collection({ params }) {
   const hasCoverageDownloads = coverageDownloads.length > 0;
   const thumbnailSrc = getPreviewImageHref(data.links) || thumbnail;
 
-  const bbox = transformExtent(data.extent.spatial.bbox[0], data.extent.spatial.crs, 'OGC:CRS84');
+  const bbox = transformExtent(data.extent.spatial.bbox[0], data.extent.spatial.crs ?? 'OGC:CRS84', 'OGC:CRS84');
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)]);
 
   return (
