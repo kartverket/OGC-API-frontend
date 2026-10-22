@@ -21,7 +21,7 @@ import {
   collectionHasStylesCapability,
   collectionHasVectorTileCapability,
 } from '@/utils/api/capabilities';
-import { getBbox } from '@/utils/map/helpers';
+import { transformExtent } from '@/utils/map/helpers';
 import CoverageDownloadButtons from './CoverageDownloadButtons';
 import styles from './page.module.css';
 
@@ -150,7 +150,7 @@ export default async function Collection({ params }) {
   const hasCoverageDownloads = coverageDownloads.length > 0;
   const thumbnailSrc = getPreviewImageHref(data.links) || thumbnail;
 
-  const bbox = getBbox(data.extent.spatial.bbox[0], data.extent.spatial.crs);
+  const bbox = transformExtent(data.extent.spatial.bbox[0], data.extent.spatial.crs ?? 'OGC:CRS84', 'OGC:CRS84');
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)]);
 
   return (
