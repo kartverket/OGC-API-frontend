@@ -9,7 +9,6 @@ services:
       - "3000:3000"
     environment:
       - API_BASE_URL=http://pygeoapi:5000
-      - DATASET_URL=http://localhost:3000
     depends_on:
       pygeoapi:
         condition: service_healthy
