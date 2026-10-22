@@ -78,7 +78,6 @@ metadata:
     name: Kartverket
     email: post@kartverket.no
     url: https://www.kartverket.no
-  
 
 resources:
   get-distinct-values:

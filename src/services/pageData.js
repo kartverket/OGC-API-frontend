@@ -4,6 +4,7 @@ import {
   getCollectionFeatureTitleField,
   getDatasetPreviewHref,
   getMetadata,
+  hasExportProcessors,
 } from '@/config/readPygeoapiConfig';
 import {
   fetchCollection,
@@ -86,6 +87,7 @@ export async function fetchCollectionPageData(collection) {
         dataset: { title: homeData.title },
         metadata: getMetadata(),
         downloadConfig: getCollectionDownloadConfig(collection),
+        canDownload: hasExportProcessors(),
       },
       status: 200,
     };
