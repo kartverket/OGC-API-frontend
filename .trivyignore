@@ -12,3 +12,12 @@ GHSA-6v7p-g79w-8964
 # We do not run an OpenSSL QUIC server, so this is not exploitable in our deployment.
 # Revisit/remove once Debian ships a patched libssl3t64.
 CVE-2026-14456
+
+# CVE-2026-97687 (urllib3 HTTPS proxy TLS config leakage): vendored inside
+# pip/_vendor/, not an installed package, not independently patchable. Still
+# present in pip 26.2.2's vendor.txt (urllib3==2.7.0, fix requires >=2.8.0).
+# Build-time only (used by pip itself, not the running app), so exposure is
+# minimal. Reviewed 2026-10-23 — recheck when pip ships a vendored
+# urllib3>=2.8.0.
+CVE-2026-97687
+CVE-2026-97689
