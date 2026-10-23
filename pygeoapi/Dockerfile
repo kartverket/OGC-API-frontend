@@ -15,9 +15,13 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends --only-upgrade openssl libssl3t64 \
  && rm -rf /var/lib/apt/lists/*
 
-RUN /venv/bin/python -m pip uninstall -y fsspec # TEMPORARY: Fix for CVE-2026-104851, try removing on new pygeoapi-version (0.24.1+)
+# TEMPORARY: Fix for CVE-2026-104851, try removing on new pygeoapi-version (0.24.1+)
+RUN /venv/bin/python -m pip uninstall -y fsspec
 
 COPY --from=dependencies /venv /venv
+
+# TEMPORARY: Fix for CVE-2026-111066 (aiohttp multipart FD exhaustion), try removing on new pygeoapi-version (0.24.1+)
+RUN /venv/bin/python -m pip install --upgrade "aiohttp>=3.14.4"
 
 # Custom Python scripts
 COPY distinct_values.py /pygeoapi/distinct_values.py
