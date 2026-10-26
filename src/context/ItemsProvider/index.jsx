@@ -4,32 +4,28 @@ import { useSearchParams } from 'next/navigation';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getBbox, isBboxValid, parseBboxStr, transformExtent } from '@/utils/map/helpers';
 
+function getInitialBbox(data, searchParams) {
+  const bboxStr = searchParams.get('bbox');
+  const bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
+
+  if (isBboxValid(bbox)) {
+    return bbox;
+  }
+
+  const extent = data.collection.extent;
+  return transformExtent(getBbox(extent.bbox, extent.crs), extent.crs, 'OGC:CRS84');
+}
+
 export default function ItemsProvider({ data, children }) {
-  const [bbox, setBbox] = useState(null);
+  const searchParams = useSearchParams();
+  const [bbox, setBbox] = useState(() => getInitialBbox(data, searchParams));
   const [bboxEdit, setBboxEdit] = useState(false);
   const [sizeAndPosition, setSizeAndPosition] = useState(null);
   const sizeAndPositionRef = useRef(null);
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (data === null) {
-      return;
-    }
-
-    const bboxStr = searchParams.get('bbox');
-    let bbox = bboxStr !== null ? parseBboxStr(bboxStr) : null;
-
-    if (!isBboxValid(bbox)) {
-      const extent = data.collection.extent;
-      bbox = transformExtent(getBbox(extent.bbox, extent.crs), extent.crs, 'OGC:CRS84');
-    }
-
-    setBbox(bbox);
+    setBbox(getInitialBbox(data, searchParams));
   }, [data, searchParams]);
-
-  if (bbox === null) {
-    return null;
-  }
 
   return (
     <ItemsContext.Provider
