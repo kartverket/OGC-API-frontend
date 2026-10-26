@@ -47,7 +47,10 @@ def add_styles_paths(spec, config):
         'get': {
             'description': 'Lister opp stiler registrert for collectionen, med en enkel beskrivelse og lenke til hver stilfil.',
             'operationId': None,
-            'parameters': [{'$ref': '#/components/parameters/lang'}],
+            'parameters': [
+                {'$ref': '#/components/parameters/f'},
+                {'$ref': '#/components/parameters/lang'}
+                ],
             'responses': {
                 '200': {
                     'description': 'Available styles',
