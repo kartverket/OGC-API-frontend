@@ -340,7 +340,7 @@ export default function FilterCard({ data }) {
 
           <div className={styles.buttons}>
             {!bboxEdit && (
-              <Button onClick={startEditBbox} variant="secondary" data-size="sm">
+              <Button onClick={startEditBbox} variant="secondary" data-size="sm" disabled={map === null}>
                 <PencilIcon title="Rediger" fontSize="24px" />
                 Rediger BBOX-filter
               </Button>

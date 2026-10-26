@@ -1,6 +1,17 @@
 'use client';
 
-import { Alert, Card, Field, Heading, Label, Link, Paragraph, Select, Spinner } from '@digdir/designsystemet-react';
+import {
+  Alert,
+  Card,
+  Field,
+  Heading,
+  Label,
+  Link,
+  Paragraph,
+  Select,
+  Skeleton,
+  Spinner,
+} from '@digdir/designsystemet-react';
 import { PaletteFillIcon } from '@navikt/aksel-icons';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -101,23 +112,11 @@ export default function Items({ srvData, collection, searchParams }) {
     router.push(`${pathname}?${params}`, { scroll: false });
   }
 
-  const data = useMemo(() => {
-    if (_data === null) {
-      return null;
-    }
-
-    return {
-      ..._data,
-      ...srvData,
-    };
-  }, [_data, srvData]);
+  const data = useMemo(() => ({ ...(_data ?? {}), ...srvData }), [_data, srvData]);
+  const hasItems = _data !== null;
 
   if (error !== null) {
     return <ErrorPage status={error.status.code} />;
-  }
-
-  if (data === null) {
-    return null;
   }
 
   return (
@@ -139,7 +138,7 @@ export default function Items({ srvData, collection, searchParams }) {
           {isStyleLoading && <Paragraph>Laster valgt stil...</Paragraph>}
           {styleError && <Alert data-color="danger">Kunne ikke laste valgt stil: {styleError.message}</Alert>}
           {applyStyleError && <Alert data-color="danger">Kunne ikke bruke valgt stil: {applyStyleError}</Alert>}
-          {isLoading && (
+          {isLoading && hasItems && (
             <div className={styles.overlay}>
               <Spinner aria-label="Laster data..." data-size="xl" />
               <Paragraph>Laster data...</Paragraph>
@@ -202,7 +201,13 @@ export default function Items({ srvData, collection, searchParams }) {
               </ItemsMapProvider>
             </div>
 
-            <div className={styles.bottom}>{data.features.length > 0 && <ItemsTable data={data} />}</div>
+            <div className={styles.bottom} aria-busy={!hasItems}>
+              {hasItems ? (
+                data.features.length > 0 && <ItemsTable data={data} />
+              ) : (
+                <Skeleton width="100%" height={520} />
+              )}
+            </div>
           </ItemsProvider>
         </div>
       </div>

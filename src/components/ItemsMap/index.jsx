@@ -1,5 +1,6 @@
 'use client';
 
+import { Skeleton } from '@digdir/designsystemet-react';
 import { unByKey } from 'ol/Observable';
 import { useEffect, useRef } from 'react';
 import { Rnd } from 'react-rnd';
@@ -81,6 +82,10 @@ export default function ItemsMap({ width, height }) {
       boxEl.removeEventListener('wheel', onWheel);
     };
   }, [map, bboxEdit, sizeAndPositionRef]);
+
+  if (map === null) {
+    return <Skeleton width={width} height={height} />;
+  }
 
   return (
     <div ref={containerElRef} className={styles.container}>
