@@ -53,6 +53,12 @@ COPY processes/ /pygeoapi/processes/
 # Custom templates
 COPY templates/ /pygeoapi/custom_templates/
 
+# Disable Swagger UI syntax highlighting, which crashes on large GeoJSON responses.
+# Patches pygeoapi's built-in template; the grep fails the build if the sed no longer matches.
+RUN sed -i "s/deepLinking: true,/deepLinking: true,\n        syntaxHighlight: false,/" \
+      /pygeoapi/pygeoapi/templates/openapi/swagger.html \
+ && grep -q "syntaxHighlight: false" /pygeoapi/pygeoapi/templates/openapi/swagger.html
+
 # MapServer config (fonts, styles)
 COPY mapserver/fonts.txt /pygeoapi/fonts.txt
 COPY mapserver/styles/ /pygeoapi/styles/
