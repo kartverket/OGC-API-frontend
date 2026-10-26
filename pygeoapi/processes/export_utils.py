@@ -5,8 +5,8 @@ duplication and any change to the config is automatically picked up.
 """
 
 import io
-import os
 import logging
+import os
 import tempfile
 
 import geopandas as gpd
@@ -18,8 +18,10 @@ LOGGER = logging.getLogger(__name__)
 # Config helpers
 # ──────────────────────────────────────────────
 
+
 def load_config() -> dict:
     from pygeoapi.config import get_config
+
     return get_config()
 
 
@@ -104,6 +106,7 @@ def _qualify_table(provider: dict) -> str:
 # Data-reading helpers
 # ──────────────────────────────────────────────
 
+
 def read_collection(coll_info: dict, where: str | None = None) -> gpd.GeoDataFrame:
     """
     Read a PostGIS collection into a GeoDataFrame.
@@ -125,43 +128,6 @@ def read_collection(coll_info: dict, where: str | None = None) -> gpd.GeoDataFra
     return gdf
 
 
-def read_collection_by_area(
-    coll_info: dict,
-    area_geom_wkt: str,
-    area_srid: int = 4326,
-) -> gpd.GeoDataFrame:
-    """
-    Spatially filter a collection to features that intersect a given geometry.
-
-    Args:
-        coll_info:      dict from get_postgis_collections()
-        area_geom_wkt:  WKT of the filter geometry (e.g. a fylke polygon)
-        area_srid:      SRID of the WKT geometry
-    """
-    engine = create_engine(coll_info['connection'])
-    geom = coll_info['geom_field']
-    table = coll_info['table']
-
-    sql = text(f"""
-        SELECT *
-        FROM   {table}
-        WHERE  ST_Intersects(
-                   {geom},
-                   ST_Transform(
-                       ST_GeomFromText(:wkt, :srid),
-                       ST_SRID({geom})
-                   )
-               )
-    """)
-
-    gdf = gpd.read_postgis(
-        sql, con=engine.connect(), geom_col=geom,
-        params={'wkt': area_geom_wkt, 'srid': area_srid},
-    )
-    LOGGER.info('Spatially filtered %d features from %s', len(gdf), table)
-    return gdf
-
-
 def get_area_geometry(
     config: dict,
     area_collection: str,
@@ -177,20 +143,23 @@ def get_area_geometry(
 
     Returns WKT string in EPSG:4326, or None if no matching feature found.
     """
-    import urllib.request
-    import urllib.parse
     import json
     import re
+    import urllib.parse
+    import urllib.request
+
     from shapely.geometry import shape
 
     base_url = config.get('server', {}).get('url', 'http://localhost:5000').rstrip('/')
     internal_base = re.sub(r'https?://[^/]+', 'http://localhost:5000', base_url)
 
-    params = urllib.parse.urlencode({
-        field_name: field_value,
-        'f': 'json',
-        'limit': 1,
-    })
+    params = urllib.parse.urlencode(
+        {
+            field_name: field_value,
+            'f': 'json',
+            'limit': 1,
+        }
+    )
     url = f'{internal_base}/collections/{area_collection}/items?{params}'
     LOGGER.info('Fetching area geometry from: %s', url)
 
@@ -232,7 +201,7 @@ def read_collection_by_area(
         buffer_metres:  buffer distance in metres (default 1)
     """
     engine = create_engine(coll_info['connection'])
-    geom  = coll_info['geom_field']
+    geom = coll_info['geom_field']
     table = coll_info['table']
 
     sql = text(f"""
@@ -254,18 +223,24 @@ def read_collection_by_area(
     """)
 
     gdf = gpd.read_postgis(
-        sql, con=engine.connect(), geom_col=geom,
+        sql,
+        con=engine.connect(),
+        geom_col=geom,
         params={'wkt': area_geom_wkt, 'srid': area_srid, 'buffer_m': buffer_metres},
     )
     LOGGER.info(
         'ST_Within (buffer=%dm) filtered %d features from %s',
-        buffer_metres, len(gdf), table,
+        buffer_metres,
+        len(gdf),
+        table,
     )
     return gdf
+
 
 # ──────────────────────────────────────────────
 # Output serialisation helpers
 # ──────────────────────────────────────────────
+
 
 def gdf_to_gpkg_bytes(gdf: gpd.GeoDataFrame, layer_name: str = 'data') -> bytes:
     """Write a GeoDataFrame to an in-memory GeoPackage and return the raw bytes."""
@@ -310,7 +285,6 @@ def gdf_to_csv_bytes(gdf: gpd.GeoDataFrame, geom_col: str = 'geom') -> bytes:
     Serialise a GeoDataFrame to CSV with geometry encoded as hex-WKB.
     The geometry column is renamed to 'geometry_wkb'.
     """
-    import pandas as pd
 
     df = gdf.copy()
 
@@ -318,9 +292,7 @@ def gdf_to_csv_bytes(gdf: gpd.GeoDataFrame, geom_col: str = 'geom') -> bytes:
     active_geom = df.geometry.name if hasattr(df, 'geometry') else geom_col
 
     # Encode as WKB hex, drop the shapely geometry column
-    df['geometry_wkb'] = df[active_geom].apply(
-        lambda g: g.wkb_hex if g is not None else None
-    )
+    df['geometry_wkb'] = df[active_geom].apply(lambda g: g.wkb_hex if g is not None else None)
     df = df.drop(columns=[active_geom])
 
     buf = io.StringIO()

@@ -3,7 +3,6 @@ import mimetypes
 import os
 import re
 from pathlib import Path
-from typing import Optional
 from urllib.parse import quote, urlsplit
 
 from modify_openapi import add_styles_to_openapi, remove_post_endpoints
@@ -16,12 +15,13 @@ _COLLECTIONS_ITEMS_PATTERN = re.compile(r'/collections/[^/]+/items/?$')
 remove_post_endpoints(_COLLECTIONS_ITEMS_PATTERN)
 add_styles_to_openapi()
 
+import pygeoapi.api.itemtypes as itemtypes_api
+from flask import Response, jsonify, make_response, request, send_file
 from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
-from flask import Response, request, make_response, jsonify, send_file
-from pygeoapi.flask_app import APP as app, api_
 from pygeoapi import l10n
 from pygeoapi.api import APIRequest
-import pygeoapi.api.itemtypes as itemtypes_api
+from pygeoapi.flask_app import APP as app
+from pygeoapi.flask_app import api_
 
 metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 
@@ -31,11 +31,10 @@ metrics = GunicornInternalPrometheusMetrics(app, path='/actuator/metrics')
 # 2. get_collection_item doesn't support custom formatters (only get_collection_items does)
 # This hook intercepts such requests, gets GeoJSON, and applies the formatter.
 import json as json_mod
-from pygeoapi.util import get_dataset_formatters, filter_dict_by_key_value
 
-_SINGLE_ITEM_PATTERN = re.compile(
-    r'/collections/[^/]+/items/[^/]+$'
-)
+from pygeoapi.util import filter_dict_by_key_value, get_dataset_formatters
+
+_SINGLE_ITEM_PATTERN = re.compile(r'/collections/[^/]+/items/[^/]+$')
 
 
 @app.before_request
@@ -60,8 +59,7 @@ def allow_custom_format_on_single_item():
         return None
 
     # Check if this collection has a formatter for the requested format
-    collections = filter_dict_by_key_value(
-        api_.config['resources'], 'type', 'collection')
+    collections = filter_dict_by_key_value(api_.config['resources'], 'type', 'collection')
     if collection_id not in collections:
         return None
 
@@ -80,8 +78,7 @@ def allow_custom_format_on_single_item():
     # on the unknown 'jsonfg' format when building response links.
     api_request = APIRequest.from_flask(request, api_.locales)
     api_request._format = 'json'
-    headers, status, content = itemtypes_api.get_collection_item(
-        api_, api_request, collection_id, item_id)
+    headers, status, content = itemtypes_api.get_collection_item(api_, api_request, collection_id, item_id)
 
     if status != 200:
         resp = make_response(content, status)
@@ -95,25 +92,17 @@ def allow_custom_format_on_single_item():
     try:
         geojson_data = json_mod.loads(content)
         content_crs = headers.get('Content-Crs', '')
-        formatted = formatter.write(
-            data=geojson_data,
-            options={'content_crs': content_crs})
-        result = make_response(
-            json_mod.dumps(formatted, default=str),
-            200
-        )
+        formatted = formatter.write(data=geojson_data, options={'content_crs': content_crs})
+        result = make_response(json_mod.dumps(formatted, default=str), 200)
         result.headers['Content-Type'] = formatter.mimetype
         for key, value in headers.items():
             if key.lower() not in ('content-type', 'content-length'):
                 result.headers[key] = value
         return result
-    except Exception as err:
-        app.logger.exception(
-            'Failed to apply formatter "%s" for %s', f_param, request.path)
-        return make_response(
-            jsonify({'error': 'Internal Server Error', 'message': 'Failed to render response'}),
-            500
-        )
+    except Exception:
+        app.logger.exception('Failed to apply formatter "%s" for %s', f_param, request.path)
+        return make_response(jsonify({'error': 'Internal Server Error', 'message': 'Failed to render response'}), 500)
+
 
 # Restrict assets endpoint to known safe image types.
 _ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
@@ -121,7 +110,7 @@ _ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
 _ASSETS_ROOT = Path(os.environ.get('PYGEOAPI_ASSETS_ROOT', '/pygeoapi/data')).resolve()
 
 
-def _resolve_asset_path(asset_path: str) -> Optional[Path]:
+def _resolve_asset_path(asset_path: str) -> Path | None:
     if not asset_path:
         return None
 
@@ -147,18 +136,13 @@ def get_asset_image(asset_path):
     # Serve preview images referenced by collection links (rel=preview).
     image_path = _resolve_asset_path(asset_path)
     if image_path is None:
-        response = make_response(
-            jsonify({
-                "error": "Not Found",
-                "message": "Requested asset image was not found"
-            }),
-            404
-        )
+        response = make_response(jsonify({'error': 'Not Found', 'message': 'Requested asset image was not found'}), 404)
         return response
 
     # Infer content type from extension; default to octet-stream if unknown.
     mimetype = mimetypes.guess_type(str(image_path))[0] or 'application/octet-stream'
     return send_file(image_path, mimetype=mimetype)
+
 
 # Blocking POST endpoints /collections/{id}/items, as they are not standard
 @app.before_request
@@ -166,23 +150,20 @@ def block_post_to_collection_items():
     if request.method == 'POST':
         if _COLLECTIONS_ITEMS_PATTERN.search(request.path):
             response = make_response(
-                jsonify({
-                    "error": "Method Not Allowed",
-                    "message": f"POST requests to {request.path} are not supported"
-                }),
-                405
+                jsonify(
+                    {'error': 'Method Not Allowed', 'message': f'POST requests to {request.path} are not supported'}
+                ),
+                405,
             )
             response.headers['Allow'] = 'GET, HEAD, OPTIONS'
             return response
-
 
 
 STYLE_MEDIA_TYPE = 'application/vnd.mapbox.style+json'
 
 
 def collection_config(collection_id):
-    collections = filter_dict_by_key_value(
-        api_.config['resources'], 'type', 'collection')
+    collections = filter_dict_by_key_value(api_.config['resources'], 'type', 'collection')
     return collections.get(collection_id)
 
 
@@ -219,9 +200,7 @@ def absolute_style_tile_urls(style_document):
     for source in style_document.get('sources', {}).values():
         if 'tiles' in source:
             source['tiles'] = [
-                f'{base_url}{tile_url}'
-                if tile_url.startswith('/') and not tile_url.startswith('//')
-                else tile_url
+                f'{base_url}{tile_url}' if tile_url.startswith('/') and not tile_url.startswith('//') else tile_url
                 for tile_url in source['tiles']
             ]
 
@@ -254,35 +233,23 @@ def style_keywords(style_document, collection_id):
         return []
 
     source_id, source = next(iter(sources.items()))
-    if not isinstance(source, dict) or not all(
-        isinstance(layer, dict) for layer in layers
-    ):
+    if not isinstance(source, dict) or not all(isinstance(layer, dict) for layer in layers):
         return []
 
-    source_layers = [
-        layer for layer in layers if layer.get('source') == source_id
-    ]
+    source_layers = [layer for layer in layers if layer.get('source') == source_id]
     if not source_layers:
         return []
 
     if source.get('type') == 'geojson' and isinstance(source.get('data'), str):
-        if (
-            urlsplit(source['data']).path.rstrip('/') == f'{collection_path}/items'
-            and all('source-layer' not in layer for layer in source_layers)
+        if urlsplit(source['data']).path.rstrip('/') == f'{collection_path}/items' and all(
+            'source-layer' not in layer for layer in source_layers
         ):
             return ['items']
     elif source.get('type') == 'vector' and isinstance(source.get('tiles'), list):
-        if (
-            any(
-                isinstance(tile_url, str)
-                and urlsplit(tile_url).path.startswith(f'{collection_path}/tiles/')
-                for tile_url in source['tiles']
-            )
-            and all(
-                layer.get('source-layer') == collection_id
-                for layer in source_layers
-            )
-        ):
+        if any(
+            isinstance(tile_url, str) and urlsplit(tile_url).path.startswith(f'{collection_path}/tiles/')
+            for tile_url in source['tiles']
+        ) and all(layer.get('source-layer') == collection_id for layer in source_layers):
             return ['vector-tiles']
 
     return []
@@ -293,10 +260,12 @@ def get_collection_styles(collection_id):
     styles = configured_styles(collection_id)
 
     if styles is None:
-        return jsonify({
-            'code': 'NotFound',
-            'description': f'Unknown collection: {collection_id}',
-        }), 404
+        return jsonify(
+            {
+                'code': 'NotFound',
+                'description': f'Unknown collection: {collection_id}',
+            }
+        ), 404
 
     locale = APIRequest.from_flask(request, api_.locales).locale
     descriptions = []
@@ -308,13 +277,15 @@ def get_collection_styles(collection_id):
             app.logger.exception('Could not classify style: %s', style.get('path'))
             keywords = []
 
-        descriptions.append({
-            'id': style['id'],
-            'title': l10n.translate(style.get('title') or style['id'], locale),
-            'description': l10n.translate(style.get('description') or '', locale),
-            'links': style_links(collection_id, style),
-            **({'keywords': keywords} if keywords else {}),
-        })
+        descriptions.append(
+            {
+                'id': style['id'],
+                'title': l10n.translate(style.get('title') or style['id'], locale),
+                'description': l10n.translate(style.get('description') or '', locale),
+                'links': style_links(collection_id, style),
+                **({'keywords': keywords} if keywords else {}),
+            }
+        )
 
     response = {'styles': descriptions}
 
@@ -328,25 +299,28 @@ def get_collection_styles(collection_id):
 
     return jsonify(response)
 
+
 @app.get('/collections/<collection_id>/styles/<style_id>')
 def get_collection_style(collection_id, style_id):
     style = find_style(collection_id, style_id)
 
     if style is None:
-        return jsonify({
-            'code': 'NotFound',
-            'description': f'Unknown style: {style_id}',
-        }), 404
+        return jsonify(
+            {
+                'code': 'NotFound',
+                'description': f'Unknown style: {style_id}',
+            }
+        ), 404
 
     requested_format = request.args.get('f', 'mbs')
 
     if requested_format not in ('mbs', 'mapbox'):
-        return jsonify({
-            'code': 'InvalidParameterValue',
-            'description': (
-                f'Unsupported style format: {requested_format}'
-            ),
-        }), 400
+        return jsonify(
+            {
+                'code': 'InvalidParameterValue',
+                'description': (f'Unsupported style format: {requested_format}'),
+            }
+        ), 400
 
     try:
         style_document = read_style_document(style)
@@ -356,20 +330,24 @@ def get_collection_style(collection_id, style_id):
             style.get('path'),
         )
 
-        return jsonify({
-            'code': 'NotFound',
-            'description': f'Style file not found: {style_id}',
-        }), 404
+        return jsonify(
+            {
+                'code': 'NotFound',
+                'description': f'Style file not found: {style_id}',
+            }
+        ), 404
     except json_mod.JSONDecodeError:
         app.logger.exception(
             'Invalid style JSON: %s',
             style.get('path'),
         )
 
-        return jsonify({
-            'code': 'InternalServerError',
-            'description': 'Style document is not valid JSON',
-        }), 500
+        return jsonify(
+            {
+                'code': 'InternalServerError',
+                'description': 'Style document is not valid JSON',
+            }
+        ), 500
 
     style_document = absolute_style_tile_urls(style_document)
 
@@ -415,6 +393,7 @@ def add_styles_conformance_classes(response):
     response.set_data(json_mod.dumps(payload))
     return response
 
+
 # Same rationale as above: pygeoapi's collection responses have no knowledge
 # of the custom /styles endpoints, so they won't link to them. Patch the
 # link in here for any collection that has styles configured.
@@ -454,12 +433,14 @@ def add_styles_link_to_collection(response):
     styles_href = f'{base_url}/collections/{collection_id}/styles'
 
     if not any(link.get('rel') == _STYLES_REL for link in links):
-        links.append({
-            'rel': _STYLES_REL,
-            'type': 'application/json',
-            'title': 'Styles',
-            'href': styles_href,
-        })
+        links.append(
+            {
+                'rel': _STYLES_REL,
+                'type': 'application/json',
+                'title': 'Styles',
+                'href': styles_href,
+            }
+        )
 
     response.set_data(json_mod.dumps(payload))
     return response

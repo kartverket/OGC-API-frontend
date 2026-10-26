@@ -14,13 +14,9 @@ _WGS84_CRSS = {
     'http://www.opengis.net/def/crs/EPSG/0/4326',
 }
 
-_CONFORMANCE_URI = (
-    'http://www.opengis.net/spec/json-fg-1/1.0/conf/core'
-)
+_CONFORMANCE_URI = 'http://www.opengis.net/spec/json-fg-1/1.0/conf/core'
 
-_TYPES_SCHEMAS_URI = (
-    'http://www.opengis.net/spec/json-fg-1/1.0/conf/types-schemas'
-)
+_TYPES_SCHEMAS_URI = 'http://www.opengis.net/spec/json-fg-1/1.0/conf/types-schemas'
 
 
 class JsonFgFormatter(BaseFormatter):
@@ -161,9 +157,11 @@ class JsonFgFormatter(BaseFormatter):
         """Add a 'describedby' link to the schema for JSON Schema validation."""
 
         links = data.setdefault('links', [])
-        links.append({
-            'rel': 'describedby',
-            'type': 'application/schema+json',
-            'title': 'Schema',
-            'href': schema_url,
-        })
+        links.append(
+            {
+                'rel': 'describedby',
+                'type': 'application/schema+json',
+                'title': 'Schema',
+                'href': schema_url,
+            }
+        )

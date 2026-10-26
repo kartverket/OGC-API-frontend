@@ -9,12 +9,14 @@ Returns: application/geopackage+sqlite3 binary
 """
 
 import logging
+
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
+
 from .export_utils import (
-    load_config,
-    get_postgis_collections,
-    read_collection,
     gdf_to_gpkg_bytes,
+    get_postgis_collections,
+    load_config,
+    read_collection,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -54,14 +56,11 @@ PROCESS_METADATA = {
             },
         }
     },
-    'example': {
-        'inputs': {'collection_id': 'my_collection'}
-    },
+    'example': {'inputs': {'collection_id': 'my_collection'}},
 }
 
 
 class ExportCollectionGpkgProcessor(BaseProcessor):
-
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
 
@@ -76,8 +75,7 @@ class ExportCollectionGpkgProcessor(BaseProcessor):
         if collection_id not in collections:
             available = ', '.join(collections.keys())
             raise ProcessorExecuteError(
-                f"Collection '{collection_id}' not found. "
-                f"Available PostGIS collections: {available}"
+                f"Collection '{collection_id}' not found. Available PostGIS collections: {available}"
             )
 
         LOGGER.info('Exporting collection %s to GPKG', collection_id)
@@ -99,10 +97,12 @@ class ExportCollectionGpkgProcessor(BaseProcessor):
 
         LOGGER.info(
             'GPKG for %s: %d features, %.1f KB',
-            collection_id, len(gdf), len(gpkg_bytes) / 1024,
+            collection_id,
+            len(gdf),
+            len(gpkg_bytes) / 1024,
         )
 
         return 'application/geopackage+sqlite3', gpkg_bytes
 
     def __repr__(self):
-        return f'<ExportCollectionGpkgProcessor>'
+        return '<ExportCollectionGpkgProcessor>'

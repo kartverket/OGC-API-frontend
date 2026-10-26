@@ -17,20 +17,22 @@ Returns: text/csv
 """
 
 import logging
+
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
+
 from .export_utils import (
-    load_config,
+    gdf_to_csv_bytes,
+    get_area_geometry,
     get_postgis_collections,
+    load_config,
     read_collection,
     read_collection_by_area,
-    get_area_geometry,
-    gdf_to_csv_bytes,
 )
 
 LOGGER = logging.getLogger(__name__)
 
 AREA_CONFIG = {
-    'fylke':   {'collection': 'fylker',   'default_field': 'navn'},
+    'fylke': {'collection': 'fylker', 'default_field': 'navn'},
     'kommune': {'collection': 'kommuner', 'default_field': 'navn'},
 }
 
@@ -82,28 +84,23 @@ PROCESS_METADATA = {
             },
         }
     },
-    'example': {
-        'inputs': {'collection_id': 'my_collection'}
-    },
+    'example': {'inputs': {'collection_id': 'my_collection'}},
 }
 
 
 class ExportCollectionCsvProcessor(BaseProcessor):
-
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
 
     def execute(self, data, outputs=None, **kwargs):
         collection_id = data.get('collection_id', '').strip()
-        area_type     = data.get('area_type', '').strip().lower() or None
-        area_name     = data.get('area_name', '').strip() or None
+        area_type = data.get('area_type', '').strip().lower() or None
+        area_name = data.get('area_name', '').strip() or None
 
         if not collection_id:
             raise ProcessorExecuteError('collection_id is required')
         if area_type and area_type not in AREA_CONFIG:
-            raise ProcessorExecuteError(
-                f"area_type must be one of: {', '.join(AREA_CONFIG)}"
-            )
+            raise ProcessorExecuteError(f'area_type must be one of: {", ".join(AREA_CONFIG)}')
         if area_type and not area_name:
             raise ProcessorExecuteError('area_name is required when area_type is given')
 
@@ -111,10 +108,7 @@ class ExportCollectionCsvProcessor(BaseProcessor):
         collections = get_postgis_collections(config)
 
         if collection_id not in collections:
-            raise ProcessorExecuteError(
-                f"Collection '{collection_id}' not found. "
-                f"Available: {', '.join(collections)}"
-            )
+            raise ProcessorExecuteError(f"Collection '{collection_id}' not found. Available: {', '.join(collections)}")
 
         coll_info = collections[collection_id]
 
@@ -123,9 +117,7 @@ class ExportCollectionCsvProcessor(BaseProcessor):
             area_cfg = AREA_CONFIG[area_type]
             name_field = data.get('area_name_field', '').strip() or area_cfg['default_field']
             if area_cfg['collection'] not in collections:
-                raise ProcessorExecuteError(
-                    f"Area collection '{area_cfg['collection']}' not in config."
-                )
+                raise ProcessorExecuteError(f"Area collection '{area_cfg['collection']}' not in config.")
             wkt = get_area_geometry(
                 config,
                 area_collection=area_cfg['collection'],
@@ -133,12 +125,12 @@ class ExportCollectionCsvProcessor(BaseProcessor):
                 field_value=area_name,
             )
             if wkt is None:
-                raise ProcessorExecuteError(
-                    f"No {area_type} found with navn = '{area_name}'."
-                )
+                raise ProcessorExecuteError(f"No {area_type} found with navn = '{area_name}'.")
             LOGGER.info(
                 'Exporting %s filtered to %s "%s" as CSV',
-                collection_id, area_type, area_name,
+                collection_id,
+                area_type,
+                area_name,
             )
             gdf = read_collection_by_area(
                 collections[collection_id],
@@ -164,7 +156,9 @@ class ExportCollectionCsvProcessor(BaseProcessor):
 
         LOGGER.info(
             'CSV for %s: %d rows, %.1f KB',
-            collection_id, len(gdf), len(csv_bytes) / 1024,
+            collection_id,
+            len(gdf),
+            len(csv_bytes) / 1024,
         )
         return 'text/csv', csv_bytes
 
