@@ -1,6 +1,6 @@
 FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a622172a2c5c4d2145b8f0a AS dependencies
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
 
 COPY pyproject.toml uv.lock /tmp/pygeoapi-dependencies/
 
@@ -15,9 +15,16 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends --only-upgrade openssl libssl3t64 \
  && rm -rf /var/lib/apt/lists/*
 
-RUN /venv/bin/python -m pip uninstall -y fsspec # TEMPORARY: Fix for CVE-2026-104851, try removing on new pygeoapi-version (0.24.1+)
+# TEMPORARY: Fix for CVE-2026-104851, try removing on new pygeoapi-version (0.24.1+)
+RUN /venv/bin/python -m pip uninstall -y fsspec
 
 COPY --from=dependencies /venv /venv
+
+# TEMPORARY: Fix for CVE-2026-111066 (aiohttp multipart FD exhaustion), try removing on new pygeoapi-version (0.24.1+)
+RUN /venv/bin/python -m pip install --upgrade "aiohttp>=3.14.4"
+
+# TEMPORARY: Fix for CVE-2026-8643 (pip console_scripts/gui_scripts path traversal), try removing on new pygeoapi-version (0.24.1+)
+RUN /venv/bin/python -m pip install --upgrade "pip>=26.1.2"
 
 # Custom Python scripts
 COPY distinct_values.py /pygeoapi/distinct_values.py

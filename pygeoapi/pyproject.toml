@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Locked Python dependency overlay for the Kartverket pygeoapi image"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+  "certifi",
   "fsspec>=2026.6.0",
   "GeoAlchemy2",
   "geopandas",
@@ -16,3 +17,4 @@ dependencies = [
 
 [tool.uv]
 package = false
+required-version = "==0.13.5"
