@@ -49,22 +49,21 @@ import json
 import logging
 
 from geoalchemy2.elements import WKBElement
-from shapely import wkb as shapely_wkb
-from shapely.geometry import mapping
-
 from pygeoapi.provider.base import BaseProvider
 from pygeoapi.provider.sql import PostgreSQLProvider
+from shapely import wkb as shapely_wkb
+from shapely.geometry import mapping
 
 LOGGER = logging.getLogger(__name__)
 
 # Map JSON Schema primitive types to the type strings pygeoapi expects
 _JSONSCHEMA_TO_PYGEOAPI_TYPE = {
-    "string": "string",
-    "integer": "integer",
-    "number": "number",
-    "boolean": "boolean",
-    "object": "object",
-    "array": "array",
+    'string': 'string',
+    'integer': 'integer',
+    'number': 'number',
+    'boolean': 'boolean',
+    'object': 'object',
+    'array': 'array',
 }
 
 
@@ -76,12 +75,10 @@ def _is_geometry_property(prop: dict) -> bool:
       geometry-multipolygon) as per OGC API Features schema extension.
     - An ``x-ogc-role`` of ``primary-geometry``.
     """
-    fmt = prop.get("format", "")
-    if isinstance(fmt, str) and fmt.startswith("geometry-"):
+    fmt = prop.get('format', '')
+    if isinstance(fmt, str) and fmt.startswith('geometry-'):
         return True
-    if prop.get("x-ogc-role") == "primary-geometry":
-        return True
-    return False
+    return prop.get('x-ogc-role') == 'primary-geometry'
 
 
 def _parse_fields(schema: dict) -> tuple[dict, str | None]:
@@ -105,28 +102,28 @@ def _parse_fields(schema: dict) -> tuple[dict, str | None]:
     fields = {}
     geometry_properties = []
 
-    for name, prop in schema.get("properties", {}).items():
+    for name, prop in schema.get('properties', {}).items():
         if _is_geometry_property(prop):
             geometry_properties.append((name, prop))
             continue
 
-        raw_type = prop.get("type", "string")
+        raw_type = prop.get('type', 'string')
 
         # Handle nullable union types: {"type": ["string", "null"]}
         if isinstance(raw_type, list):
-            non_null = [t for t in raw_type if t != "null"]
-            raw_type = non_null[0] if non_null else "string"
+            non_null = [t for t in raw_type if t != 'null']
+            raw_type = non_null[0] if non_null else 'string'
 
         field = {
-            "type": _JSONSCHEMA_TO_PYGEOAPI_TYPE.get(raw_type, "string"),
+            'type': _JSONSCHEMA_TO_PYGEOAPI_TYPE.get(raw_type, 'string'),
         }
 
-        for optional_key in ("title", "description", "format", "enum", "x-ogc-example"):
+        for optional_key in ('title', 'description', 'format', 'enum', 'x-ogc-example'):
             if optional_key in prop:
                 field[optional_key] = prop[optional_key]
 
-        field["sortable"] = prop.get("x-ogc-sortable", True)
-        field["filterable"] = prop.get("x-ogc-filterable", True)
+        field['sortable'] = prop.get('x-ogc-sortable', True)
+        field['filterable'] = prop.get('x-ogc-filterable', True)
 
         fields[name] = field
 
@@ -135,7 +132,7 @@ def _parse_fields(schema: dict) -> tuple[dict, str | None]:
     # - If only one geometry property exists, it is the primary geometry
     primary_geometry = None
     for name, prop in geometry_properties:
-        if prop.get("x-ogc-role") == "primary-geometry":
+        if prop.get('x-ogc-role') == 'primary-geometry':
             primary_geometry = name
             break
     if primary_geometry is None and len(geometry_properties) == 1:
@@ -143,7 +140,7 @@ def _parse_fields(schema: dict) -> tuple[dict, str | None]:
 
     if geometry_properties:
         LOGGER.debug(
-            "Excluded %d geometry property/properties from fields: %s (primary=%s)",
+            'Excluded %d geometry property/properties from fields: %s (primary=%s)',
             len(geometry_properties),
             [name for name, _ in geometry_properties],
             primary_geometry,
@@ -173,12 +170,12 @@ class SchemaPostgreSQLProvider(BaseProvider):
         # data, id_field, storage_crs, etc.) without touching the database.
         super().__init__(provider_def)
 
-        schema_file = provider_def.get("schema_file")
+        schema_file = provider_def.get('schema_file')
         self._fields = None
 
         if schema_file:
-            LOGGER.debug("Loading JSON Schema from %s", schema_file)
-            with open(schema_file, encoding="utf-8") as fh:
+            LOGGER.debug('Loading JSON Schema from %s', schema_file)
+            with open(schema_file, encoding='utf-8') as fh:
                 raw_schema = json.load(fh)
 
             fields, primary_geometry = _parse_fields(raw_schema)
@@ -186,8 +183,8 @@ class SchemaPostgreSQLProvider(BaseProvider):
 
             # If the schema declares a primary geometry and the provider_def
             # doesn't already specify geom_field, use the one from the schema.
-            if primary_geometry and not provider_def.get("geom_field"):
-                provider_def["geom_field"] = primary_geometry
+            if primary_geometry and not provider_def.get('geom_field'):
+                provider_def['geom_field'] = primary_geometry
                 self.geom_field = primary_geometry
                 LOGGER.info(
                     "Using primary geometry '%s' from schema file",
@@ -195,14 +192,14 @@ class SchemaPostgreSQLProvider(BaseProvider):
                 )
 
             LOGGER.info(
-                "Loaded %d field(s) from %s",
+                'Loaded %d field(s) from %s',
                 len(self._fields),
                 schema_file,
             )
         else:
             LOGGER.info(
-                "No schema_file configured for %s; falling back to PostgreSQL introspection",
-                provider_def.get("table", self.name),
+                'No schema_file configured for %s; falling back to PostgreSQL introspection',
+                provider_def.get('table', self.name),
             )
 
         # Keep provider_def for lazy delegate creation.
@@ -216,7 +213,7 @@ class SchemaPostgreSQLProvider(BaseProvider):
     def _get_delegate(self) -> PostgreSQLProvider:
         """Return (and lazily create) the real PostgreSQLProvider."""
         if self._delegate is None:
-            LOGGER.debug("Initializing PostgreSQLProvider delegate")
+            LOGGER.debug('Initializing PostgreSQLProvider delegate')
             self._delegate = PostgreSQLProvider(self._provider_def)
         return self._delegate
 
@@ -243,7 +240,7 @@ class SchemaPostgreSQLProvider(BaseProvider):
                 # Convert WKB to GeoJSON geometry dict.
                 return mapping(shapely_wkb.loads(bytes(value.data)))
             except Exception:  # pragma: no cover - defensive fallback
-                LOGGER.debug("Failed to decode WKBElement", exc_info=True)
+                LOGGER.debug('Failed to decode WKBElement', exc_info=True)
                 return None
 
         if isinstance(value, dict):

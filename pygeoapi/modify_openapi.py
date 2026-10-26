@@ -1,11 +1,13 @@
+import fcntl
 import os
 import time
-import yaml
-import fcntl
 from copy import deepcopy
+
+import yaml
 
 _MAX_RETRIES = 20
 _RETRY_INTERVAL = 1  # seconds
+
 
 def _wait_for_file(filepath):
     """
@@ -21,12 +23,13 @@ def _wait_for_file(filepath):
         if os.path.exists(filepath):
             return True
         print(
-            f"OpenAPI spec not found at {filepath} "
-            f"(attempt {attempt}/{_MAX_RETRIES}). "
-            f"Retrying in {_RETRY_INTERVAL}s..."
+            f'OpenAPI spec not found at {filepath} '
+            f'(attempt {attempt}/{_MAX_RETRIES}). '
+            f'Retrying in {_RETRY_INTERVAL}s...'
         )
         time.sleep(_RETRY_INTERVAL)
     return False
+
 
 def add_styles_paths(spec, config):
     paths = spec['paths']
@@ -45,43 +48,49 @@ def add_styles_paths(spec, config):
 
     styles_list = {
         'get': {
-            'description': 'Lister opp stiler registrert for collectionen, med en enkel beskrivelse og lenke til hver stilfil.',
+            'description': (
+                'Lister opp stiler registrert for collectionen, med en enkel beskrivelse og lenke til hver stilfil.'
+            ),
             'operationId': None,
             'parameters': [{'$ref': '#/components/parameters/lang'}],
             'responses': {
                 '200': {
                     'description': 'Available styles',
-                    'content': {'application/json': {'schema': {
-                        'type': 'object',
-                        'required': ['styles'],
-                        'properties': {
-                            'styles': {
-                                'type': 'array',
-                                'items': {
-                                    'type': 'object',
-                                    'required': ['id', 'title', 'description', 'links'],
-                                    'properties': {
-                                        'id': {'type': 'string'},
-                                        'title': {'type': 'string'},
-                                        'description': {'type': 'string'},
-                                        'links': {
-                                            'type': 'array',
-                                            'items': {
-                                                'type': 'object',
-                                                'required': ['rel', 'href', 'type'],
-                                                'properties': {
-                                                    'rel': {'type': 'string'},
-                                                    'href': {'type': 'string'},
-                                                    'type': {'type': 'string'},
+                    'content': {
+                        'application/json': {
+                            'schema': {
+                                'type': 'object',
+                                'required': ['styles'],
+                                'properties': {
+                                    'styles': {
+                                        'type': 'array',
+                                        'items': {
+                                            'type': 'object',
+                                            'required': ['id', 'title', 'description', 'links'],
+                                            'properties': {
+                                                'id': {'type': 'string'},
+                                                'title': {'type': 'string'},
+                                                'description': {'type': 'string'},
+                                                'links': {
+                                                    'type': 'array',
+                                                    'items': {
+                                                        'type': 'object',
+                                                        'required': ['rel', 'href', 'type'],
+                                                        'properties': {
+                                                            'rel': {'type': 'string'},
+                                                            'href': {'type': 'string'},
+                                                            'type': {'type': 'string'},
+                                                        },
+                                                    },
                                                 },
                                             },
                                         },
                                     },
+                                    'default': {'type': 'string'},
                                 },
-                            },
-                            'default': {'type': 'string'},
-                        },
-                    }}},
+                            }
+                        }
+                    },
                 },
                 '404': not_found,
             },
@@ -92,21 +101,24 @@ def add_styles_paths(spec, config):
         'get': {
             'description': 'Returnerer stilfilen som et Mapbox-stildokument i JSON-format.',
             'operationId': None,
-            'parameters': [{
-                'name': 'styleId',
-                'in': 'path',
-                'required': True,
-                'schema': {'type': 'string'},
-            }, {
-                'name': 'f',
-                'in': 'query',
-                'required': False,
-                'schema': {
-                    'type': 'string',
-                    'enum': ['mbs', 'mapbox'],
-                    'default': 'mbs',
+            'parameters': [
+                {
+                    'name': 'styleId',
+                    'in': 'path',
+                    'required': True,
+                    'schema': {'type': 'string'},
                 },
-            }],
+                {
+                    'name': 'f',
+                    'in': 'query',
+                    'required': False,
+                    'schema': {
+                        'type': 'string',
+                        'enum': ['mbs', 'mapbox'],
+                        'default': 'mbs',
+                    },
+                },
+            ],
             'responses': {
                 '200': {
                     'description': 'Mapbox style document (version 8)',
@@ -165,19 +177,19 @@ def remove_post_endpoints(pattern):
     """
     openapi_file = os.environ.get('PYGEOAPI_OPENAPI')
     if not openapi_file:
-        print("PYGEOAPI_OPENAPI environment variable is not set. Skipping POST endpoint removal.")
+        print('PYGEOAPI_OPENAPI environment variable is not set. Skipping POST endpoint removal.')
         return
 
     if not _wait_for_file(openapi_file):
         print(
-            f"WARNING: OpenAPI spec file not found at {openapi_file} after "
-            f"{_MAX_RETRIES * _RETRY_INTERVAL}s. POST endpoints will NOT be "
-            f"removed from the spec. This may happen on a fresh deployment if "
-            f"pygeoapi has not yet generated the file."
+            f'WARNING: OpenAPI spec file not found at {openapi_file} after '
+            f'{_MAX_RETRIES * _RETRY_INTERVAL}s. POST endpoints will NOT be '
+            f'removed from the spec. This may happen on a fresh deployment if '
+            f'pygeoapi has not yet generated the file.'
         )
         return
 
-    print(f"Modifying OpenAPI spec at {openapi_file} to remove POST endpoints matching pattern")
+    print(f'Modifying OpenAPI spec at {openapi_file} to remove POST endpoints matching pattern')
     try:
         with open(openapi_file, 'r+') as _f:
             # Acquire an exclusive lock to prevent race conditions properly
@@ -187,10 +199,7 @@ def remove_post_endpoints(pattern):
 
                 if isinstance(_spec, dict):
                     paths = _spec.get('paths', {})
-                    paths_to_modify = [
-                        p for p in paths
-                        if pattern.search(p) and 'post' in paths[p]
-                    ]
+                    paths_to_modify = [p for p in paths if pattern.search(p) and 'post' in paths[p]]
 
                     for p in paths_to_modify:
                         paths[p].pop('post')
@@ -201,14 +210,14 @@ def remove_post_endpoints(pattern):
                         _f.truncate()
                         yaml.safe_dump(_spec, _f, allow_unicode=True, sort_keys=False)
                 elif _spec is not None:
-                    print(f"OpenAPI spec at {openapi_file} is not a valid dictionary. Skipping modification.")
+                    print(f'OpenAPI spec at {openapi_file} is not a valid dictionary. Skipping modification.')
             finally:
                 # Release the lock
                 fcntl.flock(_f, fcntl.LOCK_UN)
     except yaml.YAMLError as exc:
-        print(f"Failed to parse OpenAPI spec at {openapi_file}: {exc}")
+        print(f'Failed to parse OpenAPI spec at {openapi_file}: {exc}')
     except Exception as e:
-        print(f"Failed to modify OpenAPI spec at {openapi_file}: {e}")
+        print(f'Failed to modify OpenAPI spec at {openapi_file}: {e}')
 
 
 def add_styles_to_openapi():
@@ -216,17 +225,17 @@ def add_styles_to_openapi():
     openapi_file = os.environ.get('PYGEOAPI_OPENAPI')
     config_file = os.environ.get('PYGEOAPI_CONFIG')
     if not openapi_file:
-        print("PYGEOAPI_OPENAPI environment variable is not set. Skipping Styles documentation.")
+        print('PYGEOAPI_OPENAPI environment variable is not set. Skipping Styles documentation.')
         return
     if not config_file:
-        raise RuntimeError("PYGEOAPI_CONFIG environment variable is not set")
+        raise RuntimeError('PYGEOAPI_CONFIG environment variable is not set')
 
     if not _wait_for_file(openapi_file):
-        print(f"WARNING: OpenAPI spec file not found at {openapi_file}. Styles endpoints will NOT be documented.")
+        print(f'WARNING: OpenAPI spec file not found at {openapi_file}. Styles endpoints will NOT be documented.')
         return
 
     try:
-        with open(config_file, 'r') as config_stream:
+        with open(config_file) as config_stream:
             config = yaml.safe_load(config_stream)
         if not isinstance(config, dict) or not isinstance(config.get('resources'), dict):
             raise ValueError('pygeoapi config must contain resources')
@@ -245,4 +254,4 @@ def add_styles_to_openapi():
             finally:
                 fcntl.flock(_f, fcntl.LOCK_UN)
     except (OSError, yaml.YAMLError, ValueError) as exc:
-        raise RuntimeError(f"Failed to document Styles endpoints in OpenAPI spec at {openapi_file}") from exc
+        raise RuntimeError(f'Failed to document Styles endpoints in OpenAPI spec at {openapi_file}') from exc

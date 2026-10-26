@@ -10,12 +10,14 @@ Returns: application/geopackage+sqlite3 binary (one layer per collection)
 """
 
 import logging
+
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
+
 from .export_utils import (
-    load_config,
-    get_postgis_collections,
-    read_collection,
     gdfs_to_gpkg_bytes,
+    get_postgis_collections,
+    load_config,
+    read_collection,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -39,8 +41,7 @@ PROCESS_METADATA = {
         'collection_ids': {
             'title': 'Collection IDs (optional)',
             'description': (
-                'Comma-separated list of collection IDs to include. '
-                'Leave empty to export all collections.'
+                'Comma-separated list of collection IDs to include. Leave empty to export all collections.'
             ),
             'schema': {'type': 'string'},
             'minOccurs': 0,
@@ -63,7 +64,6 @@ PROCESS_METADATA = {
 
 
 class ExportAllGpkgProcessor(BaseProcessor):
-
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
 
@@ -81,8 +81,7 @@ class ExportAllGpkgProcessor(BaseProcessor):
             missing = [c for c in requested if c not in all_collections]
             if missing:
                 raise ProcessorExecuteError(
-                    f"Unknown collection(s): {', '.join(missing)}. "
-                    f"Available: {', '.join(all_collections.keys())}"
+                    f'Unknown collection(s): {", ".join(missing)}. Available: {", ".join(all_collections.keys())}'
                 )
             target = {k: v for k, v in all_collections.items() if k in requested}
         else:
@@ -102,9 +101,7 @@ class ExportAllGpkgProcessor(BaseProcessor):
                 errors.append(f'{coll_id}: {exc}')
 
         if not layers:
-            raise ProcessorExecuteError(
-                f'All collections failed to load. Errors: {"; ".join(errors)}'
-            )
+            raise ProcessorExecuteError(f'All collections failed to load. Errors: {"; ".join(errors)}')
 
         try:
             gpkg_bytes = gdfs_to_gpkg_bytes(layers)
@@ -114,7 +111,8 @@ class ExportAllGpkgProcessor(BaseProcessor):
 
         LOGGER.info(
             'Combined GPKG: %d layers, %.1f KB',
-            len(layers), len(gpkg_bytes) / 1024,
+            len(layers),
+            len(gpkg_bytes) / 1024,
         )
         return 'application/geopackage+sqlite3', gpkg_bytes
 
