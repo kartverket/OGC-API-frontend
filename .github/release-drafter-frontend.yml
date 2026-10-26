@@ -5,6 +5,7 @@ tag-prefix: 'frontend-'
 categories:
   - type: 'pre-exclude'
     when:
+      paths-mode: 'only'
       paths:
         - pygeoapi/**
         - martin/**
