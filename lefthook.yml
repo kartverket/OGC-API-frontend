@@ -6,5 +6,5 @@ pre-commit:
     - name: ruff
       root: "pygeoapi/"
       glob: "*.py"
-      run: uv run ruff check --fix {staged_files} && uv run ruff format {staged_files}
+      run: uv run ruff format {staged_files} && uv run ruff check --fix {staged_files} && uv run ruff format {staged_files}
       stage_fixed: true
