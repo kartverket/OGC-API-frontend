@@ -23,8 +23,9 @@ COPY --from=dependencies /venv /venv
 # TEMPORARY: Fix for CVE-2026-111066 (aiohttp multipart FD exhaustion), try removing on new pygeoapi-version (0.24.1+)
 RUN /venv/bin/python -m pip install --upgrade "aiohttp>=3.14.4"
 
-# TEMPORARY: Fix for CVE-2026-8643 (pip console_scripts/gui_scripts path traversal), try removing on new pygeoapi-version (0.24.1+)
-RUN /venv/bin/python -m pip install --upgrade "pip>=26.1.2"
+# TEMPORARY: Fix for CVE-2026-8643 (pip console_scripts/gui_scripts path traversal) and the
+# distrusted eMudhra root CA bundled in pip's vendored certifi, try removing on new pygeoapi-version (0.24.1+)
+RUN /venv/bin/python -m pip install --upgrade "pip>=26.2.2"
 
 # Custom Python scripts
 COPY distinct_values.py /pygeoapi/distinct_values.py
