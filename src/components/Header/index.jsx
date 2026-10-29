@@ -37,6 +37,7 @@ export default function Header() {
             <NextLink
               href={jsonLink || '#'}
               target="_blank"
+              prefetch={false}
               aria-disabled={!jsonLink}
               // optional: make it actually non-clickable when disabled
               onClick={(e) => {
