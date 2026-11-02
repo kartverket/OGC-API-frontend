@@ -14,12 +14,13 @@ RUN uv export --locked --no-emit-project --format requirements-txt > requirement
 #   botocore   - upgraded: vendors its own cacert.pem, and the version pulled in by pygeoapi's
 #                requirements-docker.txt (botocore>1.42) still ships eMudhra's distrusted
 #                "emSign ECC Root CA - G3" / "AAA Certificate Services" roots.
+#   filelock   - upgraded: CVE-2026-112940, fixed in filelock 4.x.
 #   pip/setuptools/wheel - uninstalled entirely: pip is a build-time tool only and the running
 #                image never invokes it, so rather than patching it in place (CVE-2026-8643,
 #                same eMudhra roots in its vendored certifi) we strip it from /venv so it can't
 #                be flagged at all.
 RUN /venv/bin/python -m pip uninstall -y fsspec \
- && /venv/bin/python -m pip install --upgrade "aiohttp>=3.14.4" "botocore>=1.43.121" \
+ && /venv/bin/python -m pip install --upgrade "aiohttp>=3.14.4" "botocore>=1.43.121" "filelock>=4.2.6" \
  && /venv/bin/python -m pip uninstall -y pip setuptools wheel
 
 FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a622172a2c5c4d2145b8f0a
@@ -29,12 +30,13 @@ FROM geopython/pygeoapi:0.24.0@sha256:a62895f2585ef1fcd1fc97ec35bf13177becc1334a
 #   libnss3    - upgraded: its compiled-in trust module (libnssckbi.so) still ships eMudhra's
 #                distrusted "emSign ECC Root CA - G3" / "AAA Certificate Services" roots on the
 #                base image's version; Ubuntu's 2026-10-21 security update drops both.
+#   libbrotli1 - upgraded: CVE-2026-111497, fixed in Ubuntu's 1.1.0-2ubuntu0.1.
 #   python3-pip / python3-pip-whl - purged: pip is a build-time tool only, installed system-wide
 #                by the base image via apt. python3-pip-whl is a separate Debian/Ubuntu package
 #                (pulled in by python3-venv) shipping just the ensurepip bootstrap wheel, at
 #                /usr/share/python-wheels/pip-*.whl - independent of /venv's pip and python3-pip.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends --only-upgrade openssl libssl3t64 libnss3 \
+ && apt-get install -y --no-install-recommends --only-upgrade openssl libssl3t64 libnss3 libbrotli1 \
  && apt-get purge -y python3-pip python3-pip-whl \
  && rm -rf /var/lib/apt/lists/*
 
