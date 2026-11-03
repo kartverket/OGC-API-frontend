@@ -125,7 +125,7 @@ resources:
     links:
       - type: text/html
         rel: related
-        title: Geonorge link
+        title: Geonorge metadata
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker/6093c8a8-fa80-11e6-bc64-92361f002671
       - type: image/png
         rel: preview
@@ -226,7 +226,7 @@ resources:
     links:
       - type: text/html
         rel: related
-        title: Geonorge link
+        title: Geonorge metadata
         href: https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b
       - type: image/png
         rel: preview
