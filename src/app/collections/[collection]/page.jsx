@@ -149,7 +149,7 @@ export default async function Collection({ params }) {
   }));
   const hasCoverageDownloads = coverageDownloads.length > 0;
   const thumbnailSrc = getPreviewImageHref(data.links) || thumbnail;
-  const metadataLink = data.links?.find((link) => link.title === 'Geonorge link' && typeof link.href === 'string');
+  const metadataLink = data.links?.find((link) => link.rel === 'related' && typeof link.href === 'string');
 
   const bbox = transformExtent(data.extent.spatial.bbox[0], data.extent.spatial.crs ?? 'OGC:CRS84', 'OGC:CRS84');
   const featureCollection = createFeatureCollection([bboxPolygon(bbox)]);
@@ -183,7 +183,7 @@ export default async function Collection({ params }) {
                 {metadataLink && (
                   <Card asChild data-variant="tinted" data-color="success" className={styles.metadataCard}>
                     <a href={metadataLink.href} target="_blank" rel="noopener noreferrer">
-                      Collection Metadata
+                      {metadataLink.title || metadataLink.href}
                     </a>
                   </Card>
                 )}

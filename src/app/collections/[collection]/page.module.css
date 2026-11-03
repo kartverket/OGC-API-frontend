@@ -111,7 +111,8 @@
 .metadataCard {
   display: block;
   width: fit-content;
-  margin-top: calc(var(--ds-size-1) * 1.82);
-  padding: var(--ds-size-4) var(--ds-size-6);
+  margin-top: calc(var(--ds-size-1) * 7.8);
+  padding: var(--ds-size-1) var(--ds-size-5);
+  font-size: var(--ds-font-size-4);
   font-weight: var(--ds-font-weight-bold);
 }
